@@ -11,6 +11,8 @@ import cors from 'cors';
 
 export const app = express();
 
+app.use(express.static(path.join('public', 'build')));
+
 // CORS
 app.use(cors({
     origin: 'http://localhost:3000',
