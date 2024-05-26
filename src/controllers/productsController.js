@@ -1,8 +1,10 @@
 import { Product } from "../models/mongoose/productModel.js";
 import { productServices } from "../services/productServices.js";
+import { logger } from "../utils/logger.js";
 
 export const getAllProducts = async (req, res, next) => {
     try {
+
         const options = {
           page: req.query.page || 1,
           limit: req.query.itemsPorPagina || 20, 
@@ -22,6 +24,7 @@ export const getAllProducts = async (req, res, next) => {
 
 export const getCategory = async (req, res, next) => {
     try{
+
      const { category } = req.query;
      const categoryProducts = await productServices.getCategory(category);
       console.log(categoryProducts,'categoryProducts')

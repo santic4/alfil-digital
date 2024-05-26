@@ -4,7 +4,7 @@ import { logger } from '../../utils/logger.js';
 
 class ProductDao{
     async getAllProducts(filter, options){
-        
+
         const paginado= await Product.paginate(filter, options);
 
         return paginado
