@@ -14,6 +14,7 @@ console.log(path.join('public', 'build', 'index.html'));
 app.use(express.static(path.join('public', 'build')));
 
 
+
 app.use(passportInitialize);
 
 app.use(metodosPersonalizados);
