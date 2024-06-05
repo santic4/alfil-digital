@@ -64,17 +64,12 @@ productsRouter.delete('/featured-products/:id', async (req, res) => {
   }
 });
 
-
-
-
-
 // GET /products/pid
 productsRouter.get('/:pid', 
     getProductId
 )
 
 // POST /products/
-
 const handleUpload = upload.array('files', 6);
 
 productsRouter.post('/',

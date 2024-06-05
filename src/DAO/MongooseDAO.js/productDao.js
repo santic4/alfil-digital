@@ -33,15 +33,14 @@ class ProductDao{
     
         while (!inserted) {
             try {
-                newData._id = randomUUID(); // Generar un nuevo UUID
-                console.log(newData, 'newdata');
+                newData._id = randomUUID(); 
+
                 newProduct = await Product.create(newData);
 
                 logger.info('Vez suma')
-                inserted = true; // Salir del bucle si la inserción es exitosa
+                inserted = true; 
             } catch (error) {
                 if (error.code === 11000) {
-                    // Código de error para clave duplicada
                     logger.info('Se entro en error por duplicacion')
                 } else {
                     logger.info('Se entro algun otro error que no es codigo duplicacion')

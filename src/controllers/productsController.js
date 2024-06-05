@@ -7,7 +7,7 @@ export const getAllProducts = async (req, res, next) => {
 
         const options = {
           page: req.query.page || 1,
-          limit: req.query.itemsPorPagina || 20, 
+          limit: req.query.itemsPorPagina || 10, 
           sort: req.query.order ? { 'price': req.query.order } : {},
           lean: true,
         };
@@ -26,9 +26,16 @@ export const getCategory = async (req, res, next) => {
     try{
 
      const { category } = req.query;
+     
+  
      const categoryProducts = await productServices.getCategory(category);
-      console.log(categoryProducts,'categoryProducts')
-     res.json(categoryProducts)
+  
+     const results = {
+      status: 'success',
+      payload: categoryProducts,
+    };
+
+     res.json(results)
  
     }catch(err){
      next(err)
@@ -41,8 +48,10 @@ export const getFilteredProducts = async (req, res) => {
   const query = {};
 
   if (name) {
-      query.title = new RegExp(name, 'i'); // 'i' para case insensitive
-  }
+    query.title = new RegExp(name, 'i'); 
+    
+}
+
 
   if (minPrice && maxPrice) {
       query.price = { $gte: minPrice, $lte: maxPrice };
@@ -51,6 +60,8 @@ export const getFilteredProducts = async (req, res) => {
   } else if (maxPrice) {
       query.price = { $lte: maxPrice };
   }
+
+  console.log(query,'query')
 
   try {
       const products = await Product.find(query);

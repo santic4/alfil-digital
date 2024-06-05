@@ -31,6 +31,7 @@ class ProductServices{
         }
         const categoryProducts = await productRepository.getCategory(category);
 
+
         return categoryProducts
     }
 
