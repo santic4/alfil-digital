@@ -1,10 +1,9 @@
 import { Router } from 'express'
-import { deleteProduct, getAllProducts, getCategory, getFilteredProducts, getProductId, postProduct, updateProduct } from '../controllers/productsController.js';
+import { deleteProduct, getAllProducts, getCategory, getFile, getFilteredProducts, getProductId, postProduct, updateProduct } from '../controllers/productsController.js';
 import { passportAuth } from '../middlewares/passport.js';
 import { adminsOnly } from '../middlewares/authorizationUserAdmin.js';
 import { upload } from '../middlewares/multer.js';
 import { FeaturedProducts } from '../models/mongoose/featuredModel.js';
-
 
 
 export const productsRouter = Router()
@@ -42,12 +41,13 @@ productsRouter.post('/featured-products', async (req, res) => {
       _id:body._id,
       images: body.images,
       title: body.title,
-      price: body.price
+      price: body.price,
+      category: body.category
     }
 
     console.log(schema)
     const newProduct = await FeaturedProducts.create(schema);
-    console.log(newProduct,'newProduct')
+
     await newProduct;
     res.json(newProduct);
   } catch (error) {
@@ -69,11 +69,15 @@ productsRouter.get('/:pid',
     getProductId
 )
 
+productsRouter.get('/files/:type/:filename',
+    getFile
+  );
+
 // POST /products/
-const handleUpload = upload.array('files', 6);
+const handleUpload = upload.array('files', 20);
 
 productsRouter.post('/',
- passportAuth,
+  passportAuth,
   adminsOnly,
   handleUpload,
   postProduct

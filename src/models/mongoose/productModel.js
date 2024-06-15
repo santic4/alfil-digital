@@ -10,7 +10,7 @@ const schemaProduct = new Schema ({
     status: { type: Boolean, default: true },
     category: { type: String, require: true },
     images: { type: [String], default: [] },
-    pdfFile: { type: String, default: ''  },
+    fileadj: { type: [String], default: [] },
     owner: { type: String, ref: 'users' }
 }, {
     strict: 'throw',

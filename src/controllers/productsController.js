@@ -1,7 +1,10 @@
 import { Product } from "../models/mongoose/productModel.js";
 import { productServices } from "../services/productServices.js";
 import { logger } from "../utils/logger.js";
-
+import path from 'path';
+import { fileURLToPath } from 'url';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 export const getAllProducts = async (req, res, next) => {
     try {
 
@@ -92,20 +95,18 @@ export const postProduct = async (req, res, next) => {
      const { files } = req;
 
      const imageFiles = files.filter((file) => file.mimetype.startsWith('image/'));
-     const pdfFile = files.filter((file) => file.mimetype === 'application/pdf');
+     const fileadjuntos = files.filter(file => !file.mimetype.startsWith('image/'));
+     
      if (imageFiles && imageFiles.length > 0) {
          newData.images = imageFiles.map(file => `${file.filename}`);
      }
 
-     console.log(pdfFile,'pdfFile')
-
-     if (pdfFile) {
-      newData.pdfFile = pdfFile[0].filename;
+     if (fileadjuntos) {
+      const fileadjArray = fileadjuntos.map(file => file.filename);
+      newData.fileadj = fileadjArray;
      }
 
      const newProduct = await productServices.postProduct(userPer ,newData)
-
-     console.log(newProduct,'newProduct')
 
      res.json(newProduct)
 
@@ -114,6 +115,32 @@ export const postProduct = async (req, res, next) => {
      next(error)
   }
 }
+
+// 
+
+export const getFile = (req, res) => {
+  const { type, filename } = req.params;
+
+  let directory;
+  if (type === 'photos') {
+    directory = path.join(__dirname, '../../statics/photos');
+  } else if (type === 'fileadj') {
+    directory = path.join(__dirname, '../../statics/fileadj');
+  } else {
+    return res.status(400).json({ error: 'Tipo de archivo no soportado' });
+  }
+
+  const filePath = path.join(directory, filename);
+
+  res.sendFile(filePath, (err) => {
+    if (err) {
+      console.error(err);
+      res.status(404).json({ error: 'Archivo no encontrado' });
+    }
+  });
+};
+
+//
 
 export const updateProduct = async (req, res, next) => {
   try{

@@ -5,6 +5,7 @@ const schemaProduct = new Schema ({
     title: { type: String},
     price: { type: Number },
     images: { type: [String], default: [] },
+    category: { type: String }
 }, {
     strict: 'throw',
     versionKey: false,
