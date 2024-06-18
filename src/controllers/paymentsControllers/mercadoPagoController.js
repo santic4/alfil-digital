@@ -1,11 +1,14 @@
 import mercadopago, { MercadoPagoConfig, Payment, Preference } from 'mercadopago';
+import { logger } from '../../utils/logger.js';
 
 const client = new MercadoPagoConfig({
-    accessToken: 'APP_USR-4646418936536455-051102-9c9a15b2c4e55bc8b7ca461272059450-1808896698',
+    accessToken: 'APP_USR-2137485881142292-051411-133fce11bfa1dc86b25fc21e60321eb5-151622720',
     options: { timeout: 5000, idempotencyKey: 'abc' }
 })
 
 export const createOrderMP = async (req, res) => {
+    const carrito = req.body
+    console.log(carrito,'carrito')
     try {
         const preference = new Preference(client);
 
@@ -17,21 +20,15 @@ export const createOrderMP = async (req, res) => {
                     excluded_payment_types: [{ id: "ticket" }],
                     installments: 1
                 },
-                items: [
-                    {
-                        id: 'id1as',
-                        title: 'My product',
-                        quantity: 1,
-                        unit_price: 2000
-                    }
-                ],
+                items: carrito,
                 back_urls: {
-                    success: 'http://localhost:8080/api/mercado-pago/success',
-                    failure: 'http://localhost:8080/api/mercado-pago/failure',
-                    pending: 'http://localhost:8080/api/mercado-pago/pending'
+                    success: '/api/mercado-pago/success',
+                    failure: '/api/mercado-pago/failure',
+                    pending: '/api/mercado-pago/pending'
                 } 
                 ,
-                notification_url: 'https://19db-152-170-166-25.ngrok-free.app/api/mercado-pago/webhook'
+                notification_url: '/api/mercado-pago/webhook',
+                statement_descriptor: "ALFILDIGITAL",
             }
         });
 
@@ -39,7 +36,7 @@ export const createOrderMP = async (req, res) => {
         const { init_point, sandbox_init_point } = response;
 
         // Determinar si estamos en modo sandbox
-        const isSandbox = false; // Cambia a false si estás en producción
+        const isSandbox = true; // Cambia a false si estás en producción
 
         console.log(response, 'preferenec create')
 
@@ -47,15 +44,15 @@ export const createOrderMP = async (req, res) => {
         const urlRedirect = isSandbox ? sandbox_init_point : init_point;
 
         // Redirigir al usuario al proceso de pago en MercadoPago
-        res.send(response);
+        res.send(urlRedirect);
     } catch (error) {
         console.error('Error al crear la preferencia:', error);
         res.send(500).json({ error: 'Error al crear la preferencia' });
     }
 }
-export const successPayMP = async (req, res) => { }
 
 export const webHookMP = async (req, res) => {
+    console.log('entro al webhook')
     try {
         const application = new Payment(client);
 
@@ -65,21 +62,28 @@ export const webHookMP = async (req, res) => {
 
         const payment = req.query
 
-        console.log(payment['data.id'],'payment data id')
+        console.log(payment,'payment')
 
         if(payment.type === 'payment'){
             getPay = await application.capture({
                     id: payment['data.id'],
-                    transaction_amount: 2000,
                     requestOptions: {
                     idempotencyKey: 'abc'
                     }
-                }).then(console.log).catch(console.log);
+                }).then(captureResult => {
+                    logger.info('Captura exitosa:', captureResult);
+                    console.log('Captura exitosa:', captureResult);
+                    
+                  }).catch(console.log);
             
         }
 
         console.log(getPay,' getPay')
-        console.log('Termino bien la compra')
+        logger.info(getPay,' getPay')
+
+        console.log(getPay,'Termino bien la compra')
+        logger.info(getPay,'Termino bien la compra')
+
     } catch (error) {
         console.log(error)
         throw new Error('Error al confirmar la compra')
