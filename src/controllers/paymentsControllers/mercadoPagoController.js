@@ -22,9 +22,9 @@ export const createOrderMP = async (req, res) => {
                 },
                 items: carrito,
                 back_urls: {
-                    success: '/api/mercado-pago/success',
-                    failure: '/api/mercado-pago/failure',
-                    pending: '/api/mercado-pago/pending'
+                    success: 'https://alfil-digital.onrender.com/api/mercado-pago/success',
+                    failure: 'https://alfil-digital.onrender.com/api/mercado-pago/failure',
+                    pending: 'https://alfil-digital.onrender.com/api/mercado-pago/pending'
                 } 
                 ,
                 notification_url: 'https://alfil-digital.onrender.com/api/mercado-pago/webhook'
