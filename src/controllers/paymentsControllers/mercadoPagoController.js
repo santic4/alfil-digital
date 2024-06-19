@@ -36,7 +36,7 @@ export const createOrderMP = async (req, res) => {
         const { init_point, sandbox_init_point } = response;
 
         // Determinar si estamos en modo sandbox
-        const isSandbox = true; // Cambia a false si estás en producción
+        const isSandbox = false; // Cambia a false si estás en producción
 
         console.log(response, 'preferenec create')
 
