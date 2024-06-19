@@ -43,7 +43,7 @@ export const createOrderMP = async (req, res) => {
         const urlRedirect = isSandbox ? sandbox_init_point : init_point;
         console.log(urlRedirect, 'urlRedirect')
         // Redirigir al usuario al proceso de pago en MercadoPago
-        res.sendStatus(400)
+        res.json({ redirectUrl: urlRedirect });
     } catch (error) {
         console.error('Error al crear la preferencia:', error);
         res.send(500).json({ error: 'Error al crear la preferencia' });
