@@ -23,6 +23,14 @@ app.use(express.static(path.join('public', 'build')));
 //    res.header('Access-Control-Allow-Credentials', 'true');
 //    next();
 //});
+// Middleware de CSP
+app.use((req, res, next) => {
+    res.setHeader(
+        "Content-Security-Policy",
+        "script-src 'self' https://http2.mlstatic.com 'nonce-0LQyZ7wqLUQxwjfNUyBCIQ==' 'strict-dynamic' 'unsafe-eval' 'report-sample' https: 'unsafe-inline'"
+    );
+    next();
+});
 
 app.use(passportInitialize);
 
