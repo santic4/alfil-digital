@@ -27,10 +27,11 @@ export const createOrderMP = async (req, res) => {
                     pending: '/api/mercado-pago/pending'
                 } 
                 ,
-                notification_url: '/api/mercado-pago/webhook'
+                notification_url: 'https://alfil-digital.onrender.com/api/mercado-pago/webhook'
             }
         });
 
+        const { id } = response;
         // Si llegamos aquí, la preferencia se creó correctamente
         const { init_point, sandbox_init_point } = response;
 
@@ -41,9 +42,9 @@ export const createOrderMP = async (req, res) => {
 
         // Construir la URL de redirección
         const urlRedirect = isSandbox ? sandbox_init_point : init_point;
-        console.log(urlRedirect, 'urlRedirect')
+        console.log(id, 'id id id')
         // Redirigir al usuario al proceso de pago en MercadoPago
-        res.json({ redirectUrl: urlRedirect });
+        res.json({ preferenceId: id, redirectUrl: urlRedirect });
     } catch (error) {
         console.error('Error al crear la preferencia:', error);
         res.send(500).json({ error: 'Error al crear la preferencia' });
