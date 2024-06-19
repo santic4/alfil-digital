@@ -8,11 +8,11 @@ MercadoPagoRouter.post('/create-order', createOrderMP)
 
 MercadoPagoRouter.get('/success', (req, res) => {
     logger.info('successsss')
-    res.redirect('http://localhost:3000/success');
+    res.redirect('/success');
 });
 
 MercadoPagoRouter.get('/failure', (req, res) => {
-    res.redirect('http://localhost:3000/checkout');
+    res.redirect('/checkout');
 });
 
 MercadoPagoRouter.get('/pending')
