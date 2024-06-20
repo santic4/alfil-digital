@@ -1,8 +1,11 @@
 import mercadopago, { MercadoPagoConfig, Payment, Preference } from 'mercadopago';
 import { logger } from '../../utils/logger.js';
+import { ACCESS_TOKEN_MP } from '../../config/config.js';
+import { generateToken } from '../../utils/cryptografia.js';
+import { saveTransactionWithToken, updateTransactionStatus } from '../../services/transactionServices.js';
 
 const client = new MercadoPagoConfig({
-    accessToken: 'APP_USR-2137485881142292-051411-133fce11bfa1dc86b25fc21e60321eb5-151622720',
+    accessToken: ACCESS_TOKEN_MP,
     options: { timeout: 5000, idempotencyKey: 'abc' }
 })
 
@@ -22,9 +25,9 @@ export const createOrderMP = async (req, res) => {
                 },
                 items: carrito,
                 back_urls: {
-                    success: 'https://alfil-digital.onrender.com/api/mercado-pago/success',
-                    failure: 'https://alfil-digital.onrender.com/api/mercado-pago/failure',
-                    pending: 'https://alfil-digital.onrender.com/api/mercado-pago/pending'
+                    success: 'https://alfil-digital.onrender.com/success', // URL de éxito
+                    failure: 'https://alfil-digital.onrender.com/checkout', // URL de fallo
+                    pending: 'https://alfil-digital.onrender.com/checkout'
                 } 
                 ,
                 notification_url: 'https://alfil-digital.onrender.com/api/mercado-pago/webhook'
@@ -40,54 +43,52 @@ export const createOrderMP = async (req, res) => {
 
         console.log(response, 'preferenec create')
 
-        // Construir la URL de redirección
-        const urlRedirect = isSandbox ? sandbox_init_point : init_point;
-        console.log(id, 'id id id')
-        // Redirigir al usuario al proceso de pago en MercadoPago
-        res.json({ preferenceId: id, redirectUrl: urlRedirect });
+       // Genera un token único
+       const token = generateToken();
+       const transactionId = id; // o cualquier identificador único de la transacción
+
+       // Guarda la transacción y el token en la base de datos
+       await saveTransactionWithToken(transactionId, token);
+
+       // Construir la URL de redirección
+       const urlRedirect = isSandbox ? sandbox_init_point : init_point;
+ 
+       // Redirigir al usuario al proceso de pago en MercadoPago
+       res.json({ preferenceId: id, redirectUrl: urlRedirect });
     } catch (error) {
-        console.error('Error al crear la preferencia:', error);
+        logger.error('Error al crear la preferencia:', error);
         res.send(500).json({ error: 'Error al crear la preferencia' });
     }
 }
 
 export const webHookMP = async (req, res) => {
-    console.log('entro al webhook')
     try {
         const application = new Payment(client);
+        const payment = req.query;
 
-        let getPay
-        console.log(req.query,' laqueiry')
+        console.log('Payment received:', payment);
 
-
-        const payment = req.query
-
-        console.log(payment,'payment')
-
-        if(payment.type === 'payment'){
-            getPay = await application.capture({
-                    id: payment['data.id'],
-                    requestOptions: {
+        if (payment.type === 'payment') {
+            // Captura el pago usando async/await
+            const captureResult = await application.capture({
+                id: payment['data.id'],
+                requestOptions: {
                     idempotencyKey: 'abc'
-                    }
-                }).then(captureResult => {
-                    logger.info('Captura exitosa:', captureResult);
-                    console.log('Captura exitosa:', captureResult);
-                    
-                  }).catch(console.log);
-            
+                }
+            });
+
+            console.log('Captura exitosa:', captureResult);
+            logger.info('Captura exitosa:', captureResult);
+            await updateTransactionStatus(payment['data.id'], 'paid');
+
+            res.status(200).send('OK');
+        } else {
+            // Maneja otros tipos de pago o errores aquí si es necesario
+            throw new Error('Tipo de pago no reconocido o no es un pago');
         }
-
-        console.log(getPay,' getPay')
-        logger.info(getPay,' getPay')
-
-        console.log(getPay,'Termino bien la compra')
-        logger.info(getPay,'Termino bien la compra')
-
     } catch (error) {
-        console.log(error)
-        throw new Error('Error al confirmar la compra')
+        console.error('Error al procesar el pago:', error);
+        logger.error(error, 'Error al procesar el pago');
+        res.status(500).send('Error al procesar el pago');
     }
-    res.sendStatus(400)
-}
-
+};

@@ -47,3 +47,16 @@ export function desencriptar(token) {
     })
   })
 }
+
+// TOKEN PARA MP
+
+
+// Función para generar un token único
+export const generateToken = () => {
+  try {
+    const token = hashSync(new Date().toISOString(), 10); // Genera un hash de la fecha actual
+    return token;
+  } catch (error) {
+    throw new Error('Error al generar el token con bcryptjs: ' + error.message);
+  }
+};

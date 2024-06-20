@@ -1,8 +1,11 @@
 import { Product } from "../models/mongoose/productModel.js";
+import Transaction from "../models/mongoose/transactionSchema.js";
+import { emailService } from "../services/email/emailServices.js";
 import { productServices } from "../services/productServices.js";
 import { logger } from "../utils/logger.js";
 import path from 'path';
 import { fileURLToPath } from 'url';
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 export const getAllProducts = async (req, res, next) => {
@@ -118,28 +121,71 @@ export const postProduct = async (req, res, next) => {
 
 // 
 
-export const getFile = (req, res) => {
-  const { type, filename } = req.params;
+export const getFile = async (req, res) => {
+    const { filename } = req.params;
+    const { token } = req.query;
 
-  let directory;
-  if (type === 'photos') {
-    directory = path.join(__dirname, '../../statics/photos');
-  } else if (type === 'fileadj') {
-    directory = path.join(__dirname, '../../statics/fileadj');
-  } else {
-    return res.status(400).json({ error: 'Tipo de archivo no soportado' });
-  }
-
-  const filePath = path.join(directory, filename);
-
-  res.sendFile(filePath, (err) => {
-    if (err) {
-      console.error(err);
-      res.status(404).json({ error: 'Archivo no encontrado' });
+    if (!token) {
+        return res.status(401).json({ error: 'No autorizado' });
     }
-  });
+
+    let type = 'fileadj';
+    let directory;
+    if (type === 'photos') {
+        directory = path.join(__dirname, '../../statics/photos');
+    } else if (type === 'fileadj') {
+        directory = path.join(__dirname, '../../statics/fileadj');
+    } else {
+        return res.status(400).json({ error: 'Tipo de archivo no soportado' });
+    }
+
+    const filePath = path.join(directory, filename);
+
+    try {
+        const transaction = await Transaction.findOne({ token, status: 'paid' });
+
+        if (!transaction) {
+            return res.status(403).json({ error: 'Pago no verificado' });
+        }
+
+        res.sendFile(filePath, (err) => {
+            if (err) {
+                console.error(err);
+                res.status(404).json({ error: 'Archivo no encontrado' });
+            }
+        });
+    } catch (error) {
+        console.error('Error al verificar el pago:', error);
+        res.status(500).json({ error: 'Error interno del servidor' });
+    }
 };
 
+export const sendEmail = async (req, res) => {
+    const { email, fileUrls } = req.body;
+    const { token } = req.headers;
+
+    if (!token) {
+        return res.status(401).json({ error: 'No autorizado' });
+    }
+
+    try {
+        const transaction = await Transaction.findOne({ token, status: 'paid' });
+
+        if (!transaction) {
+            return res.status(403).json({ error: 'Pago no verificado' });
+        }
+
+        const filesList = fileUrls.join(', ');
+        const message = `Gracias por tu compra. Puedes descargar tus archivos desde los siguientes enlaces: ${filesList}`;
+
+        await emailService.send(email, 'Archivos comprados', message);
+
+        res.status(200).json({ message: 'Correo enviado con éxito' });
+    } catch (error) {
+        console.error('Error al enviar el correo:', error);
+        res.status(500).json({ error: 'Error al enviar el correo' });
+    }
+};
 //
 
 export const updateProduct = async (req, res, next) => {

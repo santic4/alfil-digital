@@ -31,3 +31,6 @@ export const PAYPALCLIENTID = process.env.PAYPALCLIENTID
 export const PAYPALCLIENTSECRET = process.env.PAYPALCLIENTSECRET
 export const PAYPAL_API = process.env.PAYPAL_API
 
+// MP ACCESS_TOKEN_MP
+export const ACCESS_TOKEN_MP = process.env.ACCESS_TOKEN_MP
+

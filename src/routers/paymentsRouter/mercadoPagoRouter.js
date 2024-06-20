@@ -12,9 +12,12 @@ MercadoPagoRouter.get('/success', (req, res) => {
 });
 
 MercadoPagoRouter.get('/failure', (req, res) => {
-    res.redirect('/checkout');
+    res.redirect('/checkout'); 
 });
 
-MercadoPagoRouter.get('/pending')
+MercadoPagoRouter.get('/pending', (req, res) => {
+    res.redirect('/checkout'); 
+});
+
 
 MercadoPagoRouter.post('/webhook', webHookMP)
