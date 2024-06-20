@@ -69,6 +69,7 @@ export const webHookMP = async (req, res) => {
         console.log('Payment received:', payment);
 
         if (payment.type === 'payment') {
+            logger.info('Captura entro pero nada:');
             // Captura el pago usando async/await
             const captureResult = await application.capture({
                 id: payment['data.id'],
