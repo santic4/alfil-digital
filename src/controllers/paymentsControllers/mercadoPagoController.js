@@ -48,7 +48,7 @@ export const createOrderMP = async (req, res) => {
        const transactionId = id; // o cualquier identificador único de la transacción
 
        // Guarda la transacción y el token en la base de datos
-       await saveTransactionWithToken(transactionId, token);
+       await saveTransactionWithToken(transactionId, token, 'pending');
 
        // Construir la URL de redirección
        const urlRedirect = isSandbox ? sandbox_init_point : init_point;
