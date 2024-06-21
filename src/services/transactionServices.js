@@ -1,20 +1,5 @@
 import Transaction from "../models/mongoose/transactionSchema.js";
 
-export const saveTransactionWithToken = async (transactionId, token, status) => {
-    try {
-        const newTransaction = new Transaction({
-            transactionId,
-            token,
-            status
-        });
-        await newTransaction.save();
-        console.log('Transacción guardada correctamente:', newTransaction);
-    } catch (error) {
-        console.error('Error al guardar la transacción:', error);
-        throw error;
-    }
-};
-
 export const updateTransactionStatus = async (transactionId, status) => {
     try {
         const transaction = await Transaction.findOneAndUpdate(

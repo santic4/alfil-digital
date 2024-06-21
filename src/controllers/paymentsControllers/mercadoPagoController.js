@@ -2,7 +2,7 @@ import mercadopago, { MercadoPagoConfig, Payment, Preference } from 'mercadopago
 import { logger } from '../../utils/logger.js';
 import { ACCESS_TOKEN_MP } from '../../config/config.js';
 import { generateToken } from '../../utils/cryptografia.js';
-import { saveTransactionWithToken, updateTransactionStatus } from '../../services/transactionServices.js';
+import { updateTransactionStatus } from '../../services/transactionServices.js';
 
 const client = new MercadoPagoConfig({
     accessToken: ACCESS_TOKEN_MP,
@@ -11,7 +11,7 @@ const client = new MercadoPagoConfig({
 
 export const createOrderMP = async (req, res) => {
     const carrito = req.body
-    console.log(carrito,'carrito')
+
     try {
         const preference = new Preference(client);
 
@@ -35,31 +35,35 @@ export const createOrderMP = async (req, res) => {
         });
 
         const { id } = response;
-        // Si llegamos aquí, la preferencia se creó correctamente
-        const { init_point, sandbox_init_point } = response;
-
-        // Determinar si estamos en modo sandbox
-        const isSandbox = false; // Cambia a false si estás en producción
 
         console.log(response, 'preferenec create')
 
-       // Genera un token único
-       const token = generateToken();
-       const transactionId = id; // o cualquier identificador único de la transacción
-
-       // Guarda la transacción y el token en la base de datos
-       await saveTransactionWithToken(transactionId, token, 'pending');
-
-       // Construir la URL de redirección
-       const urlRedirect = isSandbox ? sandbox_init_point : init_point;
- 
-       // Redirigir al usuario al proceso de pago en MercadoPago
-       res.json({ preferenceId: id, redirectUrl: urlRedirect });
+       res.json({ preferenceId: id });
     } catch (error) {
         logger.error('Error al crear la preferencia:', error);
         res.send(500).json({ error: 'Error al crear la preferencia' });
     }
 }
+export const successOrder = async (req, res) => {
+    try {
+        const { status, preference_id } = req.query;
+
+        if (!status || !preference_id) {
+            return res.status(400).json({ error: 'Faltan parámetros requeridos' });
+        }
+
+        const updatedTransaction = await updateTransactionStatus(preference_id, status);
+
+        if (updatedTransaction) {
+            res.status(200).json({ message: 'Estado de la transacción actualizado correctamente', transaction: updatedTransaction });
+        } else {
+            res.status(404).json({ error: 'Transacción no encontrada' });
+        }
+    } catch (error) {
+        logger.error('Error al actualizar el estado de la transacción:', error);
+        res.status(500).json({ error: 'Error al actualizar el estado de la transacción' });
+    }
+};
 
 export const webHookMP = async (req, res) => {
     try {
@@ -69,8 +73,7 @@ export const webHookMP = async (req, res) => {
         console.log('Payment received:', payment);
 
         if (payment.type === 'payment') {
-            logger.info('Captura entro pero nada:');
-            // Captura el pago usando async/await
+
             const captureResult = await application.capture({
                 id: payment['data.id'],
                 requestOptions: {
@@ -78,17 +81,13 @@ export const webHookMP = async (req, res) => {
                 }
             });
 
-            console.log('Captura exitosa:', captureResult);
             logger.info('Captura exitosa:', captureResult);
-            await updateTransactionStatus(payment['data.id'], 'paid');
 
             res.status(200).send('OK');
         } else {
-            // Maneja otros tipos de pago o errores aquí si es necesario
             throw new Error('Tipo de pago no reconocido o no es un pago');
         }
     } catch (error) {
-        console.error('Error al procesar el pago:', error);
         logger.error(error, 'Error al procesar el pago');
         res.status(500).send('Error al procesar el pago');
     }

@@ -1,11 +1,10 @@
 import { Schema, model } from 'mongoose';
 
 const transactionSchema = new Schema({
-    transactionId: String,
-    token: String,
-    status: String,
-    createdAt: { type: Date, default: Date.now, expires: '1h' } // El token expira en 1 hora
-});
+    preferenceId: { type: String, required: true, unique: true },
+    cart: { type: Array, required: true },
+    status: { type: String, required: true }
+  });
 
 const Transaction = model('Transaction', transactionSchema);
 

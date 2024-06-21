@@ -6,10 +6,7 @@ export const MercadoPagoRouter = Router();
 
 MercadoPagoRouter.post('/create-order', createOrderMP)
 
-MercadoPagoRouter.get('/success', (req, res) => {
-    logger.info('successsss')
-    res.redirect('/success');
-});
+MercadoPagoRouter.get('/success', successOrder);
 
 MercadoPagoRouter.get('/failure', (req, res) => {
     res.redirect('/checkout'); 
