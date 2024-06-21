@@ -13,6 +13,8 @@ const externalReference = generateToken();
 export const createOrderMP = async (req, res) => {
     const carrito = req.body
     const { cartID } = req.query;
+
+    console.log(cartID,'CARTID')
     try {
         const preference = new Preference(client);
         if (!carrito || !externalReference) {
@@ -47,7 +49,7 @@ export const createOrderMP = async (req, res) => {
             console.log('falta data',cartID, externalReference)
         }
 
-        res.sendStatus(200); 
+        res.status(200).json(response);
     } catch (error) {
         logger.error('Error al crear la preferencia:', error);
         res.sendStatus(200);
