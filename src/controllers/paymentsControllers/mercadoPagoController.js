@@ -12,7 +12,7 @@ const externalReference = generateToken();
 
 export const createOrderMP = async (req, res) => {
     const carrito = req.body
-
+    const { cartID } = req.query;
     try {
         const preference = new Preference(client);
         if (!carrito || !externalReference) {
@@ -39,9 +39,6 @@ export const createOrderMP = async (req, res) => {
             }
         });
 
-        const { id } = response;
-
-        const cartID = carrito._id
         console.log(response, 'preferenec create')
 
         if(cartID && externalReference){
