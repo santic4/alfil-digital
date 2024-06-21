@@ -1,9 +1,8 @@
 import Transaction from "../models/mongoose/transactionSchema.js";
 
-export const updateTransactionStatus = async (transactionId, status) => {
+export const updateTransactionStatus = async ( status) => {
     try {
         const transaction = await Transaction.findOneAndUpdate(
-            { transactionId },
             { status },
             { new: true }
         );

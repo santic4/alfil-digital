@@ -17,3 +17,8 @@ MercadoPagoRouter.get('/pending', (req, res) => {
 
 
 MercadoPagoRouter.post('/webhook', webHookMP)
+
+/*
+    ID PREFERENCE = 151622720-811d0afa-4026-4308-9961-d778f18cef03
+
+*/

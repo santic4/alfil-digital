@@ -46,22 +46,9 @@ export const createOrderMP = async (req, res) => {
 }
 export const successOrder = async (req, res) => {
     try {
-        const { status, preference_id } = req.query;
-
-        if (!status || !preference_id) {
-            return res.status(400).json({ error: 'Faltan parámetros requeridos' });
-        }
-
-        const updatedTransaction = await updateTransactionStatus(preference_id, status);
-
-        if (updatedTransaction) {
-            res.status(200).json({ message: 'Estado de la transacción actualizado correctamente', transaction: updatedTransaction });
-        } else {
-            res.status(404).json({ error: 'Transacción no encontrada' });
-        }
+        res.redirect('https://alfil-digital.onrender.com/success')
     } catch (error) {
-        logger.error('Error al actualizar el estado de la transacción:', error);
-        res.status(500).json({ error: 'Error al actualizar el estado de la transacción' });
+        res.status(500).json({ error: 'Error al redireccionar al success.' });
     }
 };
 
@@ -81,7 +68,15 @@ export const webHookMP = async (req, res) => {
                 }
             });
 
-            logger.info('Captura exitosa:', captureResult);
+            if (captureResult.status !== 'approved' ) {
+                return res.status(400).json({ error: 'El pago no fue aprobado.' });
+            }
+
+            if (captureResult.status === 'approved' ) {
+                await updateTransactionStatus(captureResult.status);
+            }
+
+            console.log('Captura exitosa:', captureResult);
 
             res.status(200).send('OK');
         } else {
