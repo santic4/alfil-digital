@@ -2,7 +2,7 @@ import mercadopago, { MercadoPagoConfig, Payment, Preference } from 'mercadopago
 import { logger } from '../../utils/logger.js';
 import { ACCESS_TOKEN_MP } from '../../config/config.js';
 import { generateToken } from '../../utils/cryptografia.js';
-import { findTransactionByExternalReference, saveTransactionWithToken, updateTransactionStatus } from '../../services/transactionServices.js';
+import { findTransactionByExternalReference, updateTransactionStatus } from '../../services/transactionServices.js';
 
 const client = new MercadoPagoConfig({
     accessToken: ACCESS_TOKEN_MP,
@@ -49,10 +49,10 @@ export const createOrderMP = async (req, res) => {
             body: JSON.stringify({ cartID, externalReference }),
         });
 
-       res.json({ preferenceId: id, externalReference });
+        res.sendStatus(200); 
     } catch (error) {
         logger.error('Error al crear la preferencia:', error);
-        res.send(500).json({ error: 'Error al crear la preferencia' });
+        res.sendStatus(200);
     }
 }
 export const successOrder = async (req, res) => {
