@@ -3,7 +3,7 @@ import Transaction from "../models/mongoose/transactionSchema.js";
 export const saveTransactionWithToken = async (cartID, externalReference) => {
     try {
         const transaction = new Transaction({
-            cartID,
+            cart: cartID,
             externalReference
         });
         await transaction.save();
