@@ -2,7 +2,7 @@ import mercadopago, { MercadoPagoConfig, Payment, Preference } from 'mercadopago
 import { logger } from '../../utils/logger.js';
 import { ACCESS_TOKEN_MP } from '../../config/config.js';
 import { generateToken } from '../../utils/cryptografia.js';
-import { findTransactionByExternalReference, updateTransactionStatus } from '../../services/transactionServices.js';
+import { findTransactionByExternalReference, saveTransactionWithToken, updateTransactionStatus } from '../../services/transactionServices.js';
 
 const client = new MercadoPagoConfig({
     accessToken: ACCESS_TOKEN_MP,
@@ -41,13 +41,7 @@ export const createOrderMP = async (req, res) => {
         const cartID = carrito._id
         console.log(response, 'preferenec create')
 
-        await fetch(`/api/transactions/save-preference`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ cartID, externalReference }),
-        });
+        await saveTransactionWithToken(cartID, externalReference);
 
         res.sendStatus(200); 
     } catch (error) {
