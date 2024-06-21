@@ -2,12 +2,13 @@ import mercadopago, { MercadoPagoConfig, Payment, Preference } from 'mercadopago
 import { logger } from '../../utils/logger.js';
 import { ACCESS_TOKEN_MP } from '../../config/config.js';
 import { generateToken } from '../../utils/cryptografia.js';
-import { updateTransactionStatus } from '../../services/transactionServices.js';
+import { findTransactionByExternalReference, saveTransactionWithToken, updateTransactionStatus } from '../../services/transactionServices.js';
 
 const client = new MercadoPagoConfig({
     accessToken: ACCESS_TOKEN_MP,
     options: { timeout: 5000, idempotencyKey: 'abc' }
 })
+const externalReference = generateToken();
 
 export const createOrderMP = async (req, res) => {
     const carrito = req.body
@@ -30,15 +31,25 @@ export const createOrderMP = async (req, res) => {
                     pending: 'https://alfil-digital.onrender.com/checkout'
                 } 
                 ,
-                notification_url: 'https://alfil-digital.onrender.com/api/mercado-pago/webhook'
+                notification_url: 'https://alfil-digital.onrender.com/api/mercado-pago/webhook',
+                external_reference: externalReference,
             }
         });
 
         const { id } = response;
 
+        const cartID = carrito._id
         console.log(response, 'preferenec create')
 
-       res.json({ preferenceId: id });
+        await fetch(`/api/transactions/save-preference`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ cartID, externalReference, status: 'pending' }),
+        });
+
+       res.json({ preferenceId: id, externalReference });
     } catch (error) {
         logger.error('Error al crear la preferencia:', error);
         res.send(500).json({ error: 'Error al crear la preferencia' });
@@ -60,7 +71,8 @@ export const webHookMP = async (req, res) => {
         console.log('Payment received:', payment);
 
         if (payment.type === 'payment') {
-
+            const externalReference = payment['data.external_reference'];
+            const transaction = await findTransactionByExternalReference(externalReference);
             const captureResult = await application.capture({
                 id: payment['data.id'],
                 requestOptions: {
@@ -72,8 +84,13 @@ export const webHookMP = async (req, res) => {
                 return res.status(400).json({ error: 'El pago no fue aprobado.' });
             }
 
-            if (captureResult.status === 'approved' ) {
-                await updateTransactionStatus(captureResult.status);
+            console.log(captureResult.status,' captureResult.status ')
+            if (transaction && captureResult.status === 'approved') {
+                await updateTransactionStatus(externalReference, captureResult.status);
+   
+                res.status(200).send('OK');
+            } else {
+                throw new Error('Transacción no encontrada o no coincide con el external_reference');
             }
 
             console.log('Captura exitosa:', captureResult);
