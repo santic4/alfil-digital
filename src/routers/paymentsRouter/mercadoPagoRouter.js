@@ -1,6 +1,5 @@
 import { Router } from 'express'
-import { createOrderMP,  webHookMP } from '../../controllers/paymentsControllers/mercadoPagoController.js';
-import { logger } from '../../utils/logger.js';
+import { createOrderMP,  successOrder,  webHookMP } from '../../controllers/paymentsControllers/mercadoPagoController.js';
 
 export const MercadoPagoRouter = Router();
 
