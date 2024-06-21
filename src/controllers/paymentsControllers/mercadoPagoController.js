@@ -12,9 +12,9 @@ const externalReference = generateToken();
 
 export const createOrderMP = async (req, res) => {
     const carrito = req.body
-    const { cartID } = req.query;
+    const { cartId } = req.query;
 
-    console.log(cartID,'CARTID')
+    console.log(cartId,'CARTID')
     try {
         const preference = new Preference(client);
         if (!carrito || !externalReference) {
@@ -43,10 +43,10 @@ export const createOrderMP = async (req, res) => {
 
         console.log(response, 'preferenec create')
 
-        if(cartID && externalReference){
-            await saveTransactionWithToken(cartID, externalReference);
+        if(cartId && externalReference){
+            await saveTransactionWithToken(cartId, externalReference);
         }else{
-            console.log('falta data',cartID, externalReference)
+            console.log('falta data',cartId, externalReference)
         }
 
         res.status(200).json(response);
