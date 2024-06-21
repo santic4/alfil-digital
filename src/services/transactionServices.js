@@ -1,11 +1,10 @@
 import Transaction from "../models/mongoose/transactionSchema.js";
 
-export const saveTransactionWithToken = async (cartID, externalReference, status) => {
+export const saveTransactionWithToken = async (cartID, externalReference) => {
     try {
         const transaction = new Transaction({
             cartID,
-            externalReference,
-            status
+            externalReference
         });
         await transaction.save();
         console.log('Transacción guardada con éxito');

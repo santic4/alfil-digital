@@ -46,7 +46,7 @@ export const createOrderMP = async (req, res) => {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ cartID, externalReference, status: 'pending' }),
+            body: JSON.stringify({ cartID, externalReference }),
         });
 
        res.json({ preferenceId: id, externalReference });

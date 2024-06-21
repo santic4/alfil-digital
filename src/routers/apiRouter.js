@@ -27,16 +27,16 @@ apiRouter.use('/categories', categoryRouter)
 
 apiRouter.post('/transactions/save-preference', async (req, res) => {
     try {
-        const { cartID, externalReference, status } = req.body;
+        const { cartID, externalReference } = req.body;
 
-        await saveTransactionWithToken(cartID, externalReference, status);
+        await saveTransactionWithToken(cartID, externalReference);
 
         res.status(200).send('Transacción guardada correctamente.');
     } catch (error) {
-      console.error('Error al guardar la transacción:', error);
-      res.status(500).send('Error al guardar la transacción.');
+        console.error('Error al guardar la transacción:', error);
+        res.status(500).send('Error al guardar la transacción.');
     }
-  });
+});
 // MIDDLEWARES
 
 apiRouter.use(errorHandlerLogger)
