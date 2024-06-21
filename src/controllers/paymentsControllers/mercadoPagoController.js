@@ -15,6 +15,9 @@ export const createOrderMP = async (req, res) => {
 
     try {
         const preference = new Preference(client);
+        if (!carrito || !externalReference) {
+            throw new Error('Falta información requerida (carrito o externalReference)');
+        }
 
         // Crear la preferencia de pago
         const response = await preference.create({
@@ -41,7 +44,11 @@ export const createOrderMP = async (req, res) => {
         const cartID = carrito._id
         console.log(response, 'preferenec create')
 
-        await saveTransactionWithToken(cartID, externalReference);
+        if(cartID && externalReference){
+            await saveTransactionWithToken(cartID, externalReference);
+        }else{
+            console.log('falta data')
+        }
 
         res.sendStatus(200); 
     } catch (error) {
@@ -65,8 +72,8 @@ export const webHookMP = async (req, res) => {
         console.log('Payment received:', payment);
 
         if (payment.type === 'payment') {
-            const externalReference = payment['data.external_reference'];
-            const transaction = await findTransactionByExternalReference(externalReference);
+            const externalReferencePayment = payment['data.external_reference'];
+            const transaction = await findTransactionByExternalReference(externalReferencePayment);
             const captureResult = await application.capture({
                 id: payment['data.id'],
                 requestOptions: {
@@ -80,7 +87,7 @@ export const webHookMP = async (req, res) => {
 
             console.log(captureResult.status,' captureResult.status ')
             if (transaction && captureResult.status === 'approved') {
-                await updateTransactionStatus(externalReference, captureResult.status);
+                await updateTransactionStatus(externalReferencePayment, captureResult.status);
    
                 res.status(200).send('OK');
             } else {
