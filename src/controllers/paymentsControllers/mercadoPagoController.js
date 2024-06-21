@@ -47,7 +47,7 @@ export const createOrderMP = async (req, res) => {
         if(cartID && externalReference){
             await saveTransactionWithToken(cartID, externalReference);
         }else{
-            console.log('falta data')
+            console.log('falta data',cartID, externalReference)
         }
 
         res.sendStatus(200); 
