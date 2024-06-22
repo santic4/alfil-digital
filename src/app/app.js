@@ -30,6 +30,11 @@ app.use((req, res, next) => {
         "script-src 'self' https://http2.mlstatic.com 'nonce-0LQyZ7wqLUQxwjfNUyBCIQ==' 'strict-dynamic' 'unsafe-eval' 'report-sample' https: 'unsafe-inline'"
     );
     next();
+
+});
+
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'build', 'index.html'));
 });
 
 app.use(passportInitialize);
