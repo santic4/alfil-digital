@@ -8,11 +8,11 @@ const client = new MercadoPagoConfig({
     accessToken: ACCESS_TOKEN_MP,
     options: { timeout: 5000, idempotencyKey: 'abc' }
 })
-const externalReference = generateToken();
 
 export const createOrderMP = async (req, res) => {
     const carrito = req.body
     const { cartId } = req.query;
+    const externalReference = generateToken();
 
     console.log(cartId,'CARTID')
     try {
@@ -31,9 +31,9 @@ export const createOrderMP = async (req, res) => {
                 },
                 items: carrito,
                 back_urls: {
-                    success: 'https://alfil-digital.onrender.com/success', // URL de éxito
-                    failure: 'https://alfil-digital.onrender.com/checkout', // URL de fallo
-                    pending: 'https://alfil-digital.onrender.com/checkout'
+                    success: 'https://alfil-digital.onrender.com/api/mercado-pago/success', // URL de éxito
+                    failure: 'https://alfil-digital.onrender.com/api/mercado-pago/failure', // URL de fallo
+                    pending: 'https://alfil-digital.onrender.com/api/mercado-pago/pending'
                 } 
                 ,
                 notification_url: 'https://alfil-digital.onrender.com/api/mercado-pago/webhook',
