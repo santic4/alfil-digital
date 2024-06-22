@@ -66,12 +66,11 @@ export const successOrder = async (req, res) => {
 
         if (transaction && status === 'approved' && payment_id) {
             await updateTransactionStatus(external_reference, status, payment_id);
-
+            res.redirect('/success');
         } else {
             throw new Error('Transacción no encontrada o no coincide con el external_reference');
         }
 
-        res.redirect('https://alfil-digital.onrender.com/success')
     } catch (error) {
         res.status(500).json({ error: 'Error al redireccionar al success.' });
     }
