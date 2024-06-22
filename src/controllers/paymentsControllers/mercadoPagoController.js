@@ -67,7 +67,6 @@ export const successOrder = async (req, res) => {
         if (transaction && status === 'approved' && payment_id) {
             await updateTransactionStatus(external_reference, status, payment_id);
 
-            res.status(200).send('OK');
         } else {
             throw new Error('Transacción no encontrada o no coincide con el external_reference');
         }
