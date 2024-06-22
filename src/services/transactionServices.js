@@ -24,9 +24,13 @@ export const findTransactionByExternalReference = async (externalReference) => {
     }
 };
 
-export const updateTransactionStatus = async (externalReference, status) => {
+export const updateTransactionStatus = async (externalReference, status, payment_id) => {
     try {
-        await Transaction.findOneAndUpdate({ externalReference }, { status });
+        await Transaction.findOneAndUpdate(
+            { externalReference }, 
+            { status, payment_id } 
+        );
+        
         console.log('Estado de la transacción actualizado con éxito');
     } catch (error) {
         console.error('Error al actualizar el estado de la transacción:', error);

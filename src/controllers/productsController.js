@@ -123,9 +123,9 @@ export const postProduct = async (req, res, next) => {
 
 export const getFile = async (req, res) => {
     const { filename } = req.params;
-    const { token } = req.query;
+    const { cart } = req.query;
 
-    if (!token) {
+    if (!cart) {
         return res.status(401).json({ error: 'No autorizado' });
     }
 
@@ -142,7 +142,7 @@ export const getFile = async (req, res) => {
     const filePath = path.join(directory, filename);
 
     try {
-        const transaction = await Transaction.findOne({ token, status: 'paid' });
+        const transaction = await Transaction.findOne({ cart, status: 'approved' });
 
         if (!transaction) {
             return res.status(403).json({ error: 'Pago no verificado' });
@@ -162,14 +162,14 @@ export const getFile = async (req, res) => {
 
 export const sendEmail = async (req, res) => {
     const { email, fileUrls } = req.body;
-    const { token } = req.headers;
+    const { cart } = req.headers;
 
-    if (!token) {
+    if (!cart) {
         return res.status(401).json({ error: 'No autorizado' });
     }
 
     try {
-        const transaction = await Transaction.findOne({ token, status: 'paid' });
+        const transaction = await Transaction.findOne({ cart, status: 'approved' });
 
         if (!transaction) {
             return res.status(403).json({ error: 'Pago no verificado' });

@@ -57,6 +57,21 @@ export const createOrderMP = async (req, res) => {
 }
 export const successOrder = async (req, res) => {
     try {
+        const{ status, payment_id, external_reference} = req.query;
+
+        const transaction = await findTransactionByExternalReference(external_reference);
+
+        
+        console.log(status,' captureResult.status ',payment_id ,'payment_id',external_reference ,'external_reference' )
+
+        if (transaction && status === 'approved' && payment_id) {
+            await updateTransactionStatus(external_reference, status, payment_id);
+
+            res.status(200).send('OK');
+        } else {
+            throw new Error('Transacción no encontrada o no coincide con el external_reference');
+        }
+
         res.redirect('https://alfil-digital.onrender.com/success')
     } catch (error) {
         res.status(500).json({ error: 'Error al redireccionar al success.' });
@@ -71,8 +86,7 @@ export const webHookMP = async (req, res) => {
         console.log('Payment received:', payment);
 
         if (payment.type === 'payment') {
-            const externalReferencePayment = payment['data.external_reference'];
-            const transaction = await findTransactionByExternalReference(externalReferencePayment);
+
             const captureResult = await application.capture({
                 id: payment['data.id'],
                 requestOptions: {
@@ -84,14 +98,6 @@ export const webHookMP = async (req, res) => {
                 return res.status(400).json({ error: 'El pago no fue aprobado.' });
             }
 
-            console.log(captureResult.status,' captureResult.status ')
-            if (transaction && captureResult.status === 'approved') {
-                await updateTransactionStatus(externalReferencePayment, captureResult.status);
-   
-                res.status(200).send('OK');
-            } else {
-                throw new Error('Transacción no encontrada o no coincide con el external_reference');
-            }
 
             console.log('Captura exitosa:', captureResult);
 
