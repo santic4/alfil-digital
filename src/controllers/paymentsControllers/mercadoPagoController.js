@@ -32,7 +32,7 @@ export const createOrderMP = async (req, res) => {
                 items: carrito,
                 back_urls: {
                     success: 'https://alfil-digital.onrender.com/success', // URL de éxito
-                    failure: 'https://alfil-digital.onrender.com/api/mercado-pago/failure', // URL de fallo
+                    failure: '/api/mercado-pago/failure', // URL de fallo
                     pending: 'https://alfil-digital.onrender.com/pending'
                 } 
                 ,
