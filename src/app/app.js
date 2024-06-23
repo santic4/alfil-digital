@@ -23,6 +23,7 @@ app.use(express.static(path.join('public', 'build')));
 //    res.header('Access-Control-Allow-Credentials', 'true');
 //    next();
 //});
+
 // Middleware de CSP
 app.use((req, res, next) => {
     res.setHeader(

@@ -31,9 +31,9 @@ export const createOrderMP = async (req, res) => {
                 },
                 items: carrito,
                 back_urls: {
-                    success: 'https://alfil-digital.onrender.com/api/mercado-pago/success', // URL de éxito
-                    failure: 'https://alfil-digital.onrender.com/api/mercado-pago/failure', // URL de fallo
-                    pending: 'https://alfil-digital.onrender.com/api/mercado-pago/pending'
+                    success: 'https://alfil-digital.onrender.com/success', // URL de éxito
+                    failure: 'https://alfil-digital.onrender.com/failure', // URL de fallo
+                    pending: 'https://alfil-digital.onrender.com/pending'
                 } 
                 ,
                 notification_url: 'https://alfil-digital.onrender.com/api/mercado-pago/webhook',
@@ -65,8 +65,8 @@ export const successOrder = async (req, res) => {
         console.log(status,' captureResult.status ',payment_id ,'payment_id',external_reference ,'external_reference' )
 
         if (transaction && status === 'approved' && payment_id) {
-            await updateTransactionStatus(external_reference, status, payment_id);
-            res.redirect('/success');
+            const updTrans = await updateTransactionStatus(external_reference, status, payment_id);
+            console.log('guardadocorrecto', updTrans)
         } else {
             throw new Error('Transacción no encontrada o no coincide con el external_reference');
         }
