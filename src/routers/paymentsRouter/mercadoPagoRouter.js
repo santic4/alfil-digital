@@ -10,9 +10,7 @@ MercadoPagoRouter.get('/success',
     successOrder
 );
 
-MercadoPagoRouter.get('/failure', (req, res) => {
-    res.redirect('/checkout'); 
-});
+MercadoPagoRouter.get('/failure', (req, res) => console.log('FAILURE'));
 
 MercadoPagoRouter.get('/pending', (req, res) => {
     res.redirect('/checkout'); 
