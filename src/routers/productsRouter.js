@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { deleteProduct, getAllProducts, getCategory, getFile, getFilteredProducts, getProductId, postProduct, sendEmail, updateProduct } from '../controllers/productsController.js';
+import { deleteProduct, getAllProducts, getCategory, getFile, getFilteredProducts, getProductId, postProduct, sendEmailProducts, updateProduct } from '../controllers/productsController.js';
 import { passportAuth } from '../middlewares/passport.js';
 import { adminsOnly } from '../middlewares/authorizationUserAdmin.js';
 import { upload } from '../middlewares/multer.js';
@@ -71,7 +71,7 @@ productsRouter.get('/:pid',
 
 productsRouter.get('/files/:cart', getFile);
 
-productsRouter.post('/send-email', sendEmail);
+productsRouter.post('/send-email', sendEmailProducts);
 
 // POST /products/
 const handleUpload = upload.array('files', 20);
