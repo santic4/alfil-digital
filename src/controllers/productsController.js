@@ -122,11 +122,10 @@ export const postProduct = async (req, res, next) => {
 // 
 
 export const getFile = async (req, res) => {
-    const { filename } = req.params;
     const { cart } = req.query;
 
     if (!cart) {
-        return res.status(401).json({ error: 'No autorizado' });
+        return res.status(401).json({ error: 'No existe el carrito' });
     }
 
     let type = 'fileadj';
@@ -139,7 +138,7 @@ export const getFile = async (req, res) => {
         return res.status(400).json({ error: 'Tipo de archivo no soportado' });
     }
 
-    const filePath = path.join(directory, filename);
+    const filePath = path.join(directory, 'fileadj');
 
     try {
         const transaction = await Transaction.findOne({ cart, status: 'approved' });
@@ -160,7 +159,7 @@ export const getFile = async (req, res) => {
     }
 };
 
-export const sendEmail = async (req, res) => {
+export const sendEmailProducts = async (req, res) => {
     const { email, fileUrls } = req.body;
     const { cart } = req.headers;
 

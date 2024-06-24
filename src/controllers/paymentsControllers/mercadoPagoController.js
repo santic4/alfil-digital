@@ -31,9 +31,9 @@ export const createOrderMP = async (req, res) => {
                 },
                 items: carrito,
                 back_urls: {
-                    success: 'https://alfil-digital.onrender.com/success', // URL de éxito
+                    success: 'https://alfil-digital.onrender.com/api/mercado-pago/success', // URL de éxito
                     failure: 'https://alfil-digital.onrender.com/api/mercado-pago/failure', // URL de fallo
-                    pending: 'https://alfil-digital.onrender.com/pending'
+                    pending: 'https://alfil-digital.onrender.com/api/mercado-pago/pending'
                 } 
                 ,
                 notification_url: 'https://alfil-digital.onrender.com/api/mercado-pago/webhook',
@@ -96,6 +96,11 @@ export const webHookMP = async (req, res) => {
                 return res.status(400).json({ error: 'El pago no fue aprobado.' });
             }
 
+            if (captureResult.status === 'approved' ) {
+        
+                console.log('Archivos enviados');
+                return res.status(200).json({ message: 'Archivos entragados.' });
+            }
 
             console.log('Captura exitosa:', captureResult);
 
