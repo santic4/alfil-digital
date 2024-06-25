@@ -17,7 +17,7 @@ MercadoPagoRouter.get('/failure',  (req, res) => {
 });
 
 MercadoPagoRouter.get('/pending', (req, res) => {
-    res.redirect('/checkout'); 
+    res.redirect('https://alfil-digital.onrender.com/checkout'); 
 });
 
 

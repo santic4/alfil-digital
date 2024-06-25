@@ -1,4 +1,4 @@
-import mercadopago, { MercadoPagoConfig, Payment, Preference } from 'mercadopago';
+import { MercadoPagoConfig, Payment, Preference } from 'mercadopago';
 import { logger } from '../../utils/logger.js';
 import { ACCESS_TOKEN_MP } from '../../config/config.js';
 import { generateToken } from '../../utils/cryptografia.js';
@@ -6,7 +6,7 @@ import { findTransactionByExternalReference, saveTransactionWithToken, updateTra
 
 const client = new MercadoPagoConfig({
     accessToken: ACCESS_TOKEN_MP,
-    options: { timeout: 5000, idempotencyKey: 'abc' }
+    options: { timeout: 10000, idempotencyKey: 'abc' }
 })
 
 export const createOrderMP = async (req, res) => {
