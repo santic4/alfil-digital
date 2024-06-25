@@ -62,11 +62,11 @@ export const successOrder = async (req, res) => {
         const transaction = await findTransactionByExternalReference(external_reference);
 
         
-        console.log(status,' captureResult.status ',payment_id ,'payment_id',external_reference ,'external_reference' )
+        console.log(status,' success.status ',payment_id ,'success.payment_id',external_reference ,'success.external_reference' )
 
         if (transaction && status === 'approved' && payment_id) {
-            const updTrans = await updateTransactionStatus(external_reference, status, payment_id);
-            console.log('guardadocorrecto', updTrans)
+          
+            res.redirect('https://alfil-digital.onrender.com/success');
         } else {
             throw new Error('Transacción no encontrada o no coincide con el external_reference');
         }
@@ -91,18 +91,18 @@ export const webHookMP = async (req, res) => {
                     idempotencyKey: 'abc'
                 }
             });
+            console.log('Captura exitosa:', captureResult);
 
             if (captureResult.status !== 'approved' ) {
                 return res.status(400).json({ error: 'El pago no fue aprobado.' });
             }
 
             if (captureResult.status === 'approved' ) {
-        
+                const updTrans = await updateTransactionStatus(captureResult.external_reference, captureResult.status, captureResult.id);
+                console.log('Captura exitosa approved dentro:', updTrans);
                 console.log('Archivos enviados');
-                return res.status(200).json({ message: 'Archivos entragados.' });
             }
 
-            console.log('Captura exitosa:', captureResult);
 
             res.status(200).send('OK');
         } else {
