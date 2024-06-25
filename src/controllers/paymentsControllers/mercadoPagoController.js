@@ -38,6 +38,11 @@ export const createOrderMP = async (req, res) => {
                 ,
                 notification_url: 'https://alfil-digital.onrender.com/api/mercado-pago/webhook',
                 external_reference: externalReference,
+                redirect_urls: { 
+                    failure: 'https://alfil-digital.onrender.com/api/mercado-pago/failure',
+                    pending: 'https://alfil-digital.onrender.com/api/mercado-pago/pending', 
+                    success: 'https://alfil-digital.onrender.com/api/mercado-pago/success' 
+                },
             }
         });
 
