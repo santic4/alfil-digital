@@ -12,8 +12,8 @@ MercadoPagoRouter.get('/success',
 );
 
 MercadoPagoRouter.get('/failure',  (req, res) => {
-    logger.info(req.url)
-    console.log('el fallo 420'); 
+    logger.info(req.url,' req url failure')
+    res.redirect('https://alfil-digital.onrender.com/success');
 });
 
 MercadoPagoRouter.get('/pending', (req, res) => {

@@ -26,7 +26,7 @@ export const createOrderMP = async (req, res) => {
             body: {
                 payment_methods: {
                     excluded_payment_methods: [],
-                    excluded_payment_types: [{ id: "ticket" }],
+                    excluded_payment_types: [],
                     installments: 1
                 },
                 items: carrito,
@@ -38,11 +38,6 @@ export const createOrderMP = async (req, res) => {
                 ,
                 notification_url: 'https://alfil-digital.onrender.com/api/mercado-pago/webhook',
                 external_reference: externalReference,
-                redirect_urls: { 
-                    failure: 'https://alfil-digital.onrender.com/api/mercado-pago/failure',
-                    pending: 'https://alfil-digital.onrender.com/api/mercado-pago/pending', 
-                    success: 'https://alfil-digital.onrender.com/api/mercado-pago/success' 
-                },
             }
         });
 
