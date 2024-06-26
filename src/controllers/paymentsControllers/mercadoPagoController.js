@@ -55,6 +55,7 @@ export const createOrderMP = async (req, res) => {
         res.sendStatus(200);
     }
 }
+
 export const successOrder = async (req, res) => {
     try {
         const{ status, payment_id, external_reference} = req.query;
