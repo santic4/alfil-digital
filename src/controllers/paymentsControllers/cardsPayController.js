@@ -29,8 +29,7 @@ export const proccessPaymentCard = async (req, res) => {
                     type: payer.identification.type,
                     number: payer.identification.number
                 }
-            },
-            notification_url: 'https://alfil-digital.onrender.com/api/cards/payment_webhook'
+            }
         };
         const application = new Payment(client);
 
