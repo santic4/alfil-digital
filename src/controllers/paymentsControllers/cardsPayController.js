@@ -1,6 +1,7 @@
 import { MercadoPagoConfig, Payment, Preference } from 'mercadopago';
 import { ACCESS_TOKEN_MP } from '../../config/config.js';
-import { updateTransactionStatus } from '../../services/transactionServices.js';
+import { saveTransactionWithToken, updateTransactionStatus } from '../../services/transactionServices.js';
+import { generateToken } from '../../utils/cryptografia.js';
 
 const client = new MercadoPagoConfig({
     accessToken: ACCESS_TOKEN_MP,
@@ -11,6 +12,7 @@ export const proccessPaymentCard = async (req, res) => {
     try {
         const { token, issuer_id, payment_method_id, transaction_amount, installments, payer } = req.body;
         const { cartId } = req.query;
+        const externalReference = generateToken();
 
         console.log('cosas 1', req.body)
  
@@ -29,12 +31,18 @@ export const proccessPaymentCard = async (req, res) => {
                 }
             },
             notification_url: 'https://alfil-digital.onrender.com/api/cards/payment_webhook',
-            external_reference: cartId,
+            external_reference: externalReference,
         };
         const application = new Payment(client);
 
         const payment = await application.create({ body: payment_data });
 
+        if(cartId && externalReference){
+            await saveTransactionWithToken(cartId, externalReference);
+        }else{
+            console.log('falta data',cartId, externalReference)
+        }
+        
         console.log(payment,'payment en cardsPay')
 
         res.status(201).json(payment);
