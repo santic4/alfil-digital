@@ -4,6 +4,7 @@ import { MercadoPagoConfig, Payment, Preference } from 'mercadopago';
 import { ACCESS_TOKEN_MP } from '../../config/config.js';
 import { generateToken } from '../../utils/cryptografia.js';
 import { saveTransactionWithToken } from '../../services/transactionServices.js';
+import { logger } from '../../utils/logger.js';
 
 export const CardsPay = Router();
 
@@ -52,6 +53,8 @@ CardsPay.post('/process_payment', async (req, res) => {
     try {
         const { token, issuer_id, payment_method_id, transaction_amount, installments, payer } = req.body;
 
+        console.log('cosas 1', req.body)
+        logger.info('cosas 2', req.body)
         const payment_data = {
             transaction_amount: Number(transaction_amount),
             token,
