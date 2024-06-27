@@ -24,20 +24,16 @@ export const createOrderMP = async (req, res) => {
         // Crear la preferencia de pago
         const response = await preference.create({
             body: {
-                payment_methods: {
-                    excluded_payment_methods: [],
-                    excluded_payment_types: [],
-                    installments: 1
-                },
                 items: carrito,
                 back_urls: {
-                    success: 'https://alfil-digital.onrender.com/api/mercado-pago/success', // URL de éxito
-                    failure: 'https://alfil-digital.onrender.com/api/mercado-pago/failure', // URL de fallo
-                    pending: 'https://alfil-digital.onrender.com/api/mercado-pago/pending'
+                    success: 'https://alfil-digital.onrender.com/success', // URL de éxito
+                    failure: 'https://alfil-digital.onrender.com/failure', // URL de fallo
+                    pending: 'https://alfil-digital.onrender.com/pending'
                 } 
                 ,
                 notification_url: 'https://alfil-digital.onrender.com/api/mercado-pago/webhook',
                 external_reference: externalReference,
+                auto_return: 'approved'
             }
         });
 
