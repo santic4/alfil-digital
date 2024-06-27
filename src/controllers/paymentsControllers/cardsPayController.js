@@ -13,13 +13,13 @@ export const proccessPaymentCard = async (req, res) => {
         const { token, issuer_id, payment_method_id, transaction_amount, installments, payer } = req.body;
         const { cartId } = req.query;
         const externalReference = payer.email;
-
+        const application = new Payment(client);
         console.log('cosas 1', req.body)
  
         const payment_data = {
             transaction_amount: Number(transaction_amount),
             token,
-            description: 'Descripción del producto',
+            description: 'dsdfgsdfsfg',
             installments: Number(installments),
             payment_method_id,
             issuer_id,
@@ -31,7 +31,7 @@ export const proccessPaymentCard = async (req, res) => {
                 }
             }
         };
-        const application = new Payment(client);
+   
 
         const payment = await application.create({ body: payment_data });
 
@@ -57,7 +57,7 @@ export const webHookCardsMP = async (req, res) => {
     try {
         if (status === 'approved') {
 
-            const captureResult = await application.capture({
+            const captureResult = await application.get({
                 id: id,
                 requestOptions: {
                     idempotencyKey: 'abc'
