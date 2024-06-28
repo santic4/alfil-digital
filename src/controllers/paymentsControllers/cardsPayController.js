@@ -53,13 +53,13 @@ export const proccessPaymentCard = async (req, res) => {
 
 export const webHookCardsMP = async (req, res) => {
     const application = new Payment(client);
-    const { id, status } = req.body
+    const { id, type, data } = req.body
     console.log(req.body,' body en webhook cards')
     try {
-        if (status === 'approved') {
+        if (type === 'payment') {
 
             const captureResult = await application.get({
-                id: id,
+                id: data.id,
                 requestOptions: {
                     idempotencyKey: 'abc'
                 }
