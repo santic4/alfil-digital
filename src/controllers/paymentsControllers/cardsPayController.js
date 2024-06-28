@@ -14,12 +14,12 @@ export const proccessPaymentCard = async (req, res) => {
         const { cartId } = req.query;
         const externalReference = payer.email;
         const application = new Payment(client);
-        console.log('cosas 1', req.body)
+        console.log('cosas 1', req.body,' payer', payer)
  
         const payment_data = {
             transaction_amount: Number(transaction_amount),
             token,
-            description: 'dsdfgsdfsfg',
+            description: 'Asistencia informatica',
             installments: Number(installments),
             payment_method_id,
             issuer_id,
@@ -29,7 +29,8 @@ export const proccessPaymentCard = async (req, res) => {
                     type: payer.identification.type,
                     number: payer.identification.number
                 }
-            }
+            },
+            three_d_secure_mode: 'optional'
         };
    
 
