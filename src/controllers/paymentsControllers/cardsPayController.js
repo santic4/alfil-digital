@@ -8,40 +8,6 @@ const client = new MercadoPagoConfig({
     options: { timeout: 10000, idempotencyKey: 'abc' }
 })
 
-export const createOrderMPCards = async (req, res) => {
-    const carrito = req.body
-    const externalReference = generateToken();
-
-    try {
-        const preference = new Preference(client);
-        if (!carrito || !externalReference) {
-            throw new Error('Falta información requerida (carrito o externalReference)');
-        }
-
-        // Crear la preferencia de pago
-        const response = await preference.create({
-            body: {
-                items: carrito,
-                back_urls: {
-                    success: 'https://alfil-digital.onrender.com/success', // URL de éxito
-                    failure: 'https://alfil-digital.onrender.com/failure', // URL de fallo
-                    pending: 'https://alfil-digital.onrender.com/pending'
-                } 
-                ,
-                notification_url: 'https://alfil-digital.onrender.com/api/cards/payment_webhook',
-                external_reference: externalReference,
-                auto_return: 'approved'
-            }
-        });
-
-        console.log(response, 'preferenec create')
-
-        res.status(200).json(response);
-    } catch (error) {
-        res.sendStatus(200);
-    }
-}
-
 export const proccessPaymentCard = async (req, res) => {
     try {
         const { token, issuer_id, payment_method_id, transaction_amount, installments, payer } = req.body;
@@ -63,7 +29,8 @@ export const proccessPaymentCard = async (req, res) => {
                     type: payer.identification.type,
                     number: payer.identification.number
                 }
-            }
+            },
+            three_d_secure_mode: 'optional'
         };
    
 
@@ -87,25 +54,22 @@ export const proccessPaymentCard = async (req, res) => {
 export const webHookCardsMP = async (req, res) => {
     const application = new Payment(client);
     const { id, type, data } = req.body
-    const payment = req.query;
     console.log(req.body,' body en webhook cards')
     try {
-        if (payment.type === 'payment') {
+        if (type === 'payment') {
 
             const captureResult = await application.get({
-                id: payment['data.id'],
+                id: data.id,
                 requestOptions: {
                     idempotencyKey: 'abc'
                 }
             });
 
-            console.log(captureResult,'catureeeee')
-
-            if (captureResult.money_release_status !== 'approved' ) {
+            if (captureResult.status !== 'approved' ) {
                 return res.status(400).json({ error: 'El pago no fue aprobado.' });
             }
 
-            if (captureResult.money_release_status === 'approved' ) {
+            if (captureResult.status === 'approved' ) {
                 const updTrans = await updateTransactionStatus(captureResult.payer?.email, captureResult.status, captureResult.id);
                 console.log('Captura exitosa approved dentro:', updTrans);
             }
