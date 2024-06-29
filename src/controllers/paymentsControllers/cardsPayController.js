@@ -99,6 +99,8 @@ export const webHookCardsMP = async (req, res) => {
                 }
             });
 
+            console.log(captureResult,'catureeeee')
+
             if (captureResult.status !== 'approved' ) {
                 return res.status(400).json({ error: 'El pago no fue aprobado.' });
             }
