@@ -1,6 +1,5 @@
 import { Router } from 'express'
 import { createOrderMP,  successOrder,  webHookMP } from '../../controllers/paymentsControllers/mercadoPagoController.js';
-import { logger } from '../../utils/logger.js';
 
 
 export const MercadoPagoRouter = Router();
@@ -12,7 +11,6 @@ MercadoPagoRouter.get('/success',
 );
 
 MercadoPagoRouter.get('/failure',  (req, res) => {
-    logger.info(req.url,' req url failure')
     res.redirect('https://alfil-digital.onrender.com/success');
 });
 
