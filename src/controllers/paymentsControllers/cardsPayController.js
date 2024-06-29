@@ -28,7 +28,7 @@ export const createOrderMPCards = async (req, res) => {
                     pending: 'https://alfil-digital.onrender.com/pending'
                 } 
                 ,
-                notification_url: 'https://alfil-digital.onrender.com/api/mercado-pago/webhook',
+                notification_url: 'https://alfil-digital.onrender.com/api/cards/payment_webhook',
                 external_reference: externalReference,
                 auto_return: 'approved'
             }
@@ -63,8 +63,7 @@ export const proccessPaymentCard = async (req, res) => {
                     type: payer.identification.type,
                     number: payer.identification.number
                 }
-            },
-            three_d_secure_mode: 'optional'
+            }
         };
    
 
@@ -88,12 +87,13 @@ export const proccessPaymentCard = async (req, res) => {
 export const webHookCardsMP = async (req, res) => {
     const application = new Payment(client);
     const { id, type, data } = req.body
+    const payment = req.query;
     console.log(req.body,' body en webhook cards')
     try {
-        if (type === 'payment') {
+        if (payment.type === 'payment') {
 
             const captureResult = await application.get({
-                id: data.id,
+                id: payment['data.id'],
                 requestOptions: {
                     idempotencyKey: 'abc'
                 }
@@ -101,11 +101,11 @@ export const webHookCardsMP = async (req, res) => {
 
             console.log(captureResult,'catureeeee')
 
-            if (captureResult.status !== 'approved' ) {
+            if (captureResult.money_release_status !== 'approved' ) {
                 return res.status(400).json({ error: 'El pago no fue aprobado.' });
             }
 
-            if (captureResult.status === 'approved' ) {
+            if (captureResult.money_release_status === 'approved' ) {
                 const updTrans = await updateTransactionStatus(captureResult.payer?.email, captureResult.status, captureResult.id);
                 console.log('Captura exitosa approved dentro:', updTrans);
             }
