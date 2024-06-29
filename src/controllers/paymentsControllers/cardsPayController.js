@@ -10,9 +10,9 @@ const client = new MercadoPagoConfig({
 
 export const proccessPaymentCard = async (req, res) => {
     try {
-        const { token, issuer_id, payment_method_id, transaction_amount, installments, payer } = req.body;
+        const { token, issuer_id, payment_method_id, transaction_amount, installments, payer, external_reference } = req.body;
         const { cartId } = req.query;
-        const externalReference = payer.email;
+        const externalReference = external_reference;
         const application = new Payment(client);
         console.log('cosas 1', req.body,' payer', payer)
  
@@ -35,12 +35,6 @@ export const proccessPaymentCard = async (req, res) => {
    
 
         const payment = await application.create({ body: payment_data });
-
-        if(cartId && externalReference){
-            await saveTransactionWithToken(cartId, externalReference);
-        }else{
-            console.log('falta data',cartId, externalReference)
-        }
 
         console.log(payment,'payment en cardsPay')
 
@@ -70,7 +64,7 @@ export const webHookCardsMP = async (req, res) => {
             }
 
             if (captureResult.status === 'approved' ) {
-                const updTrans = await updateTransactionStatus(captureResult.payer?.email, captureResult.status, captureResult.id);
+                const updTrans = await updateTransactionStatus(captureResult.external_reference, captureResult.status, captureResult.id);
                 console.log('Captura exitosa approved dentro:', updTrans);
             }
 
