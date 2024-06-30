@@ -1,79 +1,97 @@
 import { MercadoPagoConfig, Payment, Preference } from 'mercadopago';
 import { ACCESS_TOKEN_MP } from '../../config/config.js';
-import { saveTransactionWithToken, updateTransactionStatus } from '../../services/transactionServices.js';
-import { generateToken } from '../../utils/cryptografia.js';
+import { saveTransactionWithToken, updateTransactionStatus } from '../../services/cardsServices.js';
 
 const client = new MercadoPagoConfig({
     accessToken: ACCESS_TOKEN_MP,
     options: { timeout: 10000, idempotencyKey: 'abc' }
 })
 
-export const proccessPaymentCard = async (req, res) => {
+export const createOrderMPCards = async (req, res) => {
+    const carrito = req.body;
+    const { cartId } = req.query;
+  
     try {
-        const { token, issuer_id, payment_method_id, transaction_amount, installments, payer, external_reference } = req.body;
-        const { cartId } = req.query;
-        const externalReference = external_reference;
-        const application = new Payment(client);
-        console.log('cosas 1', req.body,' payer', payer)
- 
-        const payment_data = {
-            transaction_amount: Number(transaction_amount),
-            token,
-            description: 'Asistencia informatica',
-            installments: Number(installments),
-            payment_method_id,
-            issuer_id,
-            payer: {
-                email: payer.email,
-                identification: {
-                    type: payer.identification.type,
-                    number: payer.identification.number
-                }
-            },
-            three_d_secure_mode: 'optional'
-        };
-   
-
-        const payment = await application.create({ body: payment_data });
-
-        console.log(payment,'payment en cardsPay')
-
-        res.status(201).json(payment);
+      const preference = new Preference(client);
+      if (!carrito || !cartId) {
+        throw new Error('Falta información requerida (carrito o cartId)');
+      }
+  
+      const response = await preference.create({
+        items: carrito,
+        back_urls: {
+          success: 'https://alfil-digital.onrender.com/success',
+          failure: 'https://alfil-digital.onrender.com/failure',
+          pending: 'https://alfil-digital.onrender.com/pending'
+        },
+        notification_url: 'https://alfil-digital.onrender.com/api/cards/webhook',
+        auto_return: 'approved'
+      });
+  
+      const paymentId = response.id;
+      console.log(paymentId,' paymentId en create order ')
+      await saveTransactionWithToken(cartId, paymentId, 'pending');
+  
+      res.status(200).json({ id: paymentId });
     } catch (error) {
-        console.error('Error al procesar el pago:', error);
-        res.status(500).send('Error al procesar el pago');
+      console.error('Error al crear la preferencia:', error);
+      res.status(500).send('Error al crear la preferencia');
     }
-}
+  };
 
-export const webHookCardsMP = async (req, res) => {
-    const application = new Payment(client);
-    const { id, type, data } = req.body
-    console.log(req.body,' body en webhook cards')
+  export const proccessPaymentCard = async (req, res) => {
     try {
-        if (type === 'payment') {
+      const { token, issuer_id, payment_method_id, transaction_amount, installments, payer } = req.body;
+      const { cartId } = req.query;
+  
+      const payment_data = {
+        transaction_amount: Number(transaction_amount),
+        token,
+        description: 'Asistencia informatica',
+        installments: Number(installments),
+        payment_method_id,
+        issuer_id,
+        payer: {
+          email: payer.email,
+          identification: {
+            type: payer.identification.type,
+            number: payer.identification.number
+          }
+        },
+        three_d_secure_mode: 'optional'
+      };
+  
+      const payment = await new Payment(client).create({ body: payment_data });
+  
+      console.log(payment,' payment en process ')
+      if (payment.status === 'approved') {
+        await updateTransactionStatus(payment.id, 'approved');
+      }
+  
+      res.status(201).json(payment);
+    } catch (error) {
+      console.error('Error al procesar el pago:', error);
+      res.status(500).send('Error al procesar el pago');
+    }
+  };
 
-            const captureResult = await application.get({
-                id: data.id,
-                requestOptions: {
-                    idempotencyKey: 'abc'
-                }
-            });
-
-            if (captureResult.status !== 'approved' ) {
-                return res.status(400).json({ error: 'El pago no fue aprobado.' });
-            }
-
-            if (captureResult.status === 'approved' ) {
-                const updTrans = await updateTransactionStatus(captureResult.external_reference, captureResult.status, captureResult.id);
-                console.log('Captura exitosa approved dentro:', updTrans);
-            }
-
-            console.log('Notificación de pago recibida:', captureResult);
-
+  export const webHookCardsMP = async (req, res) => {
+    const { type, data } = req.body;
+  
+    try {
+      if (type === 'payment') {
+        const captureResult = await new Payment(client).get({ id: data.id });
+  
+        console.log(captureResult,'result en hook')
+        if (captureResult.status === 'approved') {
+          await updateTransactionStatus(captureResult.id, 'approved');
         }
-        res.status(200).json();
+  
+        console.log('Notificación de pago recibida:', captureResult);
+      }
+      res.status(200).json();
     } catch (error) {
-        console.error('Error al procesar el pago:', error);
-        res.status(500).send('Error al procesar el pago');
+      console.error('Error al procesar el pago:', error);
+      res.status(500).send('Error al procesar el pago');
     }
-}
+  };
