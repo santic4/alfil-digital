@@ -1,13 +1,13 @@
 import Transaction from "../models/mongoose/transactionSchema.js";
 
-export const saveTransactionWithToken = async (cartID, externalReference) => {
+export const saveTransactionWithToken = async (cartID, emailPayer) => {
   try {
-    const existingTransaction = await Transaction.findOne({ externalReference });
+    const existingTransaction = await Transaction.findOne({ emailPayer });
 
     if (!existingTransaction) {
       const transaction = new Transaction({
         cart: cartID,
-        externalReference
+        emailPayer
       });
       await transaction.save();
       console.log('Transacción guardada con éxito');
@@ -20,9 +20,9 @@ export const saveTransactionWithToken = async (cartID, externalReference) => {
   }
 };
 
-export const findTransactionByExternalReference = async (externalReference) => {
+export const findTransactionByExternalReference = async (emailPayer) => {
   try {
-    const transaction = await Transaction.findOne({ externalReference });
+    const transaction = await Transaction.findOne({ emailPayer });
     return transaction;
   } catch (error) {
     console.error('Error al buscar la transacción por external_reference:', error);
@@ -30,10 +30,10 @@ export const findTransactionByExternalReference = async (externalReference) => {
   }
 };
 
-export const updateTransactionStatus = async (externalReference, status, payment_id) => {
+export const updateTransactionStatus = async (emailPayer, status, payment_id) => {
   try {
     await Transaction.findOneAndUpdate(
-      { externalReference },
+      { emailPayer },
       { status, payment_id }
     );
 
