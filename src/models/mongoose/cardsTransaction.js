@@ -6,6 +6,6 @@ const transactionSchema = new Schema({
     status: { type: String, default: 'pending' }
   });
 
-const TransactionCartMP = model('TransactionCardsMP', transactionSchema);
+const TransactionCartMP = model('TransactionCartMP', transactionSchema);
 
 export default TransactionCartMP;
