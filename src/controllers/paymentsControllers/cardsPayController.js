@@ -34,6 +34,7 @@ export const createOrderMPCards = async (req, res) => {
       console.log(paymentId,' paymentId en create order ')
       await saveTransactionWithToken(cartId, paymentId, 'pending');
   
+      console.log('paso el save')
       res.status(200).json({ id: paymentId });
     } catch (error) {
       console.error('Error al crear la preferencia:', error);

@@ -22,7 +22,7 @@
     "express": "^4.19.2",
     "express-session": "^1.18.0",
     "jsonwebtoken": "^9.0.2",
-    "mercadopago": "^2.0.9",
+    "mercadopago": "^2.0.10",
     "mongoose": "^8.3.1",
     "mongoose-paginate-v2": "^1.8.0",
     "multer": "^1.4.5-lts.1",
