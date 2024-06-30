@@ -10,10 +10,13 @@ const client = new MercadoPagoConfig({
 
 export const proccessPaymentCard = async (req, res) => {
     try {
-        const { token, issuer_id, payment_method_id, transaction_amount, installments, payer} = req.body;
+        const { token, issuer_id, payment_method_id, transaction_amount, installments} = req.body;
         const application = new Payment(client);
-        console.log('cosas 1', req.body,' payer', payer)
- 
+        console.log('cosas 1', req.body)
+
+            const email = 'nahuel_1996_06@hotmail.com'
+            const type = 'DNI'
+            const number = '39485990'
         const payment_data = {
             transaction_amount: Number(transaction_amount),
             token,
@@ -22,10 +25,10 @@ export const proccessPaymentCard = async (req, res) => {
             payment_method_id,
             issuer_id,
             payer: {
-                email: payer.email,
+                email: email,
                 identification: {
-                    type: payer.identification.type,
-                    number: payer.identification.number
+                    type: type,
+                    number: number
                 }
             },
             three_d_secure_mode: 'optional'
