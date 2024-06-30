@@ -8,14 +8,15 @@ const client = new MercadoPagoConfig({
     options: { timeout: 10000, idempotencyKey: 'abc' }
 })
 
-export const createOrderMPCards = async (req, res) => {
+export const createOrderMP = async (req, res) => {
     const carrito = req.body
     const { cartId } = req.query;
+    const externalReference = generateToken();
 
     console.log(cartId,'CARTID')
     try {
         const preference = new Preference(client);
-        if (!carrito) {
+        if (!carrito || !externalReference) {
             throw new Error('Falta información requerida (carrito o externalReference)');
         }
 
@@ -29,22 +30,23 @@ export const createOrderMPCards = async (req, res) => {
                     pending: 'https://alfil-digital.onrender.com/pending'
                 } 
                 ,
-                notification_url: 'https://alfil-digital.onrender.com/api/mercado-pago/webhook',
+                notification_url: 'https://alfil-digital.onrender.com/api/cards/payment_webhook',
+                external_reference: externalReference,
                 auto_return: 'approved'
             }
         });
 
         console.log(response, 'preferenec create')
 
-        if(cartId){
-            await saveTransactionWithToken(cartId, 'external_reference');
+        if(cartId && externalReference){
+            await saveTransactionWithToken(cartId, externalReference);
         }else{
-            console.log('falta data',cartId)
+            console.log('falta data',cartId, externalReference)
         }
 
         res.status(200).json(response);
     } catch (error) {
-        res.sendStatus(200);
+        res.sendStatus(400);
     }
 }
 
