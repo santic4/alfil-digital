@@ -18,16 +18,18 @@ export const createOrderMPCards = async (req, res) => {
       }
   
       const response = await preference.create({
-        items: carrito,
-        back_urls: {
-          success: 'https://alfil-digital.onrender.com/success',
-          failure: 'https://alfil-digital.onrender.com/failure',
-          pending: 'https://alfil-digital.onrender.com/pending'
-        },
-        notification_url: 'https://alfil-digital.onrender.com/api/cards/webhook',
-        auto_return: 'approved'
-      });
-  
+        body: {
+            items: carrito,
+            back_urls: {
+                success: 'https://alfil-digital.onrender.com/success', // URL de éxito
+                failure: 'https://alfil-digital.onrender.com/failure', // URL de fallo
+                pending: 'https://alfil-digital.onrender.com/pending'
+            } 
+            ,
+            notification_url: 'https://alfil-digital.onrender.com/api/cards/webhook',
+            auto_return: 'approved'
+        }
+    });
       const paymentId = response.id;
       console.log(paymentId,' paymentId en create order ')
       await saveTransactionWithToken(cartId, paymentId, 'pending');
