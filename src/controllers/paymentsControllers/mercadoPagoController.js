@@ -14,7 +14,6 @@ export const createOrderMP = async (req, res) => {
     const { cartId } = req.query;
     const externalReference = generateToken();
 
-    const emailPayer = 'ventadele1234@gmail.com';
     console.log(cartId,'CARTID')
     try {
         const preference = new Preference(client);
@@ -41,9 +40,9 @@ export const createOrderMP = async (req, res) => {
         console.log(response, 'preferenec create')
 
         if(cartId && externalReference){
-            await saveTransactionWithToken(cartId, emailPayer);
+            await saveTransactionWithToken(cartId, externalReference);
         }else{
-            console.log('falta data',cartId, emailPayer)
+            console.log('falta data',cartId, externalReference)
         }
 
         res.status(200).json(response);
@@ -80,7 +79,7 @@ export const webHookMP = async (req, res) => {
         const payment = req.query;
 
         console.log('Payment received:', payment);
-        const emailPayer = 'ventadele1234@gmail.com';
+
         if (payment.type === 'payment') {
 
             const captureResult = await application.capture({
@@ -96,14 +95,13 @@ export const webHookMP = async (req, res) => {
             }
 
             if (captureResult.status === 'approved' ) {
-                console.log('Captura exitosa approved dentro:');
-                await updateTransactionStatus(emailPayer, captureResult.status, captureResult.id);
-              
+                const updTrans = await updateTransactionStatus(captureResult.external_reference, captureResult.status, captureResult.id);
+                console.log('Captura exitosa approved dentro:', updTrans);
                 console.log('Archivos enviados');
             }
 
 
-            res.status(200);
+            res.status(200).send('OK');
         } else {
             throw new Error('Tipo de pago no reconocido o no es un pago');
         }

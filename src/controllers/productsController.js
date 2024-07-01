@@ -2,9 +2,11 @@ import { Product } from "../models/mongoose/productModel.js";
 import Transaction from "../models/mongoose/transactionSchema.js";
 import { emailService } from "../services/email/emailServices.js";
 import { productServices } from "../services/productServices.js";
-import { logger } from "../utils/logger.js";
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { fetchTransactionByPaymentId } from "../services/transactionsCardServices.js";
+import { cartServices } from "../services/cartServices.js";
+import { cartServicesMP } from "../services/email/emailProducts.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -122,39 +124,48 @@ export const postProduct = async (req, res, next) => {
 // 
 
 export const getFile = async (req, res) => {
-    const { cart } = req.query;
-
-    if (!cart) {
-        return res.status(401).json({ error: 'No existe el carrito' });
-    }
-
-    let type = 'fileadj';
-    let directory;
-    if (type === 'photos') {
-        directory = path.join(__dirname, '../../statics/photos');
-    } else if (type === 'fileadj') {
-        directory = path.join(__dirname, '../../statics/fileadj');
-    } else {
-        return res.status(400).json({ error: 'Tipo de archivo no soportado' });
-    }
-
-    const filePath = path.join(directory, 'fileadj');
+    const { paymentId } = req.params;
+    const { emailSend } = req.query;
 
     try {
-        const transaction = await Transaction.findOne({ cart, status: 'approved' });
-
-        if (!transaction) {
-            return res.status(403).json({ error: 'Pago no verificado' });
+        if (!paymentId || !emailSend) {
+            return res.status(401).json({ error: 'Falta paymentId o email.' });
         }
 
-        res.sendFile(filePath, (err) => {
-            if (err) {
-                console.error(err);
-                res.status(404).json({ error: 'Archivo no encontrado' });
-            }
-        });
+        const transaction = await fetchTransactionByPaymentId(paymentId);
+
+        if (!transaction || transaction.status !== 'accredited') {
+            return res.status(401).json({ error: 'Transacción no encontrada o no acreditada.' });
+        }
+
+        const cartID = transaction.cart;
+        const carritoFound = await cartServices.getCartId(cartID);
+
+        if (!carritoFound) {
+            return res.status(404).json({ error: 'Carrito no encontrado.' });
+        }
+
+        const nombresArchivos = carritoFound.carrito.reduce((acc, item) => {
+            return acc.concat(item.productID.fileadj);
+        }, []);
+
+        const directory = path.join(__dirname, '../../statics/fileadj');
+        const fileUrls = nombresArchivos.map(nombreArchivo => path.join(directory, nombreArchivo));
+
+        // Enviar correos con enlaces de descarga
+        const message = `Gracias por tu compra. Puedes descargar tus archivos desde los siguientes enlaces: ${fileUrls.join(', ')}`;
+        cartServicesMP.sendEmailProducts(paymentId, fileUrls, emailSend)
+
+        // Devolver enlaces de descarga al frontend
+        const downloadLinks = nombresArchivos.map(nombreArchivo => ({
+            fileName: nombreArchivo,
+            downloadLink: `/statics/fileadj/${nombreArchivo}`
+        }));
+
+        res.status(200).json({ files: downloadLinks });
+
     } catch (error) {
-        console.error('Error al verificar el pago:', error);
+        console.error('Error al procesar la solicitud:', error);
         res.status(500).json({ error: 'Error interno del servidor' });
     }
 };
@@ -168,7 +179,7 @@ export const sendEmailProducts = async (req, res) => {
     }
 
     try {
-        const transaction = await Transaction.findOne({ cart, status: 'approved' });
+        const transaction = await fetchTransactionByPaymentId(paymentId);
 
         if (!transaction) {
             return res.status(403).json({ error: 'Pago no verificado' });

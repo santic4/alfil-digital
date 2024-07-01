@@ -69,7 +69,7 @@ productsRouter.get('/:pid',
     getProductId
 )
 
-productsRouter.get('/files/:cart', getFile);
+productsRouter.get('/files/:paymentId', getFile);
 
 productsRouter.post('/send-email', sendEmailProducts);
 
