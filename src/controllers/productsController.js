@@ -159,7 +159,7 @@ export const getFile = async (req, res) => {
         // Devolver enlaces de descarga al frontend
         const downloadLinks = nombresArchivos.map(nombreArchivo => ({
             fileName: nombreArchivo,
-            downloadLink: `/statics/fileadj/${nombreArchivo}`
+            downloadLink: `${process.env.SERVER_URL}/statics/fileadj/${encodeURIComponent(nombreArchivo)}`
         }));
 
         res.status(200).json({ files: downloadLinks });
