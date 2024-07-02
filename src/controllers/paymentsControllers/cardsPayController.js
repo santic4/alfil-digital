@@ -5,7 +5,7 @@ import { generateToken } from '../../utils/cryptografia.js';
 
 const client = new MercadoPagoConfig({
     accessToken: ACCESS_TOKEN_MP,
-    options: { timeout: 10000 }
+    options: { timeout: 10000, idempotencyKey: 'abc' }
 })
 
 export const proccessPaymentCard = async (req, res) => {
@@ -13,8 +13,7 @@ export const proccessPaymentCard = async (req, res) => {
         const { token, issuer_id, payment_method_id, transaction_amount, installments, email, docType, docNumber} = req.body;
         const application = new Payment(client);
         const { cartId } = req.query;
-        const idempotencyKey = req.headers['x-idempotency-key'];
-
+const idempotencyKey = req.headers['x-idempotency-key'];
         const externalReference = generateToken();
 
         console.log('cosas 1', req.body)
@@ -42,7 +41,7 @@ export const proccessPaymentCard = async (req, res) => {
         const payment = await application.create({
             body: payment_data,
             requestOptions: {
-                idempotencyKey: idempotencyKey 
+                idempotencyKey: idempotencyKey // Usar idempotencyKey en la solicitud a Mercado Pago
             }
         });
 
