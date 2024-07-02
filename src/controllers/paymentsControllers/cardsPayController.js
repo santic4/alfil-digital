@@ -1,22 +1,26 @@
 import { MercadoPagoConfig, Payment, Preference } from 'mercadopago';
 import { ACCESS_TOKEN_MP } from '../../config/config.js';
 import { saveTransactionCart } from '../../services/transactionsCardServices.js';
-import { generateToken } from '../../utils/cryptografia.js';
+
 
 const client = new MercadoPagoConfig({
     accessToken: ACCESS_TOKEN_MP,
-    options: { timeout: 10000, idempotencyKey: 'abc' }
+    options: { timeout: 10000 }
 })
 
 export const proccessPaymentCard = async (req, res) => {
     try {
-        const { token, issuer_id, payment_method_id, transaction_amount, installments, email, docType, docNumber} = req.body;
+        const { token, issuer_id, payment_method_id, transaction_amount, installments } = req.body;
+        const body = req.body
         const application = new Payment(client);
         const { cartId } = req.query;
-const idempotencyKey = req.headers['x-idempotency-key'];
-        const externalReference = generateToken();
+        const idempotencyKey = req.headers['x-idempotency-key'];
 
         console.log('cosas 1', req.body)
+        
+        const email = body.payer.email;
+        const type = body.payer.identification.type;
+        const number = body.payer.identification.number;
 
         const payment_data = {
             transaction_amount: Number(transaction_amount),
@@ -28,12 +32,10 @@ const idempotencyKey = req.headers['x-idempotency-key'];
             payer: {
                 email: email,
                 identification: {
-                    type: docType,
-                    number: docNumber
+                    type: type,
+                    number: number
                 }
             },
-            notification_url: 'https://alfil-digital.onrender.com/api/mercado-pago/webhook',
-            external_reference: externalReference,
             three_d_secure_mode: 'optional'
         };
    
