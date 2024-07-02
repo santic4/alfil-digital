@@ -1,10 +1,11 @@
 import { MercadoPagoConfig, Payment, Preference } from 'mercadopago';
 import { ACCESS_TOKEN_MP } from '../../config/config.js';
 import { saveTransactionCart } from '../../services/transactionsCardServices.js';
+import { generateToken } from '../../utils/cryptografia.js';
 
 const client = new MercadoPagoConfig({
     accessToken: ACCESS_TOKEN_MP,
-    options: { timeout: 10000, idempotencyKey: 'abc' }
+    options: { timeout: 10000 }
 })
 
 export const proccessPaymentCard = async (req, res) => {
@@ -12,6 +13,9 @@ export const proccessPaymentCard = async (req, res) => {
         const { token, issuer_id, payment_method_id, transaction_amount, installments, email, docType, docNumber} = req.body;
         const application = new Payment(client);
         const { cartId } = req.query;
+        const idempotencyKey = req.headers['x-idempotency-key'];
+
+        const externalReference = generateToken();
 
         console.log('cosas 1', req.body)
 
@@ -29,11 +33,18 @@ export const proccessPaymentCard = async (req, res) => {
                     number: docNumber
                 }
             },
+            notification_url: 'https://alfil-digital.onrender.com/api/mercado-pago/webhook',
+            external_reference: externalReference,
             three_d_secure_mode: 'optional'
         };
    
 
-        const payment = await application.create({ body: payment_data });
+        const payment = await application.create({
+            body: payment_data,
+            requestOptions: {
+                idempotencyKey: idempotencyKey 
+            }
+        });
 
         if(payment.status_detail === 'accredited'){
             await saveTransactionCart(cartId, payment.id, payment.status_detail) 

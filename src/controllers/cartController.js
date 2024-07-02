@@ -12,6 +12,7 @@ export const getCartId = async (req, res, next) => {
     }
 };
 
+
 // Crear un nuevo carrito
 export const postCart = async (req, res, next) => {
     try {

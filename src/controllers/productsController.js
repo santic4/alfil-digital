@@ -124,9 +124,11 @@ export const postProduct = async (req, res, next) => {
 // 
 
 export const getFile = async (req, res) => {
-    const { paymentId } = req.params;
+    const { fileName } = req.params;
     const { emailSend } = req.query;
+    const paymentId = req.headers['Payment-Id'];
 
+    console.log(fileName,' fileName ', emailSend,' email send', paymentId,' paymentid ')
     try {
         if (!paymentId || !emailSend) {
             return res.status(401).json({ error: 'Falta paymentId o email.' });
@@ -138,32 +140,19 @@ export const getFile = async (req, res) => {
             return res.status(401).json({ error: 'Transacción no encontrada o no acreditada.' });
         }
 
-        const cartID = transaction.cart;
-        const carritoFound = await cartServices.getCartId(cartID);
+        const directory = path.join(__dirname, '../../statics/fileadj');
+   
+        const fileUrl =  path.join(directory, fileName);
 
-        if (!carritoFound) {
-            return res.status(404).json({ error: 'Carrito no encontrado.' });
+        if(fileUrl){
+            // Enviar correos con enlaces de descarga
+            // arreglar aca
+            cartServicesMP.sendEmailProducts(paymentId, fileUrl, emailSend)
+        }else{
+            return res.status(404).json({ error: 'No existe el archivo.' });
         }
 
-        const nombresArchivos = carritoFound.carrito.reduce((acc, item) => {
-            return acc.concat(item.productID.fileadj);
-        }, []);
-
-        const directory = path.join(__dirname, '../../statics/fileadj');
-        const fileUrls = nombresArchivos.map(nombreArchivo => path.join(directory, nombreArchivo));
-
-        // Enviar correos con enlaces de descarga
-        const message = `Gracias por tu compra. Puedes descargar tus archivos desde los siguientes enlaces: ${fileUrls.join(', ')}`;
-        cartServicesMP.sendEmailProducts(paymentId, fileUrls, emailSend)
-
-        // Devolver enlaces de descarga al frontend
-        const downloadLinks = nombresArchivos.map(nombreArchivo => ({
-            fileName: nombreArchivo,
-            downloadLink: `/statics/fileadj/${encodeURIComponent(nombreArchivo)}`
-        }));
-
-        res.status(200).json({ files: downloadLinks });
-
+        res.sendFile(fileUrl);
     } catch (error) {
         console.error('Error al procesar la solicitud:', error);
         res.status(500).json({ error: 'Error interno del servidor' });
