@@ -10,17 +10,12 @@ const client = new MercadoPagoConfig({
 
 export const proccessPaymentCard = async (req, res) => {
     try {
-        const { token, issuer_id, payment_method_id, transaction_amount, installments } = req.body;
-        const body = req.body
+        const { token, issuer_id, payment_method_id, transaction_amount, installments, email, docType, docNumber} = req.body;
         const application = new Payment(client);
         const { cartId } = req.query;
         const idempotencyKey = req.headers['x-idempotency-key'];
 
-        console.log('cosas 1', req.body)
-        
-        const email = body.payer.email;
-        const type = body.payer.identification.type;
-        const number = body.payer.identification.number;
+        console.log('cosas 1', req.body, idempotencyKey,'idempotencyKey')
 
         const payment_data = {
             transaction_amount: Number(transaction_amount),
@@ -32,8 +27,8 @@ export const proccessPaymentCard = async (req, res) => {
             payer: {
                 email: email,
                 identification: {
-                    type: type,
-                    number: number
+                    type: docType,
+                    number: docNumber
                 }
             },
             three_d_secure_mode: 'optional'
