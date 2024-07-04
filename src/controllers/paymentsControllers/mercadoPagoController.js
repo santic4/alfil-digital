@@ -37,16 +37,16 @@ export const createOrderMP = async (req, res) => {
 
 
         const payerForPreference = {
-            name: 'NA4L',
-            surname: 'CA44 C44LIA',
-            email: 'nahue44446_06@hotmail.com',
+            name: 'NAHUEL',
+            surname: 'CAÑU CORNIGLIA',
+            email: 'nahuel_1996_06@hotmail.com',
             phone: {
                 area_code: '2342',
-                number: '466444'
+                number: '466693'
             },
             identification: {
                 type: 'DNI',
-                number: '394444440'
+                number: '39485990'
             }
 
         };
