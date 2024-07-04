@@ -36,15 +36,29 @@ export const createOrderMP = async (req, res) => {
         });
 
 
-        console.log(carrito,'carrito')
-        // Crear la preferencia de pago
+        const payerForPreference = {
+            name: 'NAHUEL',
+            surname: 'CANU CORNIGLIA',
+            email: 'nahuel_1996_06@hotmail.com',
+            phone: {
+                area_code: '2342',
+                number: '466693'
+            },
+            identification: {
+                type: 'DNI',
+                number: '39485990'
+            }
+
+        };
+
         const response = await preference.create({
             body: {
                 items: carrito,
+                payer: payerForPreference,
                 back_urls: {
-                    success: 'https://alfil-digital.onrender.com/success', // URL de éxito
-                    failure: 'https://alfil-digital.onrender.com/failure', // URL de fallo
-                    pending: 'https://alfil-digital.onrender.com/pending'
+                    success: 'https://alfil-digital.onrender.com/',
+                    failure: 'https://alfil-digital.onrender.com/',
+                    pending: 'https://alfil-digital.onrender.com/'
                 } 
                 ,
                 notification_url: 'https://alfil-digital.onrender.com/api/mercado-pago/webhook',
