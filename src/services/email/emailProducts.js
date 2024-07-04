@@ -6,7 +6,6 @@ class CartServicesMP {
 
     async sendEmailProducts(paymentId, fileUrls, email ){
 
-        
         if (!paymentId) {
             return new Error('Data Invalid')
         }
@@ -18,8 +17,8 @@ class CartServicesMP {
         }
 
         if (transaction) {          
-            const filesList = fileUrls.join(', ');
-            const message = `Gracias por tu compra. Puedes descargar tus archivos desde los siguientes enlaces: ${filesList}`;
+            
+            const message = `Gracias por tu compra. Puedes descargar tu archivo desde el siguiente enlace: ${fileUrls}`;
 
             await emailService.send(email, 'Archivos comprados', message);
         }

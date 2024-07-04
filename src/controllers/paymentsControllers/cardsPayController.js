@@ -10,7 +10,6 @@ const client = new MercadoPagoConfig({
 export const proccessPaymentCard = async (req, res) => {
     try {
         const { token, issuer_id, payment_method_id, installments, transaction_amount, description, payer } = req.body;
-
         const application = new Payment(client);
         const { cartId } = req.query;
 
