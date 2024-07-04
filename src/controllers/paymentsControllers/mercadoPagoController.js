@@ -35,7 +35,7 @@ export const createOrderMP = async (req, res) => {
             }
         });
 
-
+        console.log(carrito,'carrito en carrito en carrito ')
 
         const response = await preference.create({
             body: {
