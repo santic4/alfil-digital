@@ -4,7 +4,7 @@ import { saveTransactionCart } from '../../services/transactionsCardServices.js'
 
 const client = new MercadoPagoConfig({
     accessToken: ACCESS_TOKEN_MP,
-    options: { timeout: 10000, idempotencyKey: 'abc' }
+    options: { timeout: 10000 }
 })
 
 export const proccessPaymentCard = async (req, res) => {
@@ -33,7 +33,9 @@ export const proccessPaymentCard = async (req, res) => {
         };
    
 
-        const payment = await application.create({body: payment_data});
+        const payment = await application.create({body: payment_data, requestOptions: {
+            idempotencyKey:'abc'
+        }});
         console.log(payment,'payment en cardsPay')
         if(payment.status_detail === 'accredited'){
             await saveTransactionCart(cartId, payment.id, payment.status_detail) 
