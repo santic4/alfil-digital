@@ -13,8 +13,6 @@ export const proccessPaymentCard = async (req, res) => {
         const application = new Payment(client);
         const { cartId } = req.query;
 
-        console.log('cosas 1', req.body)
-
         const payment_data = {
             transaction_amount,
             token,
@@ -28,24 +26,26 @@ export const proccessPaymentCard = async (req, res) => {
                     type: payer.identification.type,
                     number: payer.identification.number,
                 }
-            }
+            },
+            three_d_secure_mode: 'optional'
         };
-   
 
-        const payment = await application.create({body: payment_data, requestOptions: {
-            idempotencyKey:'abc'
-        }});
-        console.log(payment,'payment en cardsPay')
-        if(payment.status_detail === 'accredited'){
-            await saveTransactionCart(cartId, payment.id, payment.status_detail) 
-            // aca habria que hacer todo lo que te pido chat gpt 
+        const payment = await application.create({ body: payment_data, requestOptions: { idempotencyKey: 'abc' } });
+
+        if (payment.status_detail === 'accredited') {
+            await saveTransactionCart(cartId, payment.id, payment.status_detail);
+        } else if (payment.status === 'pending' && payment.status_detail === 'pending_challenge') {
+            res.json({
+                status: payment.status,
+                status_detail: payment.status_detail,
+                id: payment.id,
+                three_ds_info: payment.three_ds_info
+            });
+        } else {
+            res.json({ status: payment.status, status_detail: payment.status_detail, id: payment.id });
         }
-
-  
-
-        res.json({ status: payment.status, status_detail: payment.status_detail, id: payment.id });
     } catch (error) {
         console.error('Error al procesar el pago:', error);
         res.status(500).send('Error al procesar el pago');
     }
-}
+};
