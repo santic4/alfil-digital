@@ -41,9 +41,9 @@ export const createOrderMP = async (req, res) => {
             body: {
                 items: carrito,
                 back_urls: {
-                    success: 'https://alfil-digital.onrender.com/',
-                    failure: 'https://alfil-digital.onrender.com/',
-                    pending: 'https://alfil-digital.onrender.com/'
+                    success: 'https://alfil-digital.onrender.com',
+                    failure: 'https://alfil-digital.onrender.com',
+                    pending: 'https://alfil-digital.onrender.com'
                 } 
                 ,
                 notification_url: 'https://alfil-digital.onrender.com/api/cards/webhook',
