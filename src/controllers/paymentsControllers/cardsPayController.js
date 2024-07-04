@@ -27,7 +27,8 @@ export const proccessPaymentCard = async (req, res) => {
                     number: payer.identification.number,
                 }
             },
-            three_d_secure_mode: 'optional'
+            three_d_secure_mode: 'optional',
+            statement_descriptor: 'ALFIL DIGITAL'
         };
 
         const payment = await application.create({ body: payment_data, requestOptions: { idempotencyKey: 'abc' } });

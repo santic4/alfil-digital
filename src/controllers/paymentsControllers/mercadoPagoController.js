@@ -46,7 +46,7 @@ export const createOrderMP = async (req, res) => {
                     pending: 'https://alfil-digital.onrender.com/'
                 } 
                 ,
-                notification_url: 'https://alfil-digital.onrender.com/api/mercado-pago/webhook',
+                notification_url: 'https://alfil-digital.onrender.com/api/cards/webhook',
                 external_reference: externalReference,
                 auto_return: 'approved'
             }
