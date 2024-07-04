@@ -10,6 +10,7 @@ const client = new MercadoPagoConfig({
 export const proccessPaymentCard = async (req, res) => {
     try {
         const { token, issuer_id, payment_method_id, installments, transaction_amount, description, payer } = req.body;
+
         const application = new Payment(client);
         const { cartId } = req.query;
 
@@ -32,7 +33,7 @@ export const proccessPaymentCard = async (req, res) => {
         };
    
 
-        const payment = await application.create(payment_data);
+        const payment = await application.create({body: payment_data});
         console.log(payment,'payment en cardsPay')
         if(payment.status_detail === 'accredited'){
             await saveTransactionCart(cartId, payment.id, payment.status_detail) 
