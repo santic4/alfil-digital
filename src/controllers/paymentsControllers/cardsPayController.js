@@ -32,6 +32,8 @@ export const proccessPaymentCard = async (req, res) => {
 
         const payment = await application.create({ body: payment_data, requestOptions: { idempotencyKey: 'abc' } });
 
+        console.log(payment,'payment en el back que necesito')
+        
         if (payment.status_detail === 'accredited') {
             await saveTransactionCart(cartId, payment.id, payment.status_detail);
         } else if (payment.status === 'pending' && payment.status_detail === 'pending_challenge') {
