@@ -36,6 +36,7 @@ export const proccessPaymentCard = async (req, res) => {
         
         if (payment.status_detail === 'accredited') {
             await saveTransactionCart(cartId, payment.id, payment.status_detail);
+            res.json({ status: payment.status, status_detail: payment.status_detail, id: payment.id });
         } else if (payment.status === 'pending' && payment.status_detail === 'pending_challenge') {
             res.json({
                 status: payment.status,
@@ -43,9 +44,8 @@ export const proccessPaymentCard = async (req, res) => {
                 id: payment.id,
                 three_ds_info: payment.three_ds_info
             });
-        } else {
-            res.json({ status: payment.status, status_detail: payment.status_detail, id: payment.id });
         }
+        
     } catch (error) {
         console.error('Error al procesar el pago:', error);
         res.status(500).send('Error al procesar el pago');
