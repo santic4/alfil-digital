@@ -14,13 +14,29 @@ export const createOrderMP = async (req, res) => {
     const { cartId } = req.query;
     const externalReference = generateToken();
 
-    console.log(cartId,'CARTID')
     try {
         const preference = new Preference(client);
         if (!carrito || !externalReference) {
             throw new Error('Falta información requerida (carrito o externalReference)');
         }
 
+        if (!carrito || carrito.length === 0) {
+            throw new Error('El carrito está vacío o no fue proporcionado.');
+        }
+
+        if (!externalReference) {
+            throw new Error('No se pudo generar una referencia externa.');
+        }
+
+        // Validar que cada item en el carrito tenga los campos necesarios
+        carrito.forEach(item => {
+            if (!item.id || !item.title || !item.quantity || !item.unit_price) {
+                throw new Error('Uno o más artículos del carrito no tienen todos los campos necesarios.');
+            }
+        });
+
+
+        console.log(carrito,'carrito')
         // Crear la preferencia de pago
         const response = await preference.create({
             body: {
