@@ -36,25 +36,10 @@ export const createOrderMP = async (req, res) => {
         });
 
 
-        const payerForPreference = {
-            name: 'NAHUEL',
-            surname: 'CAÑU CORNIGLIA',
-            email: 'nahuel_1996_06@hotmail.com',
-            phone: {
-                area_code: '2342',
-                number: '466693'
-            },
-            identification: {
-                type: 'DNI',
-                number: '39485990'
-            }
-
-        };
 
         const response = await preference.create({
             body: {
                 items: carrito,
-                payer: payerForPreference,
                 back_urls: {
                     success: 'https://alfil-digital.onrender.com/',
                     failure: 'https://alfil-digital.onrender.com/',
