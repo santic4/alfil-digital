@@ -28,9 +28,7 @@ export const proccessPaymentCard = async (req, res) => {
                     type: payer.identification.type,
                     number: payer.identification.number,
                 }
-            },
-            items: [],
-            notification_url: ''
+            }
         };
    
 
