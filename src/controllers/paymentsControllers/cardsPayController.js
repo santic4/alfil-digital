@@ -44,7 +44,7 @@ export const proccessPaymentCard = async (req, res) => {
 
   
 
-        res.json({ status: payment.body.status, status_detail: payment.body.status_detail, id: payment.body.id });
+        res.json({ status: payment.status, status_detail: payment.status_detail, id: payment.id });
     } catch (error) {
         console.error('Error al procesar el pago:', error);
         res.status(500).send('Error al procesar el pago');
