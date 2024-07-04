@@ -63,7 +63,7 @@ export const successOrder = async (req, res) => {
 
         if (transaction && status === 'approved' && payment_id) {
           
-            res.redirect('https://alfil-digital.onrender.com/success');
+            res.redirect(`https://alfil-digital.onrender.com?payment_id=${payment_id}`);
         } else {
             throw new Error('Transacción no encontrada o no coincide con el external_reference');
         }
@@ -100,8 +100,7 @@ export const webHookMP = async (req, res) => {
                 console.log('Archivos enviados');
             }
 
-
-            res.status(200).send('OK');
+            res.status(200);
         } else {
             throw new Error('Tipo de pago no reconocido o no es un pago');
         }
