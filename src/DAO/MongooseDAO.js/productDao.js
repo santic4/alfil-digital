@@ -10,6 +10,14 @@ class ProductDao{
         return paginado
     }
 
+    async getAllProductsAdmin(){
+
+        const productAdmin = await Product.find({}).lean();
+        console.log(productAdmin,'product admin')
+        return productAdmin
+
+    }
+
     async getCategory(category){
         const categoriasProductos = await Product.find({ category: category });
 

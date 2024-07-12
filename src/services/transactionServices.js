@@ -1,12 +1,14 @@
-import Transaction from "../models/mongoose/transactionSchema.js";
 
-export const saveTransactionWithToken = async (cartID, externalReference) => {
+import Transaction from "../models/mongoose/transactionSchema.js";
+import TransactionDTO from "../dto/transactionDTO.js";
+
+export const saveTransactionWithToken = async (emailSend, externalReference) => {
   try {
     const existingTransaction = await Transaction.findOne({ externalReference });
 
     if (!existingTransaction) {
       const transaction = new Transaction({
-        cart: cartID,
+        emailSend: emailSend,
         externalReference
       });
       await transaction.save();
@@ -16,13 +18,13 @@ export const saveTransactionWithToken = async (cartID, externalReference) => {
     }
   } catch (error) {
     console.error('Error al guardar la transacción:', error);
-    throw new Error('Error al guardar la transacción');
   }
 };
 
-export const findTransactionByExternalReference = async (externalReference) => {
+export const findTransactionByPaymentId = async (paymentID) => {
   try {
-    const transaction = await Transaction.findOne({ externalReference });
+    const transaction = await Transaction.findOne({paymentID}).lean();
+
     return transaction;
   } catch (error) {
     console.error('Error al buscar la transacción por external_reference:', error);
@@ -41,5 +43,18 @@ export const updateTransactionStatus = async (externalReference, status, payment
   } catch (error) {
     console.error('Error al actualizar el estado de la transacción:', error);
     throw new Error('Error al actualizar el estado de la transacción');
+  }
+};
+
+export const findTransactionGetAll = async () => {
+  try {
+    const transaction = await Transaction.find({}).lean();
+    const transactionDTO = transaction.map(trans => new TransactionDTO(trans));
+    console.log(transactionDTO,'transaction')
+
+    return transactionDTO;
+  } catch (error) {
+    console.error('Error:', error);
+    throw new Error('Error al buscar la transacción');
   }
 };

@@ -1,21 +1,22 @@
 import { Product } from "../models/mongoose/productModel.js";
-import Transaction from "../models/mongoose/transactionSchema.js";
-import { emailService } from "../services/email/emailServices.js";
-import { productServices } from "../services/productServices.js";
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { fetchTransactionByPaymentId } from "../services/transactionsCardServices.js";
-import { cartServices } from "../services/cartServices.js";
 import { cartServicesMP } from "../services/email/emailProducts.js";
+import { findTransactionByPaymentId } from "../services/transactionServices.js";
+import { productServices } from "../services/productServices.js";
+import jwt from 'jsonwebtoken';
+import bcrypt from 'bcryptjs';
+import { JWT_PRIVATE_KEY } from '../config/config.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
 export const getAllProducts = async (req, res, next) => {
     try {
 
         const options = {
           page: req.query.page || 1,
-          limit: req.query.itemsPorPagina || 10, 
+          limit: req.query.itemsPorPagina || 20, 
           sort: req.query.order ? { 'price': req.query.order } : {},
           lean: true,
         };
@@ -25,6 +26,18 @@ export const getAllProducts = async (req, res, next) => {
         const paginado = await productServices.getAllProducts(filter, options);
 
         res.json(paginado);
+      } catch (error) {
+        next(error)
+      }
+}
+
+export const getAllProductsAdmin = async (req, res, next) => {
+    try {
+        console.log('entre')
+
+        const productAdmin = await productServices.getAllProductsAdmin();
+
+        res.json(productAdmin);
       } catch (error) {
         next(error)
       }
@@ -123,69 +136,79 @@ export const postProduct = async (req, res, next) => {
 
 // 
 
-export const getFile = async (req, res) => {
+export const getFile = async (req, res, next) => {
     const { fileName } = req.params;
-    const { emailSend } = req.query;
-    const paymentId = req.headers['Payment-Id'];
+    const { token } = req.query;
+    const paymentID = req.headers['payment-id'];
 
-    console.log(fileName,' fileName ', emailSend,' email send', paymentId,' paymentid ')
     try {
-        if (!paymentId || !emailSend) {
-            return res.status(401).json({ error: 'Falta paymentId o email.' });
+        if (!paymentID || !fileName || !token ) {
+            return new Error('DATA INVALID')
         }
 
-        const transaction = await fetchTransactionByPaymentId(paymentId);
+        const transaction = await findTransactionByPaymentId(paymentID);
+        console.log(transaction,'transaction en controller')
 
-        if (!transaction || transaction.status !== 'accredited') {
+        if (!transaction || transaction.status !== 'accredited') { 
             return res.status(401).json({ error: 'Transacción no encontrada o no acreditada.' });
         }
 
-        const directory = path.join(__dirname, '../../statics/fileadj');
+        const directory = path.join(__dirname, '../../statics/fileadj/');
    
         const fileUrl =  path.join(directory, fileName);
 
-        if(fileUrl){
-            // Enviar correos con enlaces de descarga
-            // arreglar aca
-            cartServicesMP.sendEmailProducts(paymentId, fileUrl, emailSend)
+        if(fileUrl && transaction.status === 'accredited'){ 
+
+            cartServicesMP.sendEmailProducts(paymentID, fileName, transaction.emailSend, token)
+            res.download(fileUrl, (err) => {
+                if (err) {
+                    console.error('Error al descargar el archivo:', err);
+                    res.status(500).json({ error: 'Error al descargar el archivo.' });
+                }
+            });
         }else{
             return res.status(404).json({ error: 'No existe el archivo.' });
         }
 
-        res.sendFile(fileUrl);
+
     } catch (error) {
         console.error('Error al procesar la solicitud:', error);
-        res.status(500).json({ error: 'Error interno del servidor' });
+        next(error)
     }
 };
 
-export const sendEmailProducts = async (req, res) => {
-    const { email, fileUrls } = req.body;
-    const { cart } = req.headers;
+export const DownloadFile = async (req, res, next) => {
+    try{
+        const { token } = req.query;
 
-    if (!cart) {
-        return res.status(401).json({ error: 'No autorizado' });
-    }
-
-    try {
-        const transaction = await fetchTransactionByPaymentId(paymentId);
-
-        if (!transaction) {
-            return res.status(403).json({ error: 'Pago no verificado' });
+        if(!token){
+            throw new Error('Data Invalid.')
         }
 
-        const filesList = fileUrls.join(', ');
-        const message = `Gracias por tu compra. Puedes descargar tus archivos desde los siguientes enlaces: ${filesList}`;
+        const file = await productServices.downloadFile(token);
+    
+        res.json(file)
+    }catch(err){
+        next(err)
+    }
+}
 
-        await emailService.send(email, 'Archivos comprados', message);
+export const generateDownloadToken = async (req, res, next) => {
+    const { fileUrl } = req.params;
 
-        res.status(200).json({ message: 'Correo enviado con éxito' });
+    try {
+        const token = jwt.sign({ fileUrl }, JWT_PRIVATE_KEY, { expiresIn: '1h' });
+
+        const hashedToken = await bcrypt.hash(token, 10); 
+
+        console.log(hashedToken,'hashed token',token,'token')
+
+        res.json(hashedToken)
+
     } catch (error) {
-        console.error('Error al enviar el correo:', error);
-        res.status(500).json({ error: 'Error al enviar el correo' });
+        next(error)
     }
 };
-//
 
 export const updateProduct = async (req, res, next) => {
   try{

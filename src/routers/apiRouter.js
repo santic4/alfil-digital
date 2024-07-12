@@ -10,6 +10,7 @@ import { PayPalRouter } from './paymentsRouter/payPalRouter.js'
 import { MercadoPagoRouter } from './paymentsRouter/mercadoPagoRouter.js'
 import { categoryRouter } from './categoryRouter.js'
 import { CardsPay } from './paymentsRouter/cardsPay.js'
+import { TransactionGet } from './transactionsGet.js'
 
 export const apiRouter = Router()
 
@@ -24,6 +25,7 @@ apiRouter.use('/paypal', PayPalRouter)
 apiRouter.use('/mercado-pago', MercadoPagoRouter)
 apiRouter.use('/categories', categoryRouter)
 apiRouter.use('/cards', CardsPay)
+apiRouter.use('/transactions', TransactionGet)
 
 // MIDDLEWARES
 

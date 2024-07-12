@@ -11,11 +11,11 @@ MercadoPagoRouter.get('/success',
 );
 
 MercadoPagoRouter.get('/failure',  (req, res) => {
-    res.redirect('https://alfil-digital.onrender.com/success');
+    res.redirect('/success');
 });
 
 MercadoPagoRouter.get('/pending', (req, res) => {
-    res.redirect('https://alfil-digital.onrender.com/checkout'); 
+    res.redirect('/checkout'); 
 });
 
 

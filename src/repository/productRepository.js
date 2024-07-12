@@ -13,6 +13,17 @@ class ProductRepository{
         }
     }
 
+    async getAllProductsAdmin(){
+        try {
+            const productAdmin = await productDao.getAllProductsAdmin();
+
+            return productAdmin
+
+        } catch (error) {
+            throw new Error('Error en filtros')
+        }
+    }
+
     async getCategory(category){
         const categoryProducts = await productDao.getCategory(category);
 

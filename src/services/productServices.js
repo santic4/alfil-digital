@@ -4,7 +4,8 @@ import { usersRepository } from "../repository/usersRepository.js";
 import { NotFoundError } from '../models/errors/notFoundError.js'
 import { emailService } from "./email/emailServices.js";
 import { DataInvalid } from "../models/errors/dataInvalid.js";
-
+import jwt from 'jsonwebtoken';
+import { JWT_PRIVATE_KEY } from '../config/config.js';
 
 class ProductServices{
     async getAllProducts(filter, options){
@@ -25,6 +26,13 @@ class ProductServices{
         return results
     }
 
+    async getAllProductsAdmin(){
+        
+        const productAdmin = await productRepository.getAllProductsAdmin()
+
+        return productAdmin
+    }
+
     async getCategory(category){
         if(!category){
             throw new DataInvalid()
@@ -43,6 +51,18 @@ class ProductServices{
         }
 
         return product
+    }
+    
+    async downloadFile(token){
+        try {
+            const decoded = jwt.verify(token, JWT_PRIVATE_KEY);
+            console.log(decoded, 'decoded'); 
+            
+            return decoded;
+        } catch (error) {
+            console.error('Error al verificar el token:', error.message);
+            throw new Error('Token inválido');
+        }
     }
 
     async postProduct(user ,newData){

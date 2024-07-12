@@ -2,7 +2,7 @@ import { MercadoPagoConfig, Payment, Preference } from 'mercadopago';
 import { logger } from '../../utils/logger.js';
 import { ACCESS_TOKEN_MP } from '../../config/config.js';
 import { generateToken } from '../../utils/cryptografia.js';
-import { findTransactionByExternalReference, saveTransactionWithToken, updateTransactionStatus } from '../../services/transactionServices.js';
+import { saveTransactionWithToken, updateTransactionStatus } from '../../services/transactionServices.js';
 
 const client = new MercadoPagoConfig({
     accessToken: ACCESS_TOKEN_MP,
@@ -11,7 +11,7 @@ const client = new MercadoPagoConfig({
 
 export const createOrderMP = async (req, res) => {
     const carrito = req.body
-    const { cartId } = req.query;
+    const { emailSend } = req.query;
     const externalReference = generateToken();
 
     try {
@@ -54,10 +54,10 @@ export const createOrderMP = async (req, res) => {
 
         console.log(response, 'preferenec create')
 
-        if(cartId && externalReference){
-            await saveTransactionWithToken(cartId, externalReference);
+        if(emailSend && externalReference){
+            await saveTransactionWithToken(emailSend, externalReference);
         }else{
-            console.log('falta data',cartId, externalReference)
+            console.log('falta data',emailSend, externalReference)
         }
 
         res.status(200).json(response);
@@ -69,18 +69,12 @@ export const createOrderMP = async (req, res) => {
 
 export const successOrder = async (req, res) => {
     try {
-        const{ status, payment_id, external_reference} = req.query;
+        const{ payment_id} = req.query;
 
-        const transaction = await findTransactionByExternalReference(external_reference);
-
-        
-        console.log(status,' success.status ',payment_id ,'success.payment_id',external_reference ,'success.external_reference' )
-
-        if (transaction && status === 'approved' && payment_id) {
-          
+        if (payment_id) {
             res.redirect(`https://alfil-digital.onrender.com?payment_id=${payment_id}`);
         } else {
-            throw new Error('Transacción no encontrada o no coincide con el external_reference');
+            throw new Error('Transacción no encontrada o no coincide con el payment_id');
         }
 
     } catch (error) {
@@ -109,8 +103,8 @@ export const webHookMP = async (req, res) => {
                 return res.status(400).json({ error: 'El pago no fue aprobado.' });
             }
 
-            if (captureResult.status === 'approved' ) {
-                const updTrans = await updateTransactionStatus(captureResult.external_reference, captureResult.status, captureResult.id);
+            if (captureResult.status_detail === 'accredited' ) {
+                const updTrans = await updateTransactionStatus(captureResult.external_reference, captureResult.status_detail, captureResult.id);
                 console.log('Captura exitosa approved dentro:', updTrans);
                 console.log('Archivos enviados');
             }
