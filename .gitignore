@@ -6,6 +6,7 @@ env
 node_modules/
 npm-debug.log
 yarn-error.log
+node_modules
 /.env
 # Entornos de desarrollo
 .env
@@ -14,4 +15,6 @@ yarn-error.log
 .env.test
 .env.production
 node_modules
+package.json
 package-lock.json
+ngrok.exe
