@@ -15,6 +15,6 @@ node_modules
 .env.test
 .env.production
 node_modules
-package.json
+
 package-lock.json
 ngrok.exe
