@@ -20,7 +20,7 @@ class EmailService {
             from: EMAIL_USER,
             to: destinatario,
             subject: asunto,
-            text: mensaje
+            html: mensaje
         }
         
         await transport.sendMail(emailOptions)
