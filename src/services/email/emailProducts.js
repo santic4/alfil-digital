@@ -32,14 +32,14 @@ class CartServicesMP {
       
           // Generar el mensaje de correo electrónico con las URLs encriptadas
           const message = `
-                <div style="font-family: Arial, sans-serif; color: #333; padding: 20px; border: 1px solid #ddd; border-radius: 5px;">
+                <div style="width: 100%; display: flex; justify-content: center; font-family: "Montserrat", sans-serif; color: #333; padding: 20px; border: 1px solid #ddd; border-radius: 5px;">
                     <h2 style="color: #2C3360;">Gracias por tu compra</h2>
                     <p>Hola,</p>
                     <p>Puedes descargar tus archivos desde los siguientes enlaces:</p>
                     <ul style="list-style-type: none; padding: 0;">
                         ${fileUrlsEncoded.map(url => `
-                            <li style="margin-bottom: 10px;">
-                                <a href="${url}" style="color: #2C3360; text-decoration: none; padding: 10px 15px; background-color: #FFFDF6; border: 1px solid #2C3360; border-radius: 5px; display: inline-block;">
+                            <li style="margin-bottom: 10px; background-color:#2C3360;">
+                                <a href="${url}" style="color: white; text-decoration: none; padding: 10px 15px; background-color: #FFFDF6; border: 1px solid #2C3360; border-radius: 5px; display: inline-block;">
                                     Descargar archivo
                                 </a>
                             </li>`).join('')}
