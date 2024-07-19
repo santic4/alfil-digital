@@ -32,20 +32,36 @@ class CartServicesMP {
       
           // Generar el mensaje de correo electrónico con las URLs encriptadas
           const message = `
-            <div style="width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; font-family: 'Montserrat', sans-serif; color: #333; padding: 20px; border: 1px solid #ddd; border-radius: 5px; text-align: center;">
-                <h2 style="color: #2C3360; width: 100%; text-align: center;">Gracias por tu compra</h2>
-                <p style="width: 100%; text-align: center;">Hola,</p>
-                <p style="width: 100%; text-align: center;">Puedes descargar tus archivos desde los siguientes enlaces:</p>
-                <ul style="list-style-type: none; padding: 0;">
-                    ${fileUrlsEncoded.map(url => `
-                        <li style="margin-bottom: 10px;">
-                            <a href="${url}" style="text-decoration: none; padding: 10px 15px; background-color: white; color: #2C3360; border: 1px solid #2C3360; border-radius: 5px; display: inline-block;">
-                                Descargar archivo
-                            </a>
-                        </li>`).join('')}
-                </ul>
-                <p>Gracias por confiar en nosotros.</p>
-            </div>
+            <section style="width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; font-family: 'Montserrat', sans-serif; color: #333; padding: 20px; border: 1px solid #ddd; border-radius: 5px; text-align: center;">
+                
+                <div style="width: 100%; text-align: center; align-items: center;">
+                  <h2 style="color: #2C3360; width: 100%; text-align: center;">Gracias por tu compra</h2>
+                </div>
+
+                <div style="width: 100%; text-align: center; align-items: center;">
+                  <p style="width: 100%; text-align: center;">Hola,</p>
+                </div>
+
+                <div style="width: 100%; text-align: center; align-items: center;">
+                  <p style="width: 100%; text-align: center;">Puedes descargar tus archivos desde los siguientes enlaces:</p>
+                </div>
+
+                <div style="width: 100%; text-align: center; align-items: center;">
+                  <ul style="list-style-type: none; padding: 0;">
+                      ${fileUrlsEncoded.map(url => `
+                          <li style="margin-bottom: 10px;">
+                              <a href="${url}" style="text-decoration: none; padding: 10px 15px; background-color: white; color: #2C3360; border: 1px solid #2C3360; border-radius: 5px; display: inline-block;">
+                                  Descargar archivo
+                              </a>
+                          </li>`).join('')}
+                  </ul>
+                </div>
+
+                <div style="width: 100%; text-align: center; align-items: center;">
+                  <p>Gracias por confiar en nosotros.</p>
+                </div>
+
+            </section>
           `;
       
           await emailService.send(emailSend, 'Archivos comprados', message);
