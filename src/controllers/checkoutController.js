@@ -52,7 +52,7 @@ export const DownloadFile = async (req, res, next) => {
         const token = req.params.token;
 
         if(!token){
-            throw new Error('Data hhhhhh.')
+            throw new Error('Data invalid token.')
         }
 
         const directory = path.join(__dirname, '../../statics/fileadj/');
@@ -62,7 +62,6 @@ export const DownloadFile = async (req, res, next) => {
 
         const fileUrl =  path.join(directory, url);
 
-        console.log(fileUrl,' file en download ')
         res.download(fileUrl, (err) => {
             if (err) {
                 console.error('Error al descargar el archivo:', err);
