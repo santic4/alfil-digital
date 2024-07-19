@@ -11,6 +11,7 @@ import { MercadoPagoRouter } from './paymentsRouter/mercadoPagoRouter.js'
 import { categoryRouter } from './categoryRouter.js'
 import { CardsPay } from './paymentsRouter/cardsPay.js'
 import { TransactionGet } from './transactionsGet.js'
+import { checkoutRouter } from './checkout/checkoutRouter.js'
 
 export const apiRouter = Router()
 
@@ -26,6 +27,7 @@ apiRouter.use('/mercado-pago', MercadoPagoRouter)
 apiRouter.use('/categories', categoryRouter)
 apiRouter.use('/cards', CardsPay)
 apiRouter.use('/transactions', TransactionGet)
+apiRouter.use('/checkout', checkoutRouter)
 
 // MIDDLEWARES
 

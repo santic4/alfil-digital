@@ -30,6 +30,6 @@ export const PayPalRouter = Router()
 
 
 PayPalRouter.post('/create-order', createOrder)
-PayPalRouter.get('/capture-order', captureOrder)
+PayPalRouter.post('/capture-order', captureOrder)
 PayPalRouter.get('/cancel-order', cancelOrder)
 PayPalRouter.post('/converter-currency', converterCurreny)

@@ -1,10 +1,9 @@
 import { Router } from 'express'
-import { deleteProduct, DownloadFile, generateDownloadToken, getAllProducts, getAllProductsAdmin, getCategory, getFile, getFilteredProducts, getProductId, postProduct, updateProduct } from '../controllers/productsController.js';
+import { deleteProduct, getAllProducts, getAllProductsAdmin, getCategory, getFilteredProducts, getProductId, postProduct, updateProduct } from '../controllers/productsController.js';
 import { passportAuth } from '../middlewares/passport.js';
 import { adminsOnly } from '../middlewares/authorizationUserAdmin.js';
 import { upload } from '../middlewares/multer.js';
 import { FeaturedProducts } from '../models/mongoose/featuredModel.js';
-
 
 export const productsRouter = Router()
 
@@ -74,17 +73,6 @@ productsRouter.get('/:pid',
     getProductId
 )
 
-productsRouter.get('/files/:fileName', 
-  getFile
-);
-
-productsRouter.get('/download/:fileUrl', 
-  DownloadFile
-);
-
-productsRouter.post('/generateToken/:fileUrl', 
-  generateDownloadToken
-);
 
 // POST /products/
 const handleUpload = upload.array('files', 20);

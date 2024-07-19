@@ -53,17 +53,7 @@ class ProductServices{
         return product
     }
     
-    async downloadFile(token){
-        try {
-            const decoded = jwt.verify(token, JWT_PRIVATE_KEY);
-            console.log(decoded, 'decoded'); 
-            
-            return decoded;
-        } catch (error) {
-            console.error('Error al verificar el token:', error.message);
-            throw new Error('Token inválido');
-        }
-    }
+
 
     async postProduct(user ,newData){
 

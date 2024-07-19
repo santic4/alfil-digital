@@ -1,15 +1,5 @@
 import { Product } from "../models/mongoose/productModel.js";
-import path from 'path';
-import { fileURLToPath } from 'url';
-import { cartServicesMP } from "../services/email/emailProducts.js";
-import { findTransactionByPaymentId } from "../services/transactionServices.js";
 import { productServices } from "../services/productServices.js";
-import jwt from 'jsonwebtoken';
-import bcrypt from 'bcryptjs';
-import { JWT_PRIVATE_KEY } from '../config/config.js';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 export const getAllProducts = async (req, res, next) => {
     try {
@@ -135,80 +125,6 @@ export const postProduct = async (req, res, next) => {
 }
 
 // 
-
-export const getFile = async (req, res, next) => {
-    const { fileName } = req.params;
-    const { token } = req.query;
-    const paymentID = req.headers['payment-id'];
-
-    try {
-        if (!paymentID || !fileName || !token ) {
-            return new Error('DATA INVALID')
-        }
-
-        const transaction = await findTransactionByPaymentId(paymentID);
-        console.log(transaction,'transaction en controller')
-
-        if (!transaction || transaction.status !== 'accredited') { 
-            return res.status(401).json({ error: 'Transacción no encontrada o no acreditada.' });
-        }
-
-        const directory = path.join(__dirname, '../../statics/fileadj/');
-   
-        const fileUrl =  path.join(directory, fileName);
-
-        if(fileUrl && transaction.status === 'accredited'){ 
-
-            cartServicesMP.sendEmailProducts(paymentID, fileName, transaction.emailSend, token)
-            res.download(fileUrl, (err) => {
-                if (err) {
-                    console.error('Error al descargar el archivo:', err);
-                    res.status(500).json({ error: 'Error al descargar el archivo.' });
-                }
-            });
-        }else{
-            return res.status(404).json({ error: 'No existe el archivo.' });
-        }
-
-
-    } catch (error) {
-        console.error('Error al procesar la solicitud:', error);
-        next(error)
-    }
-};
-
-export const DownloadFile = async (req, res, next) => {
-    try{
-        const { token } = req.query;
-
-        if(!token){
-            throw new Error('Data Invalid.')
-        }
-
-        const file = await productServices.downloadFile(token);
-    
-        res.json(file)
-    }catch(err){
-        next(err)
-    }
-}
-
-export const generateDownloadToken = async (req, res, next) => {
-    const { fileUrl } = req.params;
-
-    try {
-        const token = jwt.sign({ fileUrl }, JWT_PRIVATE_KEY, { expiresIn: '1h' });
-
-        const hashedToken = await bcrypt.hash(token, 10); 
-
-        console.log(hashedToken,'hashed token',token,'token')
-
-        res.json(hashedToken)
-
-    } catch (error) {
-        next(error)
-    }
-};
 
 export const updateProduct = async (req, res, next) => {
   try{

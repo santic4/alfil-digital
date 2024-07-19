@@ -2,7 +2,7 @@ import { MercadoPagoConfig, Payment, Preference } from 'mercadopago';
 import { logger } from '../../utils/logger.js';
 import { ACCESS_TOKEN_MP } from '../../config/config.js';
 import { generateToken } from '../../utils/cryptografia.js';
-import { saveTransactionWithToken, updateTransactionStatus } from '../../services/transactionServices.js';
+import { saveTransactionWithToken, updateTransactionStatus } from '../../services/transactionServicesMP.js';
 
 const client = new MercadoPagoConfig({
     accessToken: ACCESS_TOKEN_MP,
@@ -35,8 +35,6 @@ export const createOrderMP = async (req, res) => {
             }
         });
 
-        console.log(carrito,'carrito en carrito en carrito ')
-
         const response = await preference.create({
             body: {
                 items: carrito,
@@ -51,8 +49,6 @@ export const createOrderMP = async (req, res) => {
                 auto_return: 'approved'
             }
         });
-
-        console.log(response, 'preferenec create')
 
         if(emailSend && externalReference){
             await saveTransactionWithToken(emailSend, externalReference);
@@ -97,7 +93,6 @@ export const webHookMP = async (req, res) => {
                     idempotencyKey: 'abc'
                 }
             });
-            console.log('Captura exitosa:', captureResult);
 
             if (captureResult.status !== 'approved' ) {
                 return res.status(400).json({ error: 'El pago no fue aprobado.' });
@@ -105,7 +100,6 @@ export const webHookMP = async (req, res) => {
 
             if (captureResult.status_detail === 'accredited' ) {
                 const updTrans = await updateTransactionStatus(captureResult.external_reference, captureResult.status_detail, captureResult.id);
-                console.log('Captura exitosa approved dentro:', updTrans);
                 console.log('Archivos enviados');
             }
 

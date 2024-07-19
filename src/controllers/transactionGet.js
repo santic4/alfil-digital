@@ -1,4 +1,4 @@
-import { findTransactionGetAll } from "../services/transactionServices.js"
+import { findTransactionGetAll } from "../services/transactionServicesMP.js"
 
 export const transactions = async (req, res, next) => {
     try{

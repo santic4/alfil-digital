@@ -21,16 +21,16 @@ export function hasheadasSonIguales({ recibida, almacenada }) {
 export function encriptar(data) {
   return new Promise((resolve, reject) => {
     if (!data) {
-      return reject(new Error('nothing to jwt encode!'))
+      return reject(new Error('nothing to jwt encode!'));
     }
-    jwt.sign(data, JWT_PRIVATE_KEY, { expiresIn: '24h' }, (err, encoded) => {
+    jwt.sign({ url: data }, JWT_PRIVATE_KEY, { expiresIn: '1h' }, (err, encoded) => {
       if (err) {
-        reject(err)
+        reject(err);
       } else {
-        resolve(encoded)
+        resolve(encoded);
       }
-    })
-  })
+    });
+  });
 }
 
 export function desencriptar(token) {
