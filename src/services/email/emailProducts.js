@@ -32,7 +32,7 @@ class CartServicesMP {
       
           // Generar el mensaje de correo electrónico con las URLs encriptadas
           const message = `
-            <section style="width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; font-family: 'Montserrat', sans-serif; color: #333; padding: 20px; border: 1px solid #ddd; border-radius: 5px; text-align: center;">
+            <section style="width: 100%; height: auto; justify-content: center; align-items: center; font-family: 'Montserrat', sans-serif; color: #333; padding: 20px; border: 1px solid #ddd; border-radius: 5px; text-align: center;">
                 
                 <div style="width: 100%; text-align: center; align-items: center;">
                   <h2 style="color: #2C3360; width: 100%; text-align: center;">Gracias por tu compra</h2>
