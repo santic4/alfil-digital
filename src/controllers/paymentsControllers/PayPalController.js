@@ -126,8 +126,6 @@ export const captureOrder = async (req, res) => {
       }
     );
 
-    console.log(response.data,' response en capture lindo')
-
     if (response.data.status !== 'COMPLETED') {
       return res.status(400).json({ error: 'El pago no fue aprobado.' });
     }
@@ -138,8 +136,6 @@ export const captureOrder = async (req, res) => {
     await updateTransactionStatus(referenceId, response.data.status, paymentId);
 
     const foundedTransaction = await findTransactionByPaymentId(paymentId)
-
-    console.log(foundedTransaction?.carrito,'foundedTransaction')
 
     return res.json({ 
       status: 'Pago capturado exitosamente',

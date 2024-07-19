@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { createOrderMP,  successOrder,  webHookMP } from '../../controllers/paymentsControllers/mercadoPagoController.js';
+import { captureMP, createOrderMP,  successOrder,  webHookMP } from '../../controllers/paymentsControllers/mercadoPagoController.js';
 
 
 export const MercadoPagoRouter = Router();
@@ -16,6 +16,10 @@ MercadoPagoRouter.get('/failure',  (req, res) => {
 
 MercadoPagoRouter.get('/pending', (req, res) => {
     res.redirect('/checkout'); 
+});
+
+MercadoPagoRouter.post('/capture-order', (req, res) => {
+    captureMP
 });
 
 

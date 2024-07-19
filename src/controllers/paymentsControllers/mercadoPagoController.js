@@ -2,7 +2,7 @@ import { MercadoPagoConfig, Payment, Preference } from 'mercadopago';
 import { logger } from '../../utils/logger.js';
 import { ACCESS_TOKEN_MP } from '../../config/config.js';
 import { generateToken } from '../../utils/cryptografia.js';
-import { saveTransactionWithToken, updateTransactionStatus } from '../../services/transactionServicesMP.js';
+import { findTransactionByPaymentId, saveTransactionWithToken, updateTransactionStatus } from '../../services/transactionServicesMP.js';
 
 const client = new MercadoPagoConfig({
     accessToken: ACCESS_TOKEN_MP,
@@ -10,7 +10,7 @@ const client = new MercadoPagoConfig({
 })
 
 export const createOrderMP = async (req, res) => {
-    const carrito = req.body
+    const { items, carrito } = req.body;
     const { emailSend } = req.query;
     const externalReference = generateToken();
 
@@ -50,10 +50,12 @@ export const createOrderMP = async (req, res) => {
             }
         });
 
+        console.log(response.id,' response id mercado pago create ')
+
         if(emailSend && externalReference){
-            await saveTransactionWithToken(emailSend, externalReference);
+            await saveTransactionWithToken(emailSend, externalReference, response.id, items );
         }else{
-            console.log('falta data',emailSend, externalReference)
+            console.log('falta data',emailSend, externalReference,)
         }
 
         res.status(200).json(response);
@@ -99,7 +101,7 @@ export const webHookMP = async (req, res) => {
             }
 
             if (captureResult.status_detail === 'accredited' ) {
-                const updTrans = await updateTransactionStatus(captureResult.external_reference, captureResult.status_detail, captureResult.id);
+                await updateTransactionStatus(captureResult.external_reference, captureResult.status_detail, captureResult.id);
                 console.log('Archivos enviados');
             }
 
@@ -107,6 +109,25 @@ export const webHookMP = async (req, res) => {
         } else {
             throw new Error('Tipo de pago no reconocido o no es un pago');
         }
+    } catch (error) {
+        logger.error(error, 'Error al procesar el pago');
+        res.status(500).send('Error al procesar el pago');
+    }
+};
+
+export const captureMP = async (req, res) => {
+    const payment = req.query;
+    console.log(payment,' payment en capture MP ')
+    try {
+        const foundedTransaction = await findTransactionByPaymentId(payment)
+
+        if(foundedTransaction?.status === 'accredited'){
+            return res.json({ 
+                status: 'Pago capturado exitosamente',
+                cart: foundedTransaction?.carrito || []
+              });
+        }
+
     } catch (error) {
         logger.error(error, 'Error al procesar el pago');
         res.status(500).send('Error al procesar el pago');
