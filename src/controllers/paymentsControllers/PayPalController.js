@@ -1,11 +1,5 @@
-import axios from "axios";
-import {
-  PAYPAL_API,
-  PAYPALCLIENTID,
-  PAYPALCLIENTSECRET,
-} from "../../config/config.js";
+
 import { generateToken } from "../../utils/cryptografia.js";
-import { findTransactionByPaymentId, updateTransactionStatus } from "../../services/transactions/transactionServicesMP.js";
 import { paymentsServicesPP } from "../../services/payments/paymentServicesPP.js";
 
 export const createOrder = async (req, res) => {
@@ -16,6 +10,7 @@ export const createOrder = async (req, res) => {
   const externalReference = generateToken();
 
   try {
+    console.log(currency_selected,'', amountUSD, '',emailSend,'', carrito, '',externalReference,'cosas que sirven')
     const approvalUrl = await paymentsServicesPP.createOrderPP(currency_selected, amountUSD, emailSend, carrito, externalReference);
 
     return res.json({ redirectUrl: approvalUrl });
