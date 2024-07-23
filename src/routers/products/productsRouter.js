@@ -1,9 +1,9 @@
 import { Router } from 'express'
-import { deleteProduct, getAllProducts, getAllProductsAdmin, getCategory, getFilteredProducts, getProductId, postProduct, updateProduct } from '../controllers/productsController.js';
-import { passportAuth } from '../middlewares/passport.js';
-import { adminsOnly } from '../middlewares/authorizationUserAdmin.js';
-import { upload } from '../middlewares/multer.js';
-import { FeaturedProducts } from '../models/mongoose/featuredModel.js';
+import { deleteProduct, getAllProducts, getAllProductsAdmin, getCategory, getFilteredProducts, getProductId, postProduct, updateProduct } from '../../controllers/products/productsController.js';
+import { passportAuth } from '../../middlewares/passport.js';
+import { adminsOnly } from '../../middlewares/authorizationUserAdmin.js';
+import { upload } from '../../middlewares/multer.js';
+import { FeaturedProducts } from '../../models/mongoose/featuredModel.js';
 
 export const productsRouter = Router()
 

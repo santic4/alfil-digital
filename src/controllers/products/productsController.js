@@ -1,5 +1,5 @@
-import { Product } from "../models/mongoose/productModel.js";
-import { productServices } from "../services/productServices.js";
+import { Product } from "../../models/mongoose/productModel.js";
+import { productServices } from "../../services/products/productServices.js";
 
 export const getAllProducts = async (req, res, next) => {
     try {

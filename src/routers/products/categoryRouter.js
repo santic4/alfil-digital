@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { Category } from '../models/mongoose/categories.js';
+import { Category } from '../../models/mongoose/categories.js';
 
 
 export const categoryRouter = Router();

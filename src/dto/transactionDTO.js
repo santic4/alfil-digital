@@ -1,7 +1,7 @@
 export class TransactionDTO {
     constructor(trans) {
       this.id = trans._id;
-      this.cart = trans.cart;
+      this.cart = trans.carrito;
       this.status = trans.status;
       this.email = trans.emailSend;
     }

@@ -1,11 +1,11 @@
-import { Carrito } from "../models/mongoose/cartModel.js"
-import { cartRepository } from "../repository/cartRepository.js"
-import { usersRepository } from "../repository/usersRepository.js"
-import { productRepository } from "../repository/productRepository.js"
-import { cartDao } from "../DAO/MongooseDAO.js/cartDao.js"
-import { ticketServices } from '../services/ticketServices.js'
-import { emailService } from '../services/email/emailServices.js'
-import { NotFoundError } from '../models/errors/notFoundError.js'
+import { Carrito } from "../../models/mongoose/cartModel.js"
+import { cartRepository } from "../../repository/cartRepository.js"
+import { usersRepository } from "../../repository/usersRepository.js"
+import { productRepository } from "../../repository/productRepository.js"
+import { cartDao } from "../../DAO/MongooseDAO.js/cartDao.js"
+import { ticketServices } from '../../services/transactions/ticketServices.js'
+import { emailService } from '../../services/email/emailServices.js'
+import { NotFoundError } from '../../models/errors/notFoundError.js'
 
 class CartServices {
 

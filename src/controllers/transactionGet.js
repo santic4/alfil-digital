@@ -1,8 +1,8 @@
-import { findTransactionGetAll } from "../services/transactionServicesMP.js"
+import { findTransactionGetAll } from "../services/transactions/transactionServicesMP.js"
 
 export const transactions = async (req, res, next) => {
     try{
-        const updProduct = await findTransactionGetAll()
+        const updProduct = await findTransactionGetAll();
     
         res.json(updProduct)
   

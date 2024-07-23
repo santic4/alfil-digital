@@ -1,4 +1,4 @@
-import { cartServices } from "../services/cartServices.js";
+import { cartServices } from "../../services/carrito/cartServices.js";
 
 // Obtener un carrito por ID
 export const getCartId = async (req, res, next) => {

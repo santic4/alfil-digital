@@ -1,11 +1,11 @@
 import { Router } from 'express'
 
 //controllers
-import { createUser, getCurrentUser } from '../controllers/usersController.js'
+import { createUser, getCurrentUser } from '../../controllers/users/usersController.js'
 
 // passport
-import { passportAuth } from '../middlewares/passport.js'
-import { adminsOnly } from '../middlewares/authorizationUserAdmin.js'
+import { passportAuth } from '../../middlewares/passport.js'
+import { adminsOnly } from '../../middlewares/authorizationUserAdmin.js'
 
 
 export const usersRouter = Router()

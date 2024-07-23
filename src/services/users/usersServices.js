@@ -1,18 +1,14 @@
-import { hasheadasSonIguales, hashear } from '../utils/cryptografia.js'
-import { UserDTO } from '../dto/dto.js'
-import { usersRepository } from '../repository/usersRepository.js'
-import { AuthenticationError } from '../models/errors/authenticationError.js'
-import { JWT_PRIVATE_KEY } from '../config/config.js'
+import { hasheadasSonIguales, hashear } from '../../utils/cryptografia.js'
+import { UserDTO } from '../../dto/dto.js'
+import { usersRepository } from '../../repository/usersRepository.js'
+import { AuthenticationError } from '../../models/errors/authenticationError.js'
+import { JWT_PRIVATE_KEY } from '../../config/config.js'
 import jwt from 'jsonwebtoken';
-import { DataInvalid } from '../models/errors/dataInvalid.js'
+import { DataInvalid } from '../../models/errors/dataInvalid.js'
 
 class UsersServices {
     async createUser(userData){
         try {
-            //const username = 'santito'
-
-           // await usersRepository.findUserByUsername({username})
-
             userData.password = hashear(userData.password)
             const user = await usersRepository.createUser(userData)
             

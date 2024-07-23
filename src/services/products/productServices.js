@@ -1,11 +1,11 @@
-import { PermissionsError } from "../models/errors/permissionsError.js";
-import { productRepository } from "../repository/productRepository.js";
-import { usersRepository } from "../repository/usersRepository.js";
-import { NotFoundError } from '../models/errors/notFoundError.js'
-import { emailService } from "./email/emailServices.js";
-import { DataInvalid } from "../models/errors/dataInvalid.js";
+import { PermissionsError } from "../../models/errors/permissionsError.js";
+import { productRepository } from "../../repository/productRepository.js";
+import { usersRepository } from "../../repository/usersRepository.js";
+import { NotFoundError } from '../../models/errors/notFoundError.js'
+import { emailService } from "../email/emailServices.js";
+import { DataInvalid } from "../../models/errors/dataInvalid.js";
 import jwt from 'jsonwebtoken';
-import { JWT_PRIVATE_KEY } from '../config/config.js';
+import { JWT_PRIVATE_KEY } from '../../config/config.js';
 
 class ProductServices{
     async getAllProducts(filter, options){

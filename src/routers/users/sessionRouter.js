@@ -1,7 +1,7 @@
 import { Router } from "express"
-import { appendJwtAsCookie, removeJwtFromCookies } from "../controllers/authentication.js"
-import { passportAuth, passportLogin, sessionAuth } from "../middlewares/passport.js"
-import { logoutSession, loginUser, getCurrentSessionUser } from "../controllers/sessionController.js"
+import { appendJwtAsCookie, removeJwtFromCookies } from "../../controllers/users/authentication.js"
+import { passportLogin, sessionAuth } from "../../middlewares/passport.js"
+import { logoutSession, loginUser, getCurrentSessionUser } from "../../controllers/users/sessionController.js"
 
 export const sessionRouter = Router()
 

@@ -1,5 +1,5 @@
 import { Router} from 'express'
-import { deleteCart, deleteProdInCart, getCartId, postCart, postProductIntoCart, purchaseCart, updateQuantityProductInCart } from '../controllers/cartController.js'
+import { deleteCart, deleteProdInCart, getCartId, postCart, postProductIntoCart, purchaseCart, updateQuantityProductInCart } from '../../controllers/carrito/cartController.js'
 
 export const carritoRouter = Router()
 
