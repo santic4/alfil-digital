@@ -1,62 +1,69 @@
 import { paymentsRepositoryPP } from "../../repository/payments/paymentsRepositoryPP.js";
 import { findTransactionByPaymentId, saveTransactionWithToken, updateTransactionStatus } from "../transactions/transactionServicesMP.js";
 
-class PaymentsServicesPP{
+class PaymentsServicesPP {
     async createOrderPP(currency_selected, amountUSD, emailSend, carrito, externalReference) {
-        try {
-          if (!currency_selected || !amountUSD || !emailSend || !carrito || !externalReference) {
-            throw new Error('Token no existe');
-          }
-      
-          const nombresArchivos = carrito.reduce((acc, item) => {
-            return acc.concat(item.productID.fileadj);
-          }, []);
-      
-          const response = await paymentsRepositoryPP.createOrderPP(currency_selected, amountUSD, externalReference);
-      
-          const approvalUrl = response.data.links.find(link => link.rel === 'approve').href;
-          const payment_id = response.data.id;
-      
-          if (approvalUrl && payment_id) {
-            await saveTransactionWithToken(emailSend, externalReference, payment_id, nombresArchivos);
-          } else {
-            throw new Error('No se puede realizar el pago.');
-          }
-      
-          return approvalUrl;
-        } catch (error) {
-          console.error('Error en createOrderPP:', error);
+      try {
+        // Validar los parámetros de entrada
+        if (!currency_selected || !amountUSD || !emailSend || !carrito || !externalReference) {
+          throw new Error('Token no existe');
+        }
+  
+        // Obtener los nombres de los archivos del carrito
+        const nombresArchivos = carrito.reduce((acc, item) => acc.concat(item.productID.fileadj), []);
+  
+        // Crear la orden
+        const response = await paymentsRepositoryPP.createOrderPP(currency_selected, amountUSD, externalReference);
+  
+        // Obtener la URL de aprobación y el ID de pago
+        const approvalUrl = response.data.links.find(link => link.rel === 'approve')?.href;
+        const payment_id = response.data.id;
+  
+        // Verificar que se haya obtenido la URL de aprobación y el ID de pago
+        if (approvalUrl && payment_id) {
+          await saveTransactionWithToken(emailSend, externalReference, payment_id, nombresArchivos);
+        } else {
           throw new Error('No se puede realizar el pago.');
         }
+  
+        return approvalUrl;
+      } catch (error) {
+        console.error('Error en createOrderPP:', error);
+        throw new Error('No se puede realizar el pago.');
       }
-
-    async captureOrderPP(token){
-
-        if(!token){
-            throw new Error('Token no existe')
+    }
+  
+    async captureOrderPP(token) {
+      try {
+        // Validar el token
+        if (!token) {
+          throw new Error('Token no existe');
         }
-        
-        const response = await paymentsRepositoryPP.createOrderPP(token);
-
+  
+        // Capturar la orden
+        const response = await paymentsRepositoryPP.captureOrderPP(token);
+  
+        // Obtener el ID de referencia y el ID de pago
         const referenceId = response.data.purchase_units[0].reference_id;
         const paymentId = response.data.id;
-
-        if(referenceId && paymentId && response){
-            await updateTransactionStatus(referenceId, response.data.status, paymentId);
-        }else{
-            throw new Error('No se puede realizar el pago.')
+  
+        // Verificar que se haya obtenido el ID de referencia y el ID de pago
+        if (referenceId && paymentId && response) {
+          await updateTransactionStatus(referenceId, response.data.status, paymentId);
+        } else {
+          throw new Error('No se puede realizar el pago.');
         }
-    
-        let foundedTransaction
-        if(paymentId){
-            foundedTransaction: await findTransactionByPaymentId(paymentId)
-        }
-        console.log(foundedTransaction,'foundedTransaction')
-    
-        return foundedTransaction
+  
+        // Buscar la transacción por el ID de pago
+        const foundedTransaction = paymentId ? await findTransactionByPaymentId(paymentId) : null;
+        console.log(foundedTransaction, 'foundedTransaction');
+  
+        return foundedTransaction;
+      } catch (error) {
+        console.error('Error en captureOrderPP:', error);
+        throw new Error('No se puede realizar el pago.');
+      }
     }
-
-
-}
-
-export const paymentsServicesPP = new PaymentsServicesPP()
+  }
+  
+  export const paymentsServicesPP = new PaymentsServicesPP();
