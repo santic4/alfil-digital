@@ -12,7 +12,7 @@ class PaymentsServicesMP{
     async createOrder(items, carrito, emailSend, externalReference){
 
         try {
-            console.log(items,'items', carrito,'carrito',emailSend,'emailSend', externalReference,'externalReference')
+            
             const preference = new Preference(client);
 
             if (!carrito || !externalReference) {
@@ -27,11 +27,15 @@ class PaymentsServicesMP{
                 throw new Error('No se pudo generar una referencia externa.');
             }
 
+            console.log('antes del for each')
+
             carrito.forEach(item => {
                 if (!item.id || !item.title || !item.quantity || !item.unit_price) {
                     throw new Error('Uno o más artículos del carrito no tienen todos los campos necesarios.');
                 }
             });
+
+            console.log('pase carrito for each')
 
             const response = await preference.create({
                 body: {
