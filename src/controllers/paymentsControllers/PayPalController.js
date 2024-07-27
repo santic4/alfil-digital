@@ -15,7 +15,7 @@ export const createOrder = async (req, res) => {
 
     return res.json({ redirectUrl: approvalUrl });
   } catch (error) {
-
+    console.error('Error al crear la orden:', error);
     return res.status(500).json("Error al crear la orden.");
   }
 };
