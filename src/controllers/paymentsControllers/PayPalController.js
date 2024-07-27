@@ -39,15 +39,16 @@ export const cancelOrder = (req, res) => res.redirect("https://alfil-digital.onr
 
 export const converterCurreny = async (req, res) => {
     try {
+      
         const response = await fetch("https://dolarapi.com/v1/dolares/blue")
         
         const data = await response.json();
 
         const usdRate = data.venta;
-    
+        console.log(usdRate,' usd Rate ')
         const costARS = req.body.amountARS;
         const convertedAmountUSD = (parseFloat(costARS) / usdRate).toFixed(2);
-    
+        console.log(convertedAmountUSD,' convertedAmountUSD  ')
         res.json({ amountUSD: convertedAmountUSD });
     
       } catch (error) {
