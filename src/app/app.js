@@ -23,6 +23,10 @@ app.use(express.static(path.join('public', 'build')));
 //    next();
 //});
 
+process.on('unhandledRejection', (error) => {
+    console.error('Unhandled Promise Rejection:', error);
+  });
+  
 // Middleware de CSP
 app.use((req, res, next) => {
     res.setHeader(

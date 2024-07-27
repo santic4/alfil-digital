@@ -17,6 +17,7 @@ export const createOrder = async (req, res) => {
     // Llamar al servicio para crear la orden
     const approvalUrl = await paymentsServicesPP.createOrderPP(currency, amountUSD, emailSend, carrito, externalReference);
 
+    console.log(approvalUrl,'approvalUrl')
     // Devolver la URL de aprobación al cliente
     return res.json({ redirectUrl: approvalUrl });
   } catch (error) {

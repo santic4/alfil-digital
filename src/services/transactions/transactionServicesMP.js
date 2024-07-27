@@ -3,8 +3,8 @@ import { DataInvalid } from "../../models/errors/dataInvalid.js";
 
 export const saveTransactionWithToken = async (emailSend, externalReference, payment_id, carrito) => {
   try {
-    if(!emailSend || externalReference || payment_id || carrito){
-      throw new DataInvalid()
+    if (!emailSend || !externalReference || !payment_id || !carrito) {
+      throw new DataInvalid();
     }
     const transaction = await transactionsDao.postTransaction(emailSend, externalReference, payment_id, carrito)
 
