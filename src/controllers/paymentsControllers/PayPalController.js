@@ -6,6 +6,7 @@ export const createOrder = async (req, res) => {
   try {
     // Validar los parámetros de entrada
     const { currency, amountUSD, emailSend, carrito } = req.body;
+    console.log(currency, amountUSD, emailSend, carrito, 'cosas que sirven');
     if (!currency || !amountUSD || !emailSend || !carrito) {
       return res.status(400).json({ message: 'Faltan parámetros requeridos' });
     }
