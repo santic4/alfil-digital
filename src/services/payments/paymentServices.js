@@ -11,6 +11,7 @@ const client = new MercadoPagoConfig({
 class PaymentsServicesMP{
     async createOrder(items, carrito, emailSend, externalReference){
         
+        console.log(items,'items', carrito,'carrito',emailSend,'emailSend', externalReference,'externalReference')
         const preference = new Preference(client);
 
         if (!carrito || !externalReference) {
