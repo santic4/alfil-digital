@@ -10,52 +10,57 @@ const client = new MercadoPagoConfig({
 
 class PaymentsServicesMP{
     async createOrder(items, carrito, emailSend, externalReference){
-        
-        console.log(items,'items', carrito,'carrito',emailSend,'emailSend', externalReference,'externalReference')
-        const preference = new Preference(client);
 
-        if (!carrito || !externalReference) {
-            throw new Error('Falta información requerida (carrito o externalReference)');
-        }
+        try {
+            console.log(items,'items', carrito,'carrito',emailSend,'emailSend', externalReference,'externalReference')
+            const preference = new Preference(client);
 
-        if (!carrito || carrito.length === 0) {
-            throw new Error('El carrito está vacío o no fue proporcionado.');
-        }
-
-        if (!externalReference) {
-            throw new Error('No se pudo generar una referencia externa.');
-        }
-
-        carrito.forEach(item => {
-            if (!item.id || !item.title || !item.quantity || !item.unit_price) {
-                throw new Error('Uno o más artículos del carrito no tienen todos los campos necesarios.');
+            if (!carrito || !externalReference) {
+                throw new Error('Falta información requerida (carrito o externalReference)');
             }
-        });
 
-        const response = await preference.create({
-            body: {
-                items: carrito,
-                back_urls: {
-                    success: 'https://alfil-digital.onrender.com',
-                    failure: 'https://alfil-digital.onrender.com',
-                    pending: 'https://alfil-digital.onrender.com'
-                } 
-                ,
-                notification_url: 'https://alfil-digital.onrender.com/api/cards/webhook',
-                external_reference: externalReference,
-                auto_return: 'approved'
+            if (!carrito || carrito.length === 0) {
+                throw new Error('El carrito está vacío o no fue proporcionado.');
             }
-        });
 
-        console.log(response.id,' response id mercado pago create ')
+            if (!externalReference) {
+                throw new Error('No se pudo generar una referencia externa.');
+            }
 
-        if(emailSend && externalReference){
-            await saveTransactionWithToken(emailSend, externalReference, response.id, items );
-        }else{
-            throw new DataInvalid()
-        }        
+            carrito.forEach(item => {
+                if (!item.id || !item.title || !item.quantity || !item.unit_price) {
+                    throw new Error('Uno o más artículos del carrito no tienen todos los campos necesarios.');
+                }
+            });
 
-        return response
+            const response = await preference.create({
+                body: {
+                    items: carrito,
+                    back_urls: {
+                        success: 'https://alfil-digital.onrender.com',
+                        failure: 'https://alfil-digital.onrender.com',
+                        pending: 'https://alfil-digital.onrender.com'
+                    } 
+                    ,
+                    notification_url: 'https://alfil-digital.onrender.com/api/cards/webhook',
+                    external_reference: externalReference,
+                    auto_return: 'approved'
+                }
+            });
+
+            console.log(response.id,' response id mercado pago create ')
+
+            if(emailSend && externalReference){
+                await saveTransactionWithToken(emailSend, externalReference, response.id, items );
+            }else{
+                throw new DataInvalid()
+            }        
+
+            return response
+        } catch (error) {
+        console.error('Error en createOrderMP:', error);
+        throw new Error('No se puede realizar el pago.');
+        }
     }
 
     async webHook(payment){
