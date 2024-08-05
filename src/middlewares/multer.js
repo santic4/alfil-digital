@@ -1,15 +1,16 @@
 import multer from 'multer';
+import fs from 'fs';
+import path from 'path';
 
 // Configuración de Multer para manejar la carga de archivos
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    console.log(file.fieldname,' file.fieldname ')
-    if (file.fieldname === 'files') {
-      cb(null, './statics/fileadj');
-    } else {
-      cb(null, './statics/photos'); 
+    const fileDir = file.fieldname === 'files' ? './statics/fileadj' : './statics/photos';
+    
+    // Verifica y crea el directorio si no existe
+    fs.mkdirSync(path.resolve(fileDir), { recursive: true });
 
-    }
+    cb(null, fileDir);
   },
   filename: function (req, file, cb) {
     cb(null, file.originalname);
