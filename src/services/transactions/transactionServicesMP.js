@@ -6,6 +6,7 @@ export const saveTransactionWithToken = async (emailSend, externalReference, pay
     if (!emailSend || !externalReference || !payment_id || !carrito) {
       throw new DataInvalid();
     }
+
     const transaction = await transactionsDao.postTransaction(emailSend, externalReference, payment_id, carrito)
 
     return transaction;
@@ -21,6 +22,7 @@ export const findTransactionByPaymentId = async (payment_id) => {
     }
     const transaction = await transactionsDao.getTransaction(payment_id)
 
+    console.log(transaction,' transactio en el find services ')
     return transaction;
   } catch (error) {
 

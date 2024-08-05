@@ -2,6 +2,7 @@
 
 export function metodosPersonalizados(req, res, next) {
     res['successfullGet'] = payload => {
+
       res.json({
         status: 'success',
         payload

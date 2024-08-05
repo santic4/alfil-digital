@@ -9,6 +9,7 @@ const client = new MercadoPagoConfig({
 })
 
 class PaymentsServicesMP{
+
     async createOrder(items, carrito, emailSend, externalReference){
 
         try {
@@ -27,32 +28,26 @@ class PaymentsServicesMP{
                 throw new Error('No se pudo generar una referencia externa.');
             }
 
-            console.log('antes del for each')
-
             carrito.forEach(item => {
                 if (!item.id || !item.title || !item.quantity || !item.unit_price) {
                     throw new Error('Uno o más artículos del carrito no tienen todos los campos necesarios.');
                 }
             });
 
-            console.log('pase carrito for each')
-
             const response = await preference.create({
                 body: {
                     items: carrito,
                     back_urls: {
-                        success: 'https://alfil-digital.onrender.com',
-                        failure: 'https://alfil-digital.onrender.com',
-                        pending: 'https://alfil-digital.onrender.com'
-                    } 
-                    ,
-                    notification_url: 'https://alfil-digital.onrender.com/api/cards/webhook',
+                        success: 'http://localhost:3000',
+                        failure: 'http://localhost:3000',
+                        pending: 'http://localhost:3000'
+                    },
+                    notification_url: 'https://6a16-152-170-212-171.ngrok-free.app/api/cards/webhook',
                     external_reference: externalReference,
                     auto_return: 'approved'
                 }
             });
 
-            console.log(response.id,' response id mercado pago create ')
 
             if(emailSend && externalReference){
                 await saveTransactionWithToken(emailSend, externalReference, response.id, items );
@@ -69,28 +64,35 @@ class PaymentsServicesMP{
 
     async webHook(payment){
         const application = new Payment(client);
+            try {
 
-        if (payment.type === 'payment') {
+          
+                if (payment.type === 'payment') {
+            
+                const captureResult = await application.capture({
+                    id: payment['data.id'],
+                    requestOptions: {
+                        idempotencyKey: 'abc'
+                    }
+                });
 
-            const captureResult = await application.capture({
-                id: payment['data.id'],
-                requestOptions: {
-                    idempotencyKey: 'abc'
+
+                if (captureResult.status !== 'approved' ) {
+                    throw new Error('Pago rechazado.')
                 }
-            });
+            
+                if (captureResult.status_detail === 'accredited' ) {
+                    await updateTransactionStatus(captureResult.external_reference, captureResult.status_detail, captureResult.id);
+                }
+            
+              } else {
+                  throw new Error('Tipo de pago no reconocido o no es un pago');
+              }
 
-            if (captureResult.status !== 'approved' ) {
-                throw new Error('Pago rechazado.')
+            }catch (error) {
+                console.error('Error en createOrderMP:', error);
+                    throw new Error('No se puede realizar el pago.');
             }
-
-            if (captureResult.status_detail === 'accredited' ) {
-                await updateTransactionStatus(captureResult.external_reference, captureResult.status_detail, captureResult.id);
-            }
-
-        } else {
-            throw new Error('Tipo de pago no reconocido o no es un pago');
-        }
-
     }
 }
 

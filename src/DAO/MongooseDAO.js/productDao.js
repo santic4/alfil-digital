@@ -13,7 +13,7 @@ class ProductDao{
     async getAllProductsAdmin(){
 
         const productAdmin = await Product.find({}).lean();
-        console.log(productAdmin,'product admin')
+       
         return productAdmin
 
     }
@@ -34,6 +34,7 @@ class ProductDao{
 
     async postProduct(userId, newData){
 
+        console.log(userId,' user id', newData, 'newDAta eb DAO')
         newData.owner = userId;
 
         let inserted = false;

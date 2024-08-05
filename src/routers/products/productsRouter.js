@@ -13,6 +13,8 @@ productsRouter.get('/',
 
 // PUT /products/admin
 productsRouter.get('/admin', 
+  passportAuth,
+  adminsOnly,
   getAllProductsAdmin
 )
 
@@ -49,7 +51,6 @@ productsRouter.post('/featured-products', async (req, res) => {
       category: body.category
     }
 
-    console.log(schema)
     const newProduct = await FeaturedProducts.create(schema);
 
     await newProduct;
@@ -75,7 +76,10 @@ productsRouter.get('/:pid',
 
 
 // POST /products/
-const handleUpload = upload.array('files', 20);
+const handleUpload = upload.fields([
+  { name: 'files', maxCount: 20 },
+  { name: 'images', maxCount: 10 }
+]);
 
 productsRouter.post('/',
   passportAuth,

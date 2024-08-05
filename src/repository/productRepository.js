@@ -44,6 +44,7 @@ class ProductRepository{
         try {
             const newProduct = await productDao.postProduct(userId, newData)
 
+          
             return newProduct
         } catch (error) {
             console.error(error.message)

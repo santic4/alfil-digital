@@ -4,7 +4,9 @@ import { captureMP, createOrderMP,  successOrder,  webHookMP } from '../../contr
 
 export const MercadoPagoRouter = Router();
 
-MercadoPagoRouter.post('/create-order', createOrderMP)
+MercadoPagoRouter.post('/create-order', 
+    createOrderMP
+)
 
 MercadoPagoRouter.get('/success', 
     successOrder

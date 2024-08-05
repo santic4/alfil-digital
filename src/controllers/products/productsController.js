@@ -1,5 +1,6 @@
 import { Product } from "../../models/mongoose/productModel.js";
 import { productServices } from "../../services/products/productServices.js";
+import { logger } from "../../utils/logger.js";
 
 export const getAllProducts = async (req, res, next) => {
     try {
@@ -23,7 +24,6 @@ export const getAllProducts = async (req, res, next) => {
 
 export const getAllProductsAdmin = async (req, res, next) => {
     try {
-        console.log('entre')
 
         const productAdmin = await productServices.getAllProductsAdmin();
 
@@ -94,16 +94,31 @@ export const getProductId = async (req, res, next) => {
     }
 }
 
+export const check = async (req, res, next) => {
+  try {
+    
+    const file = req.file
+     res.json(newProduct)
+
+  } catch (error) {
+    console.log(error.message,'error')
+     next(error)
+  }
+}
+
+
 export const postProduct = async (req, res, next) => {
   try {
      const newData = req.body;
-
+    
      const userPer = req.user
-
+ 
      const { files } = req;
-
-     const imageFiles = files.filter((file) => file.mimetype.startsWith('image/'));
-     const fileadjuntos = files.filter(file => !file.mimetype.startsWith('image/'));
+  
+     console.log(files.images,' files images')
+     console.log(files.files,' files files')
+     const imageFiles = files.images
+     const fileadjuntos = files.files
      
      if (imageFiles && imageFiles.length > 0) {
          newData.images = imageFiles.map(file => `${file.filename}`);
@@ -139,9 +154,10 @@ export const updateProduct = async (req, res, next) => {
 
 export const deleteProduct = async (req, res, next) => {
   try{
-      const idProduct = await productServices.deleteProduct(req.params.pid, req.user._id)
-      
-      res.json(idProduct)
+
+    const idProduct = await productServices.deleteProduct(req.params.pid, req.user.url._id)
+    console.log(idProduct,'idProduct delete ')
+    res.json(idProduct)
 
   }catch(err){
       next(err)

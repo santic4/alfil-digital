@@ -1,7 +1,7 @@
 
 export const loginUser = async (req, res, next) => {
   try {
-
+    console.log(req.user,'requser')
     res.successfullPost(req.user);
 
   } catch (err) {
@@ -12,6 +12,7 @@ export const loginUser = async (req, res, next) => {
 
 export const getCurrentSessionUser = async (req, res, next) => {
   try {
+    console.log(req.user, 'userrr')
 
     res.successfullGet(req.user);
   } catch (err) {

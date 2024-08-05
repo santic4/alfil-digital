@@ -25,19 +25,22 @@ class UsersServices {
         return userDTO
     }
 
-    async findUserByUsername({username, password}){
+    async findUserByUsername(username, password){
         try {
+      
+          console.log(username,'username')
+          console.log(password,'password')
             const user = await usersRepository.findUserByUsername({username})
-            
+         
             if (!user) { throw new AuthenticationError() }
-
+   
             if (!hasheadasSonIguales({
                 recibida: password,
                 almacenada: user.password
               })) {
                 throw new AuthenticationError()
               }
-
+              console.log(user,'user en repository')
             return user
         } catch (error) {
             throw new AuthenticationError()

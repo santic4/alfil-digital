@@ -6,7 +6,10 @@ export const getFile = async (req, res, next) => {
     const paymentID = req.headers['payment-id'];
 
     try {
+        console.log('1paymentID, 1fileName',paymentID, fileName)
+
         const file = await downloadServices.getFile(paymentID, fileName)
+        console.log('paymentID, fileName',paymentID, fileName)
 
         res.download(file, (err) => {
             if (err) {
@@ -24,6 +27,8 @@ export const getFile = async (req, res, next) => {
 export const DownloadFile = async (req, res, next) => {
     try{
         const token = req.params.token;
+
+        console.log('token',token)
 
         const file = await downloadServices.getDownloadFile(token)
 
@@ -54,8 +59,9 @@ export const adjuntProducts = async (req, res, next) => {
     const paymentID = req.headers['payment-id'];
 
     try {
+        console.log(paymentID,'paymentID')
         await downloadServices.adjuntFiles(paymentID)
-
+        console.log('pase paymentID')
         return res.status(200).json({ status: 'Email enviado.' });
     } catch (error) {
         next(error)

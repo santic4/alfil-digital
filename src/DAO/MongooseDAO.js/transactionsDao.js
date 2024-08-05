@@ -7,6 +7,8 @@ class TransactionsDao {
       try{
         const transaction = await Transaction.findOne({payment_id}).lean();
 
+        console.log(transaction,'transaction DAO MONGOOSE')
+
         return transaction
       }catch(error){
         throw new Error(`Error al obtener el transacción por ID: ${error.message}`);
@@ -17,6 +19,7 @@ class TransactionsDao {
         try{
         const existingTransaction = await Transaction.findOne({ externalReference });
             
+        
         if (!existingTransaction) {
           const transaction = new Transaction({
             emailSend: emailSend,
@@ -25,7 +28,7 @@ class TransactionsDao {
             carrito
           });
           await transaction.save();
-      
+   
         } else {
           console.log('Transacción ya existe');
         }

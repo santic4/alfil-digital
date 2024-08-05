@@ -56,16 +56,17 @@ class ProductServices{
 
 
     async postProduct(user ,newData){
-
+  
         if (newData.price < 0) {
             throw new Error('El precio del producto no puede ser negativo.');
         }
+   
 
-        if (user.rol !== 'admin') {
+        if (user.url.rol !== 'admin') {
             throw new PermissionsError();
         }
-
-        const userId = user._id
+  
+        const userId = user.url._id
 
         const newProduct = await productRepository.postProduct(userId, newData)
 
@@ -103,19 +104,17 @@ class ProductServices{
 
         const Usuario = await usersRepository.findById(userId)
     
+   
         if (!Usuario) {
             throw new Error('Usuario no encontrado');
         }
 
-        if (!(Usuario.rol === 'admin' || Usuario.rol === 'premium')) {
+        if (Usuario.rol !== 'admin' ){
             throw new Error('No tienes permisos para modificar productos');
         }
 
         const product = await productRepository.getProductId(pid);
-
-        if (product.owner.toString() !== userId) {
-             throw new Error('No tienes permisos para modificar este producto');
-        }
+        console.log(product,'product')
 
         const delProducto = await productRepository.deleteProduct(pid);
 

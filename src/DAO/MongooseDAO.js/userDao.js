@@ -17,9 +17,10 @@ class UserDao {
         }
     };
 
-    async findUserByUsername({username}) {
+    async findUserByUsername(username) {
       try {
-        const user = await usersManager.findOne({ username })
+ 
+        const user = await usersManager.findOne( username )
 
         user.last_connection = new Date();
         await user.save();
@@ -63,7 +64,7 @@ class UserDao {
     }
 
     async userById(id){
-
+      console.log(id,'id')
       const result = await usersManager.findOne({ _id: id }).lean()
 
       return result

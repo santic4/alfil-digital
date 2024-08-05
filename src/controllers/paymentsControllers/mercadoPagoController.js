@@ -9,7 +9,9 @@ export const createOrderMP = async (req, res) => {
     const externalReference = generateToken();
 
     try {
-        const response = paymentsServicesMP.createOrder(items, carrito, emailSend, externalReference);
+        const response = await paymentsServicesMP.createOrder(items, carrito, emailSend, externalReference);
+     
+        console.log('response',response)
 
         res.status(200).json(response);
     } catch (error) {
@@ -50,7 +52,7 @@ export const captureMP = async (req, res) => {
 
     try {
         const foundedTransaction = await findTransactionByPaymentId(payment)
-
+        console.log('foundedTransaction',foundedTransaction)
         if(foundedTransaction?.status === 'accredited'){
             return res.json({ 
                 status: 'Pago capturado exitosamente',

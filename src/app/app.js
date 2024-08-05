@@ -7,21 +7,21 @@ import { metodosPersonalizados } from '../middlewares/respuestasMejoradas.js';
 import { passportInitialize } from '../middlewares/authentication.js';
 import { cookies } from '../middlewares/cookie.js';
 import { sesiones } from '../middlewares/sesiones.js';
-//import cors from 'cors'
+import cors from 'cors'
 
 export const app = express();
-console.log(path.join('public', 'build', 'index.html'));
-app.use(express.static(path.join('public', 'build')));
+// console.log(path.join('public', 'build', 'index.html'));
+// app.use(express.static(path.join('public', 'build')));
 
-//app.use(cors({
-//    origin: 'http://localhost:3000',
-//    credentials: true 
-//}));
-//app.use((req, res, next) => {
-//    res.header('Access-Control-Allow-Origin', 'http://localhost:3000');
-//    res.header('Access-Control-Allow-Credentials', 'true');
-//    next();
-//});
+app.use(cors({
+    origin: 'http://localhost:3000',
+    credentials: true 
+}));
+app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', 'http://localhost:3000');
+    res.header('Access-Control-Allow-Credentials', 'true');
+    next();
+});
 
 process.on('unhandledRejection', (error) => {
     console.error('Unhandled Promise Rejection:', error);

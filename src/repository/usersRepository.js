@@ -15,8 +15,9 @@ class UsersRepository {
 
     async findUserByUsername({username}){
         try {
-            const user = await userDao.findUserByUsername({ username })
-
+           
+            const user = await userDao.findUserByUsername( {username} )
+       
             return user
 
         } catch (error) {
