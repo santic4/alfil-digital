@@ -25,7 +25,7 @@ export const successOrder = async (req, res) => {
         const{ payment_id} = req.query;
 
         if (payment_id) {
-            res.redirect(`https://alfil-digital.onrender.com?payment_id=${payment_id}`);
+            res.redirect(`http://localhost:3000?payment_id=${payment_id}`);
         } else {
             throw new Error('Transacción no encontrada o no coincide con el payment_id');
         }

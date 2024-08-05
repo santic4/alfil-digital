@@ -115,8 +115,6 @@ export const postProduct = async (req, res, next) => {
  
      const { files } = req;
   
-     console.log(files.images,' files images')
-     console.log(files.files,' files files')
      const imageFiles = files.images
      const fileadjuntos = files.files
      

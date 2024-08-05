@@ -40,16 +40,17 @@ class PaymentsServicesPP {
         if (!token) {
           throw new Error('Token no existe');
         }
-  
+        console.log('captureOrderPPtoken',token)
         // Capturar la orden
         const response = await paymentsRepositoryPP.captureOrderPP(token);
   
         // Obtener el ID de referencia y el ID de pago
         const referenceId = response.data.purchase_units[0].reference_id;
         const paymentId = response.data.id;
-  
+        console.log('referenceId paymentId',referenceId,paymentId)
         // Verificar que se haya obtenido el ID de referencia y el ID de pago
         if (referenceId && paymentId && response) {
+          console.log('referenceId && paymentId && response',referenceId, paymentId, response)
           await updateTransactionStatus(referenceId, response.data.status, paymentId);
         } else {
           throw new Error('No se puede realizar el pago.');

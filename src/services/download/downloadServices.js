@@ -7,7 +7,7 @@ import { DataInvalid } from "../../models/errors/dataInvalid.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const directory = path.join(__dirname, '../../statics/fileadj/');
+const directory = path.join(__dirname, '../../../statics/fileadj/');
 
 class DownloadServices {
 
@@ -23,7 +23,7 @@ class DownloadServices {
             throw new DataInvalid()
         }
         
-        const fileUrl =  path.join(directory, fileName);
+        const fileUrl = path.join(directory, fileName);
         console.log('fileUrl',fileUrl)
         return fileUrl
     }

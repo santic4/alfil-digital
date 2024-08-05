@@ -3,13 +3,12 @@ import multer from 'multer';
 // Configuración de Multer para manejar la carga de archivos
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    console.log(req.body)
-    console.log(file,' file ')
-    if (file.mimetype.startsWith('image/')) {
+    console.log(file.fieldname,' file.fieldname ')
+    if (file.fieldname === 'files') {
+      cb(null, './statics/fileadj');
+    } else {
       cb(null, './statics/photos'); 
 
-    } else {
-      cb(null, './statics/fileadj');
     }
   },
   filename: function (req, file, cb) {

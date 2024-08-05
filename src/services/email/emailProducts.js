@@ -15,7 +15,7 @@ class CartServicesMP {
 
           const fileUrlsEncoded = await Promise.all(fileUrls.map(async (file) => {
             const token = await encriptar(file);
-            return `https://alfil-digital.onrender.com/api/checkout/download/${token}`; 
+            return `http://localhost:/api/checkout/download/${token}`; 
           }));
       
           const message = `

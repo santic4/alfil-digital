@@ -9,7 +9,7 @@ export const getFile = async (req, res, next) => {
         console.log('1paymentID, 1fileName',paymentID, fileName)
 
         const file = await downloadServices.getFile(paymentID, fileName)
-        console.log('paymentID, fileName',paymentID, fileName)
+        console.log('paymentID, fileNamefile',file)
 
         res.download(file, (err) => {
             if (err) {

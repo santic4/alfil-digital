@@ -4,7 +4,7 @@ import { saveTransactionWithToken, updateTransactionStatus } from '../transactio
 import { DataInvalid } from '../../models/errors/dataInvalid.js';
 
 const client = new MercadoPagoConfig({
-    accessToken: ACCESS_TOKEN_MP,
+    accessToken:"APP_USR-4646418936536455-051102-9c9a15b2c4e55bc8b7ca461272059450-1808896698",
     options: { timeout: 10000, idempotencyKey: 'abc' }
 })
 
@@ -38,15 +38,17 @@ class PaymentsServicesMP{
                 body: {
                     items: carrito,
                     back_urls: {
-                        success: 'http://localhost:3000',
-                        failure: 'http://localhost:3000',
-                        pending: 'http://localhost:3000'
+                        success: 'https://fa0e-152-170-212-171.ngrok-free.app',
+                        failure: 'https://fa0e-152-170-212-171.ngrok-free.app',
+                        pending: 'https://fa0e-152-170-212-171.ngrok-free.app'
                     },
-                    notification_url: 'https://6a16-152-170-212-171.ngrok-free.app/api/cards/webhook',
+                    notification_url: 'https://fa0e-152-170-212-171.ngrok-free.app/api/cards/webhook',
                     external_reference: externalReference,
                     auto_return: 'approved'
                 }
             });
+
+            console.log(response,'response en create')
 
 
             if(emailSend && externalReference){
@@ -77,6 +79,7 @@ class PaymentsServicesMP{
                 });
 
 
+                console.log(captureResult,'capture result en services ')
                 if (captureResult.status !== 'approved' ) {
                     throw new Error('Pago rechazado.')
                 }

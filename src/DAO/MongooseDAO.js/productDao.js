@@ -34,12 +34,12 @@ class ProductDao{
 
     async postProduct(userId, newData){
 
-        console.log(userId,' user id', newData, 'newDAta eb DAO')
+      
         newData.owner = userId;
 
         let inserted = false;
         let newProduct;
-    
+        console.log(newData,'newData')
         while (!inserted) {
             try {
                 newData._id = randomUUID(); 
