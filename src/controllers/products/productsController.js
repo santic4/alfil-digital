@@ -117,6 +117,8 @@ export const postProduct = async (req, res, next) => {
   
      const imageFiles = files.images
      const fileadjuntos = files.files
+
+     console.log('postproduct', imageFiles, fileadjuntos, 'fileadjuntos')
      
      if (imageFiles && imageFiles.length > 0) {
          newData.images = imageFiles.map(file => `${file.filename}`);
