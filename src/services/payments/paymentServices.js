@@ -4,7 +4,7 @@ import { saveTransactionWithToken, updateTransactionStatus } from '../transactio
 import { DataInvalid } from '../../models/errors/dataInvalid.js';
 
 const client = new MercadoPagoConfig({
-    accessToken:"APP_USR-4646418936536455-051102-9c9a15b2c4e55bc8b7ca461272059450-1808896698",
+    accessToken:ACCESS_TOKEN_MP,
     options: { timeout: 10000, idempotencyKey: 'abc' }
 })
 
@@ -38,11 +38,11 @@ class PaymentsServicesMP{
                 body: {
                     items: carrito,
                     back_urls: {
-                        success: 'https://fa0e-152-170-212-171.ngrok-free.app',
-                        failure: 'https://fa0e-152-170-212-171.ngrok-free.app',
-                        pending: 'https://fa0e-152-170-212-171.ngrok-free.app'
+                        success: 'https://alfil-digital.onrender.com',
+                        failure: 'https://alfil-digital.onrender.com',
+                        pending: 'https://alfil-digital.onrender.com'
                     },
-                    notification_url: 'https://fa0e-152-170-212-171.ngrok-free.app/api/cards/webhook',
+                    notification_url: 'https://alfil-digital.onrender.com/api/cards/webhook',
                     external_reference: externalReference,
                     auto_return: 'approved'
                 }
