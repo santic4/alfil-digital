@@ -41,9 +41,9 @@ class PaymentsServicesMP{
                     additional_info: 'ALFIL DIGITAL',
                     auto_return: 'approved',
                     back_urls: {
-                        success: 'https://alfil-digital.onrender.com/success',
-                        failure: 'https://alfil-digital.onrender.com/failure',
-                        pending: 'https://alfil-digital.onrender.com/pending'
+                        success: 'https://alfil-digital.onrender.com/',
+                        failure: 'https://alfil-digital.onrender.com/',
+                        pending: 'https://alfil-digital.onrender.com/'
                     },
                     expiration_date_from: new Date().toISOString(), // Se ajusta a la fecha actual para la demostración
                     expiration_date_to: new Date(new Date().getTime() + 24 * 60 * 60 * 1000).toISOString(), // Se ajusta a 24 horas después
@@ -52,16 +52,16 @@ class PaymentsServicesMP{
                     items: carrito,
                     notification_url: 'https://alfil-digital.onrender.com/api/cards/webhook',
                     payer: {
-                        name: 'Santiago',
-                        surname: 'Cañu',
-                        email: emailSend,
+                        name: 'Nahuel',
+                        surname: 'Canu Corniglia',
+                        email: 'nahuel_1996_06@hotmail.com',
                         phone: {
-                            area_code: '2342',
-                            number: '510893'
+                            area_code: '2346',
+                            number: '466693'
                         },
                         identification: {
                             type: 'DNI',
-                            number: '42058009'
+                            number: '39485990'
                         },
                         address: {
                             zip_code: '6640',
