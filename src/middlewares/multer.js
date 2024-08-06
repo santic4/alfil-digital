@@ -6,10 +6,11 @@ import path from 'path';
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     const fileDir = file.fieldname === 'files' ? './statics/fileadj' : './statics/photos';
-    
+    console.log(fileDir,'file dir1')
     // Verifica y crea el directorio si no existe
     fs.mkdirSync(path.resolve(fileDir), { recursive: true });
 
+    console.log(fileDir,'file dir2')
     cb(null, fileDir);
   },
   filename: function (req, file, cb) {
@@ -21,7 +22,7 @@ const storage = multer.diskStorage({
 const upload = multer({
   storage: storage,
   limits: {
-    fileSize: 100 * 1024 * 1024, 
+    fileSize: 2500 * 4024 * 4024, 
   },
 });
 
