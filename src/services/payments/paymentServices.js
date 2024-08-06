@@ -35,7 +35,7 @@ class PaymentsServicesMP{
             });
 
 
-
+            console.log('antes de response en create')
             const response = await preference.create({
                 body: {
                     items: carrito,

@@ -16,7 +16,7 @@ export const createOrderMP = async (req, res) => {
         res.status(200).json(response);
     } catch (error) {
         logger.error('Error al crear la preferencia:', error);
-        res.sendStatus(200);
+        res.sendStatus(400);
     }
 }
 
