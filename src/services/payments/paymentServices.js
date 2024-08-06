@@ -1,7 +1,7 @@
 import { MercadoPagoConfig, Payment, Preference } from 'mercadopago';
-import { ACCESS_TOKEN_MP } from '../../config/config.js';
 import { saveTransactionWithToken, updateTransactionStatus } from '../transactions/transactionServicesMP.js';
 import { DataInvalid } from '../../models/errors/dataInvalid.js';
+import { ACCESS_TOKEN_MP } from '../../config/config.js';
 
 const client = new MercadoPagoConfig({
     accessToken:ACCESS_TOKEN_MP,
@@ -33,6 +33,8 @@ class PaymentsServicesMP{
                     throw new Error('Uno o más artículos del carrito no tienen todos los campos necesarios.');
                 }
             });
+
+
 
             const response = await preference.create({
                 body: {
