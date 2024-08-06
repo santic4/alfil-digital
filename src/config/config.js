@@ -33,3 +33,7 @@ export const PAYPAL_API = process.env.PAYPAL_API
 
 // MP ACCESS_TOKEN_MP
 export const ACCESS_TOKEN_MP = process.env.ACCESS_TOKEN_MP
+
+export const FIREBASE_CLIENT_EMAIL = process.env.FIREBASE_CLIENT_EMAIL
+export const FIREBASE_PRIVATE_KEY = process.env.FIREBASE_PRIVATE_KEY
+export const FIREBASE_PROJECT_ID = process.env.FIREBASE_PROJECT_ID
