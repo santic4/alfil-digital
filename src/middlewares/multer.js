@@ -8,9 +8,9 @@ const storage = multer.diskStorage({
     // Define el directorio de destino según el campo del archivo
     let fileDir;
     if (file.fieldname === 'files') {
-      fileDir = path.join(__dirname, '../../statics/fileadj');
+      fileDir = '../../statics/fileadj';
     } else {
-      fileDir = path.join(__dirname, '../../statics/photos');
+      fileDir = '../../statics/photos';
     }
 
     // Verifica y crea el directorio si no existe
