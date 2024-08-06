@@ -1,10 +1,6 @@
 import multer from 'multer';
 import fs from 'fs';
 import path from 'path';
-import { fileURLToPath } from 'url';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 // Configuración de Multer para manejar la carga de archivos
 const storage = multer.diskStorage({
@@ -14,7 +10,7 @@ const storage = multer.diskStorage({
     if (file.fieldname === 'files') {
       fileDir = path.join(__dirname, '../../statics/fileadj');
     } else {
-      fileDir = path.join(__dirname, '../../statics/images');
+      fileDir = path.join(__dirname, '../../statics/photos');
     }
 
     // Verifica y crea el directorio si no existe
