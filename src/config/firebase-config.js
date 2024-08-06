@@ -1,8 +1,4 @@
 import admin from 'firebase-admin';
-import dotenv from 'dotenv';
-
-dotenv.config();
-console.log(process.env.FIREBASE_BUCKKET,'storageBucket')
 
 // Verificar si las variables de entorno están definidas
 const projectId = process.env.FIREBASE_PROJECT_ID;
