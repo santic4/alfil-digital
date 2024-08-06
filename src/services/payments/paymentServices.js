@@ -1,5 +1,5 @@
 import { MercadoPagoConfig, Payment, Preference } from 'mercadopago';
-import { saveTransactionWithToken, updateTransactionStatus } from '../transactions/transactionServicesMP.js';
+import { findTransactionByPaymentId, saveTransactionWithToken, updateTransactionStatusMercadoPago } from '../transactions/transactionServicesMP.js';
 import { DataInvalid } from '../../models/errors/dataInvalid.js';
 import { ACCESS_TOKEN_MP } from '../../config/config.js';
 
@@ -116,8 +116,14 @@ class PaymentsServicesMP{
                 }
             
                 if (captureResult.status_detail === 'accredited' ) {
-                    await updateTransactionStatus(captureResult.external_reference, captureResult.status_detail, captureResult.id);
+                    await updateTransactionStatusMercadoPago(captureResult.external_reference, captureResult.status_detail, captureResult.id);
                 }
+
+                        // Buscar la transacción por el ID de pago
+                const foundedTransaction = payment['data.id'] ? await findTransactionByPaymentId(payment['data.id']) : null;
+                console.log(foundedTransaction, 'foundedTransaction');
+
+                return foundedTransaction;
             
               } else {
                   throw new Error('Tipo de pago no reconocido o no es un pago');

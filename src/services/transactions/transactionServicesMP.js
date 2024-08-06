@@ -43,6 +43,19 @@ export const updateTransactionStatus = async (externalReference, status, payment
   }
 };
 
+export const updateTransactionStatusMercadoPago = async (externalReference, status, payment_id) => {
+  try {
+    if(!payment_id || !externalReference  || !status){
+      throw new DataInvalid()
+    }
+    await transactionsDao.updateTransactionMercadoPago(externalReference, status, payment_id);
+
+  } catch (error) {
+
+    throw new Error('Error al actualizar el estado de la transacción');
+  }
+};
+
 export const findTransactionGetAll = async () => {
   try {
     const transactionDTO = await transactionsDao.getAllTransactions();

@@ -40,20 +40,37 @@ class TransactionsDao {
     async updateTransaction(externalReference, status, payment_id){
         try{
           
-          console.log('update transaction dao', externalReference,'-', status,'-', payment_id)
-            const existingTransaction = await Transaction.findOne({ payment_id });
+          const existingTransaction = await Transaction.findOne({ payment_id });
 
-            if (existingTransaction?.status === 'pending') {
-              await Transaction.findOneAndUpdate(
-                { externalReference },
-                { status, payment_id }
-              );  
-            }
+          if (existingTransaction?.status === 'pending') {
+            await Transaction.findOneAndUpdate(
+              { externalReference },
+              { status, payment_id }
+            );  
+          }
 
         }catch(error){
           throw new Error(`Error al actualizar la transacción: ${error.message}`);
         }
     }
+
+    async updateTransactionMercadoPago(externalReference, status, payment_id){
+      try{
+        
+        console.log('update transaction dao', externalReference,'-', status,'-', payment_id)
+          const existingTransaction = await Transaction.findOne({ externalReference });
+
+          if (existingTransaction?.status === 'pending') {
+            await Transaction.findOneAndUpdate(
+              { externalReference },
+              { status, payment_id }
+            );  
+          }
+
+      }catch(error){
+        throw new Error(`Error al actualizar la transacción: ${error.message}`);
+      }
+  }
 
     async getAllTransactions(){
         try{
