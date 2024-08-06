@@ -1,6 +1,6 @@
 import admin from 'firebase-admin';
 import { getStorage } from 'firebase-admin/storage';
-import serviceAccount from '../config/serviceAccountKey.json' assert { type: 'json' };
+import serviceAccount from './serviceAccountKey.json' assert { type: 'json' };
 
 // Inicializa Firebase Admin
 admin.initializeApp({
