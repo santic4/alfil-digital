@@ -73,7 +73,6 @@ class PaymentsServicesMP{
                     payment_methods: {
                         excluded_payment_methods: [],
                         excluded_payment_types: [],
-                        default_payment_method_id: '',
                         installments: 10,
                         default_installments: 1
                     }
