@@ -1,6 +1,11 @@
 import multer from 'multer';
 import fs from 'fs';
 import path from 'path';
+import { fileURLToPath } from 'url';
+
+// Convertir import.meta.url a ruta de sistema de archivos
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Configuración de Multer para manejar la carga de archivos
 const storage = multer.diskStorage({
@@ -8,11 +13,12 @@ const storage = multer.diskStorage({
     // Define el directorio de destino según el campo del archivo
     let fileDir;
     if (file.fieldname === 'files') {
-      fileDir = '/statics/fileadj';
+      fileDir = path.join(__dirname, '../../statics/fileadj');
     } else {
-      fileDir = '/statics/photos';
+      fileDir = path.join(__dirname, '../../statics/photos');
     }
 
+    console.log(fileDir,'fileDir')
     // Verifica y crea el directorio si no existe
     fs.mkdirSync(fileDir, { recursive: true });
 
