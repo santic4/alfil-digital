@@ -22,9 +22,7 @@ app.use(express.static(path.join('public', 'build')));
 //    res.header('Access-Control-Allow-Credentials', 'true');
 //    next();
 //});
-app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'build', 'index.html'));
-});
+
 process.on('unhandledRejection', (error) => {
     console.error('Unhandled Promise Rejection:', error);
   });
