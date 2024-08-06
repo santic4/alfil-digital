@@ -3,7 +3,7 @@ import multer from 'multer';
 // Configuración de Multer para manejar la carga de archivos
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    // Define el directorio de destino según el campo del archivo
+    console.log(file,' file cada uno')
     let fileDir;
     if (file.fieldname === 'files') {
       fileDir = './statics/fileadj'; 
