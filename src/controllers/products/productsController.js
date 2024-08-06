@@ -1,3 +1,4 @@
+import { bucket } from "../../config/firebase-config.js";
 import { Product } from "../../models/mongoose/productModel.js";
 import { productServices } from "../../services/products/productServices.js";
 import { logger } from "../../utils/logger.js";
@@ -98,7 +99,7 @@ export const check = async (req, res, next) => {
   try {
     
     const file = req.file
-     res.json(newProduct)
+     res.json(file)
 
   } catch (error) {
     console.log(error.message,'error')
@@ -109,35 +110,44 @@ export const check = async (req, res, next) => {
 
 export const postProduct = async (req, res, next) => {
   try {
-     const newData = req.body;
+    const newData = req.body;
+    const { files } = req;
     
-     const userPer = req.user
- 
-     const { files } = req;
-  
-     const imageFiles = files.images
-     const fileadjuntos = files.files
+    const imageFiles = files.images || [];
+    const fileadjuntos = files.files || [];
+    
+    const imageUrls = [];
+    const fileUrls = [];
+    console.log('llegue aca ')
 
-     console.log('postproduct', imageFiles, fileadjuntos, 'fileadjuntos')
-     
-     if (imageFiles && imageFiles.length > 0) {
-         newData.images = imageFiles.map(file => `${file.filename}`);
-     }
+    // Subir imágenes a Firebase Storage
+    for (const file of imageFiles) {
+      const fileUpload = bucket.file(`images/${file.originalname}`);
+      await fileUpload.save(file.buffer, { contentType: file.mimetype });
+      const imageUrl = `https://firebasestorage.googleapis.com/v0/b/${bucket.name}/o/${encodeURIComponent(fileUpload.name)}?alt=media`;
+      imageUrls.push(imageUrl);
+    }
 
-     if (fileadjuntos) {
-      const fileadjArray = fileadjuntos.map(file => file.filename);
-      newData.fileadj = fileadjArray;
-     }
+    // Subir archivos a Firebase Storage
+    for (const file of fileadjuntos) {
+      const fileUpload = bucket.file(`files/${file.originalname}`);
+      await fileUpload.save(file.buffer, { contentType: file.mimetype });
+      const fileUrl = `https://firebasestorage.googleapis.com/v0/b/${bucket.name}/o/${encodeURIComponent(fileUpload.name)}?alt=media`;
+      fileUrls.push(fileUrl);
+    }
 
-     const newProduct = await productServices.postProduct(userPer ,newData)
+    // Guardar las URLs en el objeto newData
+    newData.images = imageUrls;
+    newData.fileadj = fileUrls;
 
-     res.json(newProduct)
+    const newProduct = await productServices.postProduct(req.user, newData);
 
+    res.json(newProduct);
   } catch (error) {
-    console.log(error.message,'error')
-     next(error)
+    console.log(error.message, 'error');
+    next(error);
   }
-}
+};
 
 // 
 

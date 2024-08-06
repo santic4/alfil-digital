@@ -16,5 +16,9 @@ node_modules
 .env.production
 node_modules
 
+/src/config/serviceAccountKey.json
+src/config/serviceAccountKey.json
+serviceAccountKey.json
+
 package-lock.json
 ngrok.exe

@@ -4,7 +4,7 @@ import { findTransactionByPaymentId, saveTransactionWithToken, updateTransaction
 class PaymentsServicesPP {
     async createOrderPP(currency_selected, amountUSD, emailSend, carrito, externalReference) {
       try {
-        console.log(currency_selected, amountUSD, emailSend, carrito, externalReference ,' wb wk serucesc');
+        
         // Validar los parámetros de entrada
         if (!currency_selected || !amountUSD || !emailSend || !carrito || !externalReference) {
           throw new Error('Token no existe');

@@ -4,21 +4,18 @@ import { paymentsServicesPP } from "../../services/payments/paymentServicesPP.js
 
 export const createOrder = async (req, res) => {
   try {
-    // Validar los parámetros de entrada
     const { currency, amountUSD, emailSend, carrito } = req.body;
-    console.log(currency, amountUSD, emailSend, carrito, 'cosas que sirven');
+    
     if (!currency || !amountUSD || !emailSend || !carrito) {
       return res.status(400).json({ message: 'Faltan parámetros requeridos' });
     }
 
     const externalReference = generateToken();
-    console.log(currency, amountUSD, emailSend, carrito, externalReference, 'cosas que sirven');
 
-    // Llamar al servicio para crear la orden
     const approvalUrl = await paymentsServicesPP.createOrderPP(currency, amountUSD, emailSend, carrito, externalReference);
 
     console.log(approvalUrl,'approvalUrl')
-    // Devolver la URL de aprobación al cliente
+
     return res.json({ redirectUrl: approvalUrl });
   } catch (error) {
     console.error('Error al crear la orden:', error);
