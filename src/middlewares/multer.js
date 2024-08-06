@@ -2,18 +2,28 @@ import multer from 'multer';
 import fs from 'fs';
 import path from 'path';
 
-// Configuración de Multer para manejar la carga de archivos
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    const fileDir = file.fieldname === 'files' ? './statics/fileadj' : './statics/photos';
-    console.log(fileDir,'file dir1')
-    // Verifica y crea el directorio si no existe
-    fs.mkdirSync(path.resolve(fileDir), { recursive: true });
+    console.log(file,'fileeeee')
+    let fileDir;
+    if (file.fieldname === 'files') {
+      fileDir = '../statics/fileadj';
+    } else {
+      fileDir = '../statics/photos';
+    }
 
-    console.log(fileDir,'file dir2')
-    cb(null, fileDir);
+    console.log(fileDir,'fileDir1')
+    // Resuelve la ruta absoluta desde el directorio actual
+    const resolvedPath = path.resolve(__dirname, fileDir);
+    console.log(resolvedPath,'resolvedPath')
+    // Verifica y crea el directorio si no existe
+    fs.mkdirSync(resolvedPath, { recursive: true });
+
+    // Llama al callback con el directorio de destino
+    cb(null, resolvedPath);
   },
   filename: function (req, file, cb) {
+    // Usa el nombre original del archivo
     cb(null, file.originalname);
   },
 });
@@ -22,7 +32,7 @@ const storage = multer.diskStorage({
 const upload = multer({
   storage: storage,
   limits: {
-    fileSize: 2500 * 4024 * 4024, 
+    fileSize: 2500 * 1024 * 1024, // 2500 MB
   },
 });
 
