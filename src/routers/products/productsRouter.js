@@ -77,8 +77,8 @@ productsRouter.get('/:pid',
 
 // POST /products/
 const handleUpload = upload.fields([
-  { name: 'files', maxCount: 20 },
-  { name: 'images', maxCount: 10 }
+  { name: 'files', maxCount: 30 },
+  { name: 'images', maxCount: 20 }
 ]);
 
 productsRouter.post('/',
