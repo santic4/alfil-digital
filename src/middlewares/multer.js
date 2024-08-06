@@ -12,19 +12,16 @@ const storage = multer.diskStorage({
     // Define el directorio de destino según el campo del archivo
     let fileDir;
     if (file.fieldname === 'files') {
-      fileDir = '../statics/fileadj';
+      fileDir = path.join(__dirname, '../../statics/fileadj');
     } else {
-      fileDir = '../statics/images';
+      fileDir = path.join(__dirname, '../../statics/images');
     }
 
-    // Resuelve la ruta absoluta desde el directorio actual
-    const resolvedPath = path.resolve(__dirname, fileDir);
-    
     // Verifica y crea el directorio si no existe
-    fs.mkdirSync(resolvedPath, { recursive: true });
+    fs.mkdirSync(fileDir, { recursive: true });
 
     // Llama al callback con el directorio de destino
-    cb(null, resolvedPath);
+    cb(null, fileDir);
   },
   filename: function (req, file, cb) {
     // Usa el nombre original del archivo
