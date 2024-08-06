@@ -14,7 +14,7 @@ class PaymentsServicesMP{
 
         try {
             
-            const preference = new Preference(client);
+
 
             if (!carrito || !externalReference) {
                 throw new Error('Falta información requerida (carrito o externalReference)');
@@ -33,20 +33,50 @@ class PaymentsServicesMP{
                     throw new Error('Uno o más artículos del carrito no tienen todos los campos necesarios.');
                 }
             });
-
+            const preference = new Preference(client);
 
             console.log('antes de response en create')
             const response = await preference.create({
                 body: {
-                    items: carrito,
+                    additional_info: '',
+                    auto_return: 'approved',
                     back_urls: {
-                        success: 'https://alfil-digital.onrender.com',
-                        failure: 'https://alfil-digital.onrender.com',
-                        pending: 'https://alfil-digital.onrender.com'
+                        success: 'https://alfil-digital.onrender.com/success',
+                        failure: 'https://alfil-digital.onrender.com/failure',
+                        pending: 'https://alfil-digital.onrender.com/pending'
                     },
-                    notification_url: 'https://alfil-digital.onrender.com/api/cards/webhook',
+                    expiration_date_from: new Date().toISOString(), // Se ajusta a la fecha actual para la demostración
+                    expiration_date_to: new Date(new Date().getTime() + 24 * 60 * 60 * 1000).toISOString(), // Se ajusta a 24 horas después
+                    expires: false,
                     external_reference: externalReference,
-                    auto_return: 'approved'
+                    items: carrito,
+                    notification_url: 'https://alfil-digital.onrender.com/api/cards/webhook',
+                    payer: {
+                        name: 'Nombre de prueba',
+                        surname: 'Apellido de prueba',
+                        email: emailSend,
+                        phone: {
+                            area_code: '11',
+                            number: '987654321'
+                        },
+                        identification: {
+                            type: 'CPF',
+                            number: '19119119100'
+                        },
+                        address: {
+                            zip_code: '12345678',
+                            street_name: 'Dirección de ejemplo',
+                            street_number: '123'
+                        },
+                        date_created: new Date().toISOString()
+                    },
+                    payment_methods: {
+                        excluded_payment_methods: [],
+                        excluded_payment_types: [],
+                        default_payment_method_id: '',
+                        installments: 10,
+                        default_installments: 1
+                    }
                 }
             });
 
