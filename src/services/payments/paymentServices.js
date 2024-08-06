@@ -38,7 +38,7 @@ class PaymentsServicesMP{
             console.log('antes de response en create')
             const response = await preference.create({
                 body: {
-                    additional_info: '',
+                    additional_info: 'ALFIL DIGITAL',
                     auto_return: 'approved',
                     back_urls: {
                         success: 'https://alfil-digital.onrender.com/success',
@@ -52,21 +52,21 @@ class PaymentsServicesMP{
                     items: carrito,
                     notification_url: 'https://alfil-digital.onrender.com/api/cards/webhook',
                     payer: {
-                        name: 'Nombre de prueba',
-                        surname: 'Apellido de prueba',
+                        name: 'Santiago',
+                        surname: 'Cañu',
                         email: emailSend,
                         phone: {
-                            area_code: '11',
-                            number: '987654321'
+                            area_code: '2342',
+                            number: '510893'
                         },
                         identification: {
-                            type: 'CPF',
-                            number: '19119119100'
+                            type: 'DNI',
+                            number: '42058009'
                         },
                         address: {
-                            zip_code: '12345678',
-                            street_name: 'Dirección de ejemplo',
-                            street_number: '123'
+                            zip_code: '6640',
+                            street_name: 'Rauch',
+                            street_number: '942'
                         },
                         date_created: new Date().toISOString()
                     },
