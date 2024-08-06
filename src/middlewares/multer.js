@@ -13,15 +13,15 @@ const storage = multer.diskStorage({
     // Define el directorio de destino según el campo del archivo
     let fileDir;
     if (file.fieldname === 'files') {
-      fileDir = path.join(__dirname, '../../../statics/fileadj');
+      fileDir = path.join(__dirname, '/statics/fileadj');
     } else {
-      fileDir = path.join(__dirname, '../../../statics/photos');
+      fileDir = path.join(__dirname, '/statics/photos');
     }
 
     console.log(fileDir,'fileDir')
     // Verifica y crea el directorio si no existe
     fs.mkdirSync(fileDir, { recursive: true });
-
+    console.log(fileDir,'fileDir2222')
     // Llama al callback con el directorio de destino
     cb(null, fileDir);
   },
