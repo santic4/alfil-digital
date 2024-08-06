@@ -1,14 +1,19 @@
 import admin from 'firebase-admin';
-import { getStorage } from 'firebase-admin/storage';
-import serviceAccount from './serviceAccountKey.json' assert { type: 'json' };
+import dotenv from 'dotenv';
 
-// Inicializa Firebase Admin
+dotenv.config();
+
+const serviceAccount = {
+  projectId: process.env.FIREBASE_PROJECT_ID,
+  clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+  privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'),
+};
+
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
-  storageBucket: 'alfil-digital.appspot.com', // Asegúrate de usar el nombre de tu bucket
+  storageBucket: 'alfil-digital.appspot.com',
 });
 
-// Exporta el bucket de almacenamiento
-const bucket = getStorage().bucket();
+const bucket = admin.storage().bucket();
 
 export { bucket };
