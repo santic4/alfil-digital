@@ -1,67 +1,79 @@
 
 import { downloadServices } from "../../services/download/downloadServices.js";
+import { findTransactionByPaymentId } from "../../services/transactions/transactionServicesMP.js";
+import { desencriptarFB, encriptarFB } from "../../utils/cryptografia.js";
+import { pipeline } from 'stream';
+import { promisify } from 'util';
 
-export const getFile = async (req, res, next) => {
-    const { fileName } = req.params;
-    const paymentID = req.headers['payment-id'];
-
-    try {
-        console.log('1paymentID, 1fileName',paymentID, fileName)
-
-        const file = await downloadServices.getFile(paymentID, fileName)
-        console.log('paymentID, fileNamefile',file)
-
-        res.download(file, (err) => {
-            if (err) {
-                console.error('Error al descargar el archivo:', err);
-                res.status(500).json({ error: 'Error al descargar el archivo.' });
-            }
-        });
-
-    } catch (error) {
-        console.error('Error al procesar la solicitud:', error);
-        next(error)
-    }
-};
-
-export const DownloadFile = async (req, res, next) => {
+export const generateURL = async (req, res, next) => {
     try{
-        const token = req.params.token;
+        const paymentID = req.headers['payment-id'];
+     
+        const transaction = await findTransactionByPaymentId(paymentID);
+        console.log(transaction,' transaction en generat eURL')
 
-        console.log('token',token)
+        if (transaction?.status === 'pending') {
+            return res.status(400).json({ error: 'Error en el pago.' });
+        }
 
-        const file = await downloadServices.getDownloadFile(token)
+        const fileUrls = await transaction?.carrito;
 
-        res.download(file, (err) => {
-            if (err) {
-                console.error('Error al descargar el archivo:', err);
-                res.status(500).json({ error: 'Error al descargar el archivo.' });
-            }
+        if (!Array.isArray(fileUrls)) {
+          return res.status(400).json({ error: 'Formato de datos inválido' });
+        }
+        
+
+        const urlsEncriptadas = fileUrls.map((url) => {
+          const token = encriptarFB({
+            url,
+            exp: Date.now() + 12600000 // Expira en 1 hora
+          });
+          return `http://localhost:8080/api/checkout/downloadFB/${token}`;
         });
+      
+        res.json({ urls: urlsEncriptadas });
     }catch(err){
         next(err)
     }
 }
 
-export const generateDownloadToken = async (req, res, next) => {
-    const { fileUrl } = req.params;
+const pipelineAsync = promisify(pipeline);
 
+export const DownloadFileFB = async (req, res, next) => {
     try {
-        const hashedToken = await downloadServices.getToken(fileUrl)
+        const token = req.params.token;
+        console.log(token,'token ahora')
+        const data = desencriptarFB(token);
+        
+        if (Date.now() > data.exp) {
+          return res.status(403).send('El enlace ha expirado.');
+        }
+    
+        const fileUrl = data.url;
+    
+        const response = await fetch(fileUrl);
+        console.log(response.body,'resopsnse que rencesddd')
+        if (!response.ok) {
+          throw new Error('Error al descargar el archivo');
+        }
+    
+        // Configurar los encabezados de respuesta para la descarga
+        res.setHeader('Content-Disposition', `attachment; filename="${fileUrl.split('/').pop()}"`);
+        res.setHeader('Content-Type', response.headers.get('content-type') || 'application/octet-stream');
+    
+        await pipelineAsync(response.body, res);
 
-        res.json(hashedToken)
-    } catch (error) {
-        next(error)
+    }catch(err){
+        next(err)
     }
-};
+}
 
 export const adjuntProducts = async (req, res, next) => {
     const paymentID = req.headers['payment-id'];
 
     try {
-        console.log(paymentID,'paymentID')
         await downloadServices.adjuntFiles(paymentID)
-        console.log('pase paymentID')
+
         return res.status(200).json({ status: 'Email enviado.' });
     } catch (error) {
         next(error)

@@ -25,7 +25,7 @@ export const successOrder = async (req, res) => {
         const{ payment_id} = req.query;
 
         if (payment_id) {
-            res.redirect(`http://localhost:3000?payment_id=${payment_id}`);
+            res.redirect(`https://alfildigital.com.ar?payment_id=${payment_id}`);
         } else {
             throw new Error('Transacción no encontrada o no coincide con el payment_id');
         }
@@ -51,12 +51,13 @@ export const captureMP = async (req, res) => {
     const payment = req.query;
 
     try {
+
         const foundedTransaction = await findTransactionByPaymentId(payment)
-        console.log('foundedTransaction',foundedTransaction)
+
+
         if(foundedTransaction?.status === 'accredited'){
             return res.json({ 
-                status: 'Pago capturado exitosamente',
-                cart: foundedTransaction?.carrito || []
+                status: 'Pago capturado exitosamente'
               });
         }
 

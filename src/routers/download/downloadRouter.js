@@ -1,20 +1,18 @@
 import { Router } from "express";
-import { adjuntProducts, DownloadFile, generateDownloadToken, getFile } from "../../controllers/download/downloadController.js";
-
+import { adjuntProducts, DownloadFileFB, generateURL } from "../../controllers/download/downloadController.js";
 
 export const checkoutRouter = Router()
 
-checkoutRouter.get('/files/:fileName', 
-  getFile
-);
-  
-checkoutRouter.get('/download/:token', 
-  DownloadFile
+
+checkoutRouter.post('/generate-urls',
+  generateURL
 );
 
-checkoutRouter.post('/generateToken/:fileUrl', 
-  generateDownloadToken
+
+checkoutRouter.get('/downloadFB/:token', 
+  DownloadFileFB
 );
+
 
 checkoutRouter.post('/adjunt', 
   adjuntProducts

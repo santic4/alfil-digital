@@ -60,3 +60,19 @@ export const generateToken = () => {
     throw new Error('Error al generar el token con bcryptjs: ' + error.message);
   }
 };
+
+import crypto from 'crypto';
+
+export const encriptarFB = (data) => {
+  const cipher = crypto.createCipher('aes-256-ctr', JWT_PRIVATE_KEY);
+  let encrypted = cipher.update(JSON.stringify(data), 'utf8', 'hex');
+  encrypted += cipher.final('hex');
+  return encrypted;
+};
+
+export const desencriptarFB = (encrypted) => {
+  const decipher = crypto.createDecipher('aes-256-ctr', JWT_PRIVATE_KEY);
+  let decrypted = decipher.update(encrypted, 'hex', 'utf8');
+  decrypted += decipher.final('utf8');
+  return JSON.parse(decrypted);
+};

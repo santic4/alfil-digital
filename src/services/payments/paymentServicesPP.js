@@ -13,6 +13,7 @@ class PaymentsServicesPP {
         // Obtener los nombres de los archivos del carrito
         const nombresArchivos = carrito.reduce((acc, item) => acc.concat(item.productID.fileadj), []);
   
+        console.log(nombresArchivos,'nombres archivos')
         // Crear la orden
         const response = await paymentsRepositoryPP.createOrderPP(currency_selected, amountUSD, externalReference);
   

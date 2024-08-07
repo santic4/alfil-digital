@@ -13,8 +13,6 @@ class PaymentsServicesMP{
     async createOrder(items, carrito, emailSend, externalReference){
 
         try {
-            
-
 
             if (!carrito || !externalReference) {
                 throw new Error('Falta información requerida (carrito o externalReference)');
@@ -45,8 +43,8 @@ class PaymentsServicesMP{
                         failure: 'https://alfil-digital.onrender.com/',
                         pending: 'https://alfil-digital.onrender.com/'
                     },
-                    expiration_date_from: new Date().toISOString(), // Se ajusta a la fecha actual para la demostración
-                    expiration_date_to: new Date(new Date().getTime() + 24 * 60 * 60 * 1000).toISOString(), // Se ajusta a 24 horas después
+                    expiration_date_from: new Date().toISOString(),
+                    expiration_date_to: new Date(new Date().getTime() + 24 * 60 * 60 * 1000).toISOString(), 
                     expires: false,
                     external_reference: externalReference,
                     items: carrito,
@@ -81,6 +79,7 @@ class PaymentsServicesMP{
 
             console.log(response,'response en create')
 
+            console.log(items,'itemssss')
 
             if(emailSend && externalReference){
                 await saveTransactionWithToken(emailSend, externalReference, response.id, items );

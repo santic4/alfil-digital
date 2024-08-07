@@ -11,6 +11,7 @@ export const createOrder = async (req, res) => {
     }
 
     const externalReference = generateToken();
+    console.log(carrito,' carrito createOrder')
 
     const approvalUrl = await paymentsServicesPP.createOrderPP(currency, amountUSD, emailSend, carrito, externalReference);
 
@@ -31,8 +32,10 @@ export const captureOrder = async (req, res) => {
   }
 
   try {
+    console.log('entramo',token)
     const foundedTransaction = await paymentsServicesPP.captureOrderPP(token);
 
+    console.log(foundedTransaction,' foundend transactoin')
     if (!foundedTransaction) {
       return res.status(404).json({ message: 'Transacción no encontrada' });
     }

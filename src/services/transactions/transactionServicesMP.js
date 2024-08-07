@@ -7,6 +7,8 @@ export const saveTransactionWithToken = async (emailSend, externalReference, pay
       throw new DataInvalid();
     }
 
+    console.log(carrito,'carrito en transaction token')
+
     const transaction = await transactionsDao.postTransaction(emailSend, externalReference, payment_id, carrito)
 
     return transaction;
@@ -35,8 +37,9 @@ export const updateTransactionStatus = async (externalReference, status, payment
     if(!payment_id || !externalReference  || !status){
       throw new DataInvalid()
     }
-    await transactionsDao.updateTransaction(externalReference, status, payment_id);
-
+    const transaction = await transactionsDao.updateTransaction(externalReference, status, payment_id);
+    console.log(transaction,' transactio en el find updateTransaction ')
+    return transaction;
   } catch (error) {
 
     throw new Error('Error al actualizar el estado de la transacción');
@@ -48,8 +51,10 @@ export const updateTransactionStatusMercadoPago = async (externalReference, stat
     if(!payment_id || !externalReference  || !status){
       throw new DataInvalid()
     }
-    await transactionsDao.updateTransactionMercadoPago(externalReference, status, payment_id);
 
+    const transaction = await transactionsDao.updateTransactionMercadoPago(externalReference, status, payment_id);
+    console.log(transaction,' transactio en el find updateTransactionMercadoPago ')
+    return transaction;
   } catch (error) {
 
     throw new Error('Error al actualizar el estado de la transacción');

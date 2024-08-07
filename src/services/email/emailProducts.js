@@ -1,5 +1,5 @@
 import { JWT_PRIVATE_KEY } from "../../config/config.js";
-import { encriptar } from "../../utils/cryptografia.js";
+import { encriptar, encriptarFB } from "../../utils/cryptografia.js";
 import { findTransactionByPaymentId } from "../transactions/transactionServicesMP.js";
 import { emailService } from "./emailServices.js";
 import jwt from "jsonwebtoken";
@@ -14,8 +14,8 @@ class CartServicesMP {
           }
 
           const fileUrlsEncoded = await Promise.all(fileUrls.map(async (file) => {
-            const token = await encriptar(file);
-            return `http://localhost:/api/checkout/download/${token}`; 
+            const token = await encriptarFB(file);
+            return `https://alfil-digital.onrender.com/api/checkout/download/${token}`; 
           }));
       
           const message = `
