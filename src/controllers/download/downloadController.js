@@ -28,7 +28,7 @@ export const generateURL = async (req, res, next) => {
             url,
             exp: Date.now() + 259200000 // Expira en 1 hora
           });
-          return `http://localhost:8080/api/checkout/downloadFB/${token}`;
+          return `https://alfil-digital.onrender.com/api/checkout/downloadFB/${token}`;
         });
       
         res.json({ urls: urlsEncriptadas });
@@ -50,12 +50,10 @@ export const DownloadFileFB = async (req, res, next) => {
           return res.status(403).send('El enlace ha expirado.');
         }
     
-
         const fileUrl = data.url || data.file;
-        console.log(fileUrl,'fileUrl')
-    
+
         const response = await fetch(fileUrl);
-        console.log(response.body,'resopsnse que rencesddd')
+
         if (!response.ok) {
           throw new Error('Error al descargar el archivo');
         }
@@ -65,7 +63,6 @@ export const DownloadFileFB = async (req, res, next) => {
         res.setHeader('Content-Type', response.headers.get('content-type') || 'application/octet-stream');
     
         await pipelineAsync(response.body, res);
-
     }catch(err){
         next(err)
     }
