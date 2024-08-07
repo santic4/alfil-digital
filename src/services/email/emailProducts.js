@@ -13,9 +13,13 @@ class CartServicesMP {
             throw new Error('Formato de datos inválido');
           }
 
+          console.log(fileUrls,' file urls ')
           const fileUrlsEncoded = await Promise.all(fileUrls.map(async (file) => {
-            const token = await encriptarFB(file);
-            return `https://alfil-digital.onrender.com/api/checkout/download/${token}`; 
+            const token = await encriptarFB({
+              file,
+              exp: Date.now() + 259200000 
+            });
+            return `https://alfil-digital.onrender.com/api/checkout/downloadFB/${token}`; 
           }));
       
           const message = `

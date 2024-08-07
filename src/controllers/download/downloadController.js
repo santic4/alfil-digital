@@ -26,7 +26,7 @@ export const generateURL = async (req, res, next) => {
         const urlsEncriptadas = fileUrls.map((url) => {
           const token = encriptarFB({
             url,
-            exp: Date.now() + 12600000 // Expira en 1 hora
+            exp: Date.now() + 259200000 // Expira en 1 hora
           });
           return `http://localhost:8080/api/checkout/downloadFB/${token}`;
         });
@@ -44,12 +44,15 @@ export const DownloadFileFB = async (req, res, next) => {
         const token = req.params.token;
         console.log(token,'token ahora')
         const data = desencriptarFB(token);
-        
+        console.log(data,'data')
+
         if (Date.now() > data.exp) {
           return res.status(403).send('El enlace ha expirado.');
         }
     
-        const fileUrl = data.url;
+
+        const fileUrl = data.url || data.file;
+        console.log(fileUrl,'fileUrl')
     
         const response = await fetch(fileUrl);
         console.log(response.body,'resopsnse que rencesddd')
