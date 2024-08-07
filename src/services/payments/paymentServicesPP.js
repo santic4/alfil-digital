@@ -49,7 +49,7 @@ class PaymentsServicesPP {
         const paymentId = response.data.id;
         // Verificar que se haya obtenido el ID de referencia y el ID de pago
         if (referenceId && paymentId && response) {
-          console.log('referenceId && paymentId && response',referenceId, paymentId, response)
+  
           await updateTransactionStatus(referenceId, response.data.status, paymentId);
         } else {
           throw new Error('No se puede realizar el pago.');

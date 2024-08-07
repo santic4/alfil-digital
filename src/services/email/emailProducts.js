@@ -13,7 +13,7 @@ class CartServicesMP {
             throw new Error('Formato de datos inválido');
           }
 
-          console.log(fileUrls,' file urls ')
+
           const fileUrlsEncoded = await Promise.all(fileUrls.map(async (file) => {
             const token = await encriptarFB({
               file,

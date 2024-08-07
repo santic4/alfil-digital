@@ -4,14 +4,12 @@ import { findTransactionByPaymentId } from '../../services/transactions/transact
 import { paymentsServicesMP } from '../../services/payments/paymentServices.js';
 
 export const createOrderMP = async (req, res) => {
-    const { items, carrito } = req.body;
+    const { items, carrito, client } = req.body;
     const { emailSend } = req.query;
     const externalReference = generateToken();
 
     try {
-        const response = await paymentsServicesMP.createOrder(items, carrito, emailSend, externalReference);
-     
-        console.log('response',response)
+        const response = await paymentsServicesMP.createOrder(items, carrito, emailSend, externalReference, client);
 
         res.status(200).json(response);
     } catch (error) {

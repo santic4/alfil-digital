@@ -52,6 +52,7 @@ export const DownloadFileFB = async (req, res, next) => {
     
         const fileUrl = data.url || data.file;
 
+        console.log(fileUrl,'datafile')
         const response = await fetch(fileUrl);
 
         if (!response.ok) {

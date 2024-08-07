@@ -4,15 +4,19 @@ import { DataInvalid } from '../../models/errors/dataInvalid.js';
 import { ACCESS_TOKEN_MP } from '../../config/config.js';
 
 const client = new MercadoPagoConfig({
-    accessToken: 'APP_USR-1227822103444956-080520-53275b0d9ad4e50c67e4ca1644f21086-674717908',
+    accessToken: ACCESS_TOKEN_MP,
     options: { timeout: 10000, idempotencyKey: 'abc' }
 })
 
 class PaymentsServicesMP{
 
-    async createOrder(items, carrito, emailSend, externalReference){
+    async createOrder(items, carrito, emailSend, externalReference, clientData){
 
         try {
+
+            if (!clientData) {
+                throw new Error('Falta información requerida (información personal)');
+            }
 
             if (!carrito || !externalReference) {
                 throw new Error('Falta información requerida (carrito o externalReference)');
@@ -31,9 +35,10 @@ class PaymentsServicesMP{
                     throw new Error('Uno o más artículos del carrito no tienen todos los campos necesarios.');
                 }
             });
+
             const preference = new Preference(client);
 
-            console.log('antes de response en create')
+            console.log(clientData,'clientData ahora' )
             const response = await preference.create({
                 body: {
                     additional_info: 'ALFIL DIGITAL',
@@ -50,21 +55,16 @@ class PaymentsServicesMP{
                     items: carrito,
                     notification_url: 'https://alfil-digital.onrender.com/api/cards/webhook',
                     payer: {
-                        name: 'Nahuel',
-                        surname: 'Canu Corniglia',
-                        email: 'nahuel_1996_06@hotmail.com',
+                        name: clientData.Nombre,
+                        surname: clientData.Apellido,
+                        email: emailSend,
                         phone: {
-                            area_code: '2346',
-                            number: '466693'
+                            area_code: clientData.CodArea,
+                            number: clientData.Telefono
                         },
                         identification: {
                             type: 'DNI',
-                            number: '39485990'
-                        },
-                        address: {
-                            zip_code: '6640',
-                            street_name: 'Rauch',
-                            street_number: '942'
+                            number: clientData.DNI
                         },
                         date_created: new Date().toISOString()
                     },
@@ -76,10 +76,6 @@ class PaymentsServicesMP{
                     }
                 }
             });
-
-            console.log(response,'response en create')
-
-            console.log(items,'itemssss')
 
             if(emailSend && externalReference){
                 await saveTransactionWithToken(emailSend, externalReference, response.id, items );
@@ -108,8 +104,6 @@ class PaymentsServicesMP{
                     }
                 });
 
-
-                console.log(captureResult,'capture result en services ')
                 if (captureResult.status !== 'approved' ) {
                     throw new Error('Pago rechazado.')
                 }
@@ -117,8 +111,7 @@ class PaymentsServicesMP{
                 if (captureResult.status_detail === 'accredited' ) {
                     await updateTransactionStatusMercadoPago(captureResult.external_reference, captureResult.status_detail, captureResult.id);
                 }
-
-                        // Buscar la transacción por el ID de pago
+                
                 const foundedTransaction = payment['data.id'] ? await findTransactionByPaymentId(payment['data.id']) : null;
                 console.log(foundedTransaction, 'foundedTransaction');
 
