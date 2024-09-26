@@ -8,7 +8,7 @@ const storage = new memoryStorage();
 const upload = multer({
   storage: storage,
   limits: {
-    fileSize: 100 * 1024 * 1024, // Límite de 100MB
+    fileSize: 10 * 1024 * 1024 * 1024, // 10 GB
   },
 });
 

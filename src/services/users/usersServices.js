@@ -7,17 +7,6 @@ import jwt from 'jsonwebtoken';
 import { DataInvalid } from '../../models/errors/dataInvalid.js'
 
 class UsersServices {
-    async createUser(userData){
-        try {
-            userData.password = hashear(userData.password)
-            const user = await usersRepository.createUser(userData)
-            
-            return user
-        } catch (error) {
-            console.log(error)
-            throw new Error('Error al crear usuario', error)
-        }
-    }
 
     async getCurrentUser(userData){
         const userDTO = new UserDTO(userData)

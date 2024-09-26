@@ -1,5 +1,8 @@
 import { Router } from 'express';
 import { Category } from '../../models/mongoose/categories.js';
+import { postCategory } from '../../controllers/products/productsController.js';
+import { adminsOnly } from '../../middlewares/authorizationUserAdmin.js';
+import { passportAuth } from '../../middlewares/passport.js';
 
 
 export const categoryRouter = Router();
@@ -13,22 +16,11 @@ categoryRouter.get('/', async (req, res) => {
     }
 });
 
-categoryRouter.post('/', async (req, res) => {
-    const { name } = req.body;
-    if (!name) {
-        return res.status(400).json({ message: 'El nombre de la categoría es requerido' });
-    }
-    try {
-        const newCategory = new Category({ name });
-        await newCategory.save();
-        res.status(201).json({ message: 'Categoría agregada' });
-    } catch (error) {
-        if (error.code === 11000) {
-            return res.status(400).json({ message: 'La categoría ya existe' });
-        }
-        res.status(400).json({ message: 'Error al agregar categoría' });
-    }
-});
+categoryRouter.post('/', 
+    passportAuth,
+    adminsOnly,
+    postCategory
+);
 
 categoryRouter.delete('/:cid', async (req, res) => {
     try {

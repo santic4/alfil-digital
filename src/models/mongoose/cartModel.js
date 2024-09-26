@@ -21,7 +21,7 @@ const schemaCarrito = new Schema(
 );
 
 schemaCarrito.methods.upsertProd = async function (prodId, quantity) {
-  console.log(prodId, 'prodId', quantity , 'quantity')
+
   const existingProductIndex = this.carrito.findIndex(p => String(p.productID) === prodId);
   
   if (existingProductIndex !== -1) {

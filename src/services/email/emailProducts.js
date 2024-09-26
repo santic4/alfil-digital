@@ -1,8 +1,7 @@
-import { JWT_PRIVATE_KEY } from "../../config/config.js";
-import { encriptar, encriptarFB } from "../../utils/cryptografia.js";
+import { transactionsDao } from "../../DAO/MongooseDAO.js/transactionsDao.js";
 import { findTransactionByPaymentId } from "../transactions/transactionServicesMP.js";
 import { emailService } from "./emailServices.js";
-import jwt from "jsonwebtoken";
+
 
 class CartServicesMP {
 
@@ -13,63 +12,116 @@ class CartServicesMP {
             throw new Error('Formato de datos inválido');
           }
 
+          const transactionAccredited = await findTransactionByPaymentId(paymentID)
 
-          const fileUrlsEncoded = await Promise.all(fileUrls.map(async (file) => {
-            const token = await encriptarFB({
-              file,
-              exp: Date.now() + 259200000 
-            });
-            return `https://alfil-digital.onrender.com/api/checkout/downloadFB/${token}`; 
-          }));
-      
+          if (transactionAccredited?.completed === true) {
+            throw new Error('El correo ya fue enviado previamente.');
+          }
+
+          if(transactionAccredited?.status === 'pending'){
+            throw new Error('Transacciòn no aprobada.')
+          }
+
           const message = `
-            <section style="width: 100%; height: auto; justify-content: center; align-items: center; font-family: 'Montserrat', sans-serif; color: #333; padding: 20px; border: 1px solid #ddd; border-radius: 5px; text-align: center;">
-                
-                <div style="width: 100%; text-align: center; align-items: center;">
-                  <h2 style="color: #2C3360; width: 100%; text-align: center;">Gracias por tu compra</h2>
+            <section style="
+                width: 100%;
+                max-width: 600px;
+                margin: 0 auto;
+                height: auto;
+                justify-content: center;
+                align-items: center;
+                font-family: 'Montserrat', sans-serif;
+                color: #333;
+                padding: 20px;
+                border: 1px solid #ddd;
+                border-radius: 10px;
+                background-color: #f9f9f9;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                text-align: center;
+                overflow: hidden;
+                position: relative;
+            ">
+                    
+                <!-- Imagen de fondo -->
+                <div style="
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    opacity: 0.15;
+                    z-index: 0;
+                "></div>
+                    
+                <div style="position: relative; z-index: 1;">
+                    
+                    <!-- Título principal -->
+                    <div style="margin-bottom: 20px;">
+                        <h2 style="
+                            color: #2C3360;
+                            font-size: 2vh;
+                            margin: 0;
+                        ">Recibiste tu compra de ALFIL DIGITAL</h2>
+                         <h3 style="
+                            color: #2C3360;
+                            font-size: 2vh;
+                            margin: 0;
+                        ">¡Que la disfrutes! :)</h3>
+                    </div>
+                    
+                    <!-- Mensaje -->
+                    <div style="margin-bottom: 25px;">
+                        <p style="
+                            font-size: 1.7vh;
+                            line-height: 1.5;
+                            margin: 0;
+                        ">Podés descargar tus archivos desde los siguientes enlaces</p>
+                    </div>
+                    
+                    <!-- Lista de enlaces de descarga -->
+                    <div style="margin-bottom: 20px;">
+                        <ul style="
+                            list-style-type: none;
+                            padding: 0;
+                            margin: 0;
+                        ">
+                            ${fileUrls.map(e => `
+                                <li style="margin-bottom: 10px;">
+                                    <a href="${e.url}" target="_blank" style="
+                                        text-decoration: none;
+                                        padding: 10px 20px;
+                                        background-color: #2C3360;
+                                        color: white;
+                                        border-radius: 5px;
+                                        display: inline-block;
+                                        transition: background-color 0.3s ease;
+                                    ">
+                                        Ir a descargar archivo ${e.name}
+                                    </a>
+                                </li>`).join('')}
+                        </ul>
+                    </div>
+                            
+                    <!-- Agradecimiento -->
+                    <div style="margin-top: 30px;">
+                        <p style="
+                            font-size: 1.7vh;
+                            color: #6C7856;
+                            margin: 0;
+                        ">Gracias por confiar en ALFIL DIGITAL.</p>
+                    </div>
                 </div>
-
-                <div style="width: 100%; text-align: center; align-items: center;">
-                  <p style="width: 100%; text-align: center;">Hola,</p>
-                </div>
-
-                <div style="width: 100%; text-align: center; align-items: center;">
-                  <p style="width: 100%; text-align: center;">Puedes descargar tus archivos desde los siguientes enlaces:</p>
-                </div>
-
-                <div style="width: 100%; text-align: center; align-items: center;">
-                  <ul style="list-style-type: none; padding: 0;">
-                      ${fileUrlsEncoded.map(url => `
-                          <li style="margin-bottom: 10px;">
-                              <a href="${url}" style="text-decoration: none; padding: 10px 15px; background-color: white; color: #2C3360; border: 1px solid #2C3360; border-radius: 5px; display: inline-block;">
-                                  Descargar archivo
-                              </a>
-                          </li>`).join('')}
-                  </ul>
-                </div>
-
-                <div style="width: 100%; text-align: center; align-items: center;">
-                  <p>Gracias por confiar en nosotros.</p>
-                </div>
-
             </section>
           `;
       
-          await emailService.send(emailSend, 'Archivos comprados', message);
+          await emailService.send(emailSend, 'Recibiste tu compra de ALFIL DIGITAL', message);
+
+          await transactionsDao.updateTransactionByPaymentId(paymentID, { completed: true });
+
         } catch (error) {
           throw new Error('No se pudo enviar el mail.')
         }
       }
-
-    async decodedToken(token){
-        try {
-            const decoded = jwt.verify(token, JWT_PRIVATE_KEY);
-
-            return decoded;
-        } catch (error) {
-            throw new Error('Token inválido');
-        }
-    }
 
 }
 

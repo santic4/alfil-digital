@@ -16,7 +16,6 @@ passport.use('jwtAuth', new JwtStrategy({
     if (req?.signedCookies) {
       token = req.signedCookies['authorization']
     }
-    console.log(token,'token e jwtauth')
 
     return token
   }]),

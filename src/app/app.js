@@ -7,35 +7,41 @@ import { metodosPersonalizados } from '../middlewares/respuestasMejoradas.js';
 import { passportInitialize } from '../middlewares/authentication.js';
 import { cookies } from '../middlewares/cookie.js';
 import { sesiones } from '../middlewares/sesiones.js';
-//import cors from 'cors'
+import { MONGODB, PORT } from '../config/config.js';
+import { logger } from '../utils/logger.js';
+import mongoose from 'mongoose';
+import dotenv from 'dotenv'
+import cors from 'cors'
 
+dotenv.config()
 export const app = express();
-console.log(path.join('public', 'build', 'index.html'));
+
 app.use(express.static(path.join('public', 'build')));
 
-//app.use(cors({
-//    origin: 'http://localhost:3000',
-//    credentials: true 
-//}));
-//app.use((req, res, next) => {
-//    res.header('Access-Control-Allow-Origin', 'http://localhost:3000');
-//    res.header('Access-Control-Allow-Credentials', 'true');
-//    next();
-//});
+app.use(cors({
+    origin: 'http://localhost:3000',
+    credentials: true 
+}));
 
-process.on('unhandledRejection', (error) => {
-    console.error('Unhandled Promise Rejection:', error);
-  });
-  
-// Middleware de CSP
 app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', 'http://localhost:3000');
+    res.header('Access-Control-Allow-Credentials', 'true');
+    next();
+});
+
+ process.on('unhandledRejection', (error) => {
+     console.error('Unhandled Promise Rejection:', error);
+   });
+   
+ // Middleware de CSP
+ app.use((req, res, next) => {
     res.setHeader(
         "Content-Security-Policy",
-        "script-src 'self' https://http2.mlstatic.com 'nonce-0LQyZ7wqLUQxwjfNUyBCIQ==' 'strict-dynamic' 'unsafe-eval' 'report-sample' https: 'unsafe-inline'"
+        "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self' https://api.paypal.com; font-src 'self';"
     );
     next();
-
 });
+
 
 app.use(passportInitialize);
 
@@ -58,3 +64,20 @@ app.use('/api', apiRouter);
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 app.use('/statics/photos', express.static(path.join(__dirname, '../../statics/photos')));
+
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'build', 'index.html'));
+});
+
+
+// BASE DE DATOS
+await mongoose.connect(MONGODB)
+
+export const PUERTO = PORT || 8080;
+
+logger.info('Conectado a DB MONGO')
+// console.log(cpus())
+app.listen(PUERTO, () => { logger.info(`escuchando en puerto ${PUERTO}`) })
+
+
+  

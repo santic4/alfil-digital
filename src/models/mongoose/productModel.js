@@ -6,12 +6,20 @@ const schemaProduct = new Schema ({
     _id: { type: String, default: randomUUID() },
     title: { type: String, require: true },
     description: { type: String, require: true },
-    price: { type: Number, require: true },
+    priceARS: { type: Number, require: true }, 
+    priceUSD: { type: Number, require: true },
     status: { type: Boolean, default: true },
     category: { type: String, require: true },
+    mercadoLibreUrl: { type: String, default: '' },
     images: { type: [String], default: [] },
-    fileadj: { type: [String], default: [] },
-    owner: { type: String, ref: 'users' }
+    fileadj: [
+        {
+          url: { type: String, required: true }, // URL del archivo
+          name: { type: String, required: true } // Nombre asociado al archivo
+        }
+      ],
+    position: { type: Number, default: null },
+    owner: { type: String, ref: 'users' },
 }, {
     strict: 'throw',
     versionKey: false,

@@ -3,15 +3,6 @@ import { AuthenticationError } from "../models/errors/authenticationError.js"
 import { DataInvalid } from "../models/errors/dataInvalid.js"
 
 class UsersRepository {
-    async createUser(userData) {
-        try {
-            const user = await userDao.createUser(userData)
-
-            return user
-        } catch (error) {
-            throw new AuthenticationError()
-        }
-    }
 
     async findUserByUsername({username}){
         try {

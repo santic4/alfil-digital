@@ -29,6 +29,7 @@ apiRouter.use('/cards', CardsPay)
 apiRouter.use('/transactions', TransactionGet)
 apiRouter.use('/checkout', checkoutRouter)
 
+
 // MIDDLEWARES
 
 apiRouter.use(errorHandlerLogger)

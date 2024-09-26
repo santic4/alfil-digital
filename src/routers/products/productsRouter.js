@@ -27,7 +27,6 @@ productsRouter.get('/filter',
     getFilteredProducts
 )
 
-
 // ADMIN
 
 productsRouter.get('/featured-products', async (req, res) => {
@@ -47,7 +46,8 @@ productsRouter.post('/featured-products', async (req, res) => {
       _id:body._id,
       images: body.images,
       title: body.title,
-      price: body.price,
+      priceARS: body.priceARS,
+      priceUSD: body.priceUSD,
       category: body.category
     }
 
@@ -74,10 +74,8 @@ productsRouter.get('/:pid',
     getProductId
 )
 
-
 // POST /products/
 const handleUpload = upload.fields([
-  { name: 'files', maxCount: 30 },
   { name: 'images', maxCount: 20 }
 ]);
 
@@ -90,9 +88,10 @@ productsRouter.post('/',
 
 // PUT /products/:pid
 productsRouter.put('/:pid', 
-    passportAuth,
-    adminsOnly,
-    updateProduct
+  passportAuth,
+  adminsOnly,
+  handleUpload,
+  updateProduct
 )
 
 // DEL /products/:pid

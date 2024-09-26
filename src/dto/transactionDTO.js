@@ -4,6 +4,8 @@ export class TransactionDTO {
       this.cart = trans.carrito;
       this.status = trans.status;
       this.email = trans.emailSend;
+      this.clientData = trans.clientData
+      this.total = trans.total
     }
 }
 

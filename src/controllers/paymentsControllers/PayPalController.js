@@ -1,4 +1,3 @@
-
 import { generateToken } from "../../utils/cryptografia.js";
 import { paymentsServicesPP } from "../../services/payments/paymentServicesPP.js";
 
@@ -10,14 +9,16 @@ export const createOrder = async (req, res) => {
       return res.status(400).json({ message: 'Faltan parámetros requeridos' });
     }
 
-    const externalReference = generateToken();
-    console.log(carrito,' carrito createOrder')
+    const externalReference = generateToken(); 
 
-    const approvalUrl = await paymentsServicesPP.createOrderPP(currency, amountUSD, emailSend, carrito, externalReference);
+    // Crear la orden en PayPal
+    const responseCreate = await paymentsServicesPP.createOrderPP(currency, amountUSD, emailSend, carrito, externalReference);
 
-    console.log(approvalUrl,'approvalUrl')
-
-    return res.json({ redirectUrl: approvalUrl });
+    // Retornar la URL de redirección de PayPal al frontend
+    return res.json({
+      redirectUrl: responseCreate.approvalUrl,
+      payment_id: responseCreate.payment_id
+    });
   } catch (error) {
     console.error('Error al crear la orden:', error);
     return res.status(500).json({ message: "Error al crear la orden.", error: error.message });
@@ -25,24 +26,26 @@ export const createOrder = async (req, res) => {
 };
 
 export const captureOrder = async (req, res) => {
-  const { token } = req.query;
+  const { token } = req.params; 
 
   if (!token) {
     return res.status(400).json({ message: 'Token es requerido' });
   }
 
   try {
-    console.log('entramo',token)
+    console.log('Capturando pago con token:', token);
+
+    // Capturar la orden en PayPal
     const foundedTransaction = await paymentsServicesPP.captureOrderPP(token);
 
-    console.log(foundedTransaction,' foundend transactoin')
     if (!foundedTransaction) {
       return res.status(404).json({ message: 'Transacción no encontrada' });
     }
 
+    // Devolver el carrito y estado de la transacción capturada
     return res.json({ 
       status: 'Pago capturado exitosamente',
-      cart: foundedTransaction.carrito || []
+      id: foundedTransaction.payment_id
     });
   } catch (error) {
     console.error('Error al capturar la orden:', error);

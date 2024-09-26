@@ -3,11 +3,61 @@ import { randomUUID } from 'crypto'
 import { logger } from '../../utils/logger.js';
 
 class ProductDao{
-    async getAllProducts(filter, options){
+    async getAllProducts(filter, options) {
+        try {
 
-        const paginado= await Product.paginate(filter, options);
+        if (options.sort.priceARS) {
+            return await Product.paginate(filter, options);
+        }
 
-        return paginado
+          // Filtrar por aquellos productos que tienen `position` definido
+          const productosConPosition = await Product.paginate(
+            { ...filter, position: { $ne: null } }, 
+            { ...options, sort: { position: 1, _id: 1 } }
+          );
+      
+          // Si no hay productos con `position`, devolver productos sin `position`
+          if (!productosConPosition.totalDocs) {
+            const productosSinPosition = await Product.paginate(
+              filter, 
+              { ...options, sort: { _id: 1 } }
+            );
+
+            return productosSinPosition;
+          }
+      
+          return productosConPosition;
+        } catch (error) {
+          console.error('Error en getAllProducts DAO:', error);
+          throw error;
+        }
+      }
+    async postProduct(userId, newData){
+
+      
+        newData.owner = userId;
+
+        let inserted = false;
+        let newProduct;
+        while (!inserted) {
+            try {
+                newData._id = randomUUID(); 
+
+                newProduct = await Product.create(newData);
+
+                inserted = true; 
+            } catch (error) {
+                if (error.code === 11000) {
+                    logger.info('Se entro en error por duplicacion')
+                } else {
+                    logger.info('Se entro algun otro error que no es codigo duplicacion')
+                    console.error(error)
+                    throw new Error('error code')
+                }
+            }
+        }
+
+        return newProduct
     }
 
     async getAllProductsAdmin(){
@@ -32,36 +82,9 @@ class ProductDao{
     
     }
 
-    async postProduct(userId, newData){
 
-      
-        newData.owner = userId;
-
-        let inserted = false;
-        let newProduct;
-        console.log(newData,'newData')
-        while (!inserted) {
-            try {
-                newData._id = randomUUID(); 
-
-                newProduct = await Product.create(newData);
-
-                logger.info('Vez suma')
-                inserted = true; 
-            } catch (error) {
-                if (error.code === 11000) {
-                    logger.info('Se entro en error por duplicacion')
-                } else {
-                    logger.info('Se entro algun otro error que no es codigo duplicacion')
-                }
-            }
-        }
-
-        return newProduct
-    }
 
     async updateProduct(pid, newData){
-        console.log(pid,'pid', newData,'newData')
         const updProduct = await Product.findByIdAndUpdate(
             pid,
             { $set: newData },

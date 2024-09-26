@@ -5,18 +5,6 @@ import { logger } from "../../utils/logger.js";
 
 class UserDao {
 
-    async createUser(userData) {
-        try {
-          
-          const user = await usersManager.create(userData)
-
-          return user.toObject()
-        } catch (error) {
-          console.log(error)
-          //throw new Error('Error creating user', error);
-        }
-    };
-
     async findUserByUsername(username) {
       try {
  

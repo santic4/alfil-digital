@@ -1,15 +1,13 @@
 import { transactionsDao } from "../../DAO/MongooseDAO.js/transactionsDao.js";
 import { DataInvalid } from "../../models/errors/dataInvalid.js";
 
-export const saveTransactionWithToken = async (emailSend, externalReference, payment_id, carrito) => {
+export const saveTransactionWithToken = async (emailSend, externalReference, payment_id, carrito, total, clientData) => {
   try {
     if (!emailSend || !externalReference || !payment_id || !carrito) {
       throw new DataInvalid();
     }
 
-    console.log(carrito,'carrito en transaction token')
-
-    const transaction = await transactionsDao.postTransaction(emailSend, externalReference, payment_id, carrito)
+    const transaction = await transactionsDao.postTransaction(emailSend, externalReference, payment_id, carrito, total, clientData)
 
     return transaction;
   } catch (error) {
@@ -22,9 +20,9 @@ export const findTransactionByPaymentId = async (payment_id) => {
     if(!payment_id){
       throw new DataInvalid()
     }
+
     const transaction = await transactionsDao.getTransaction(payment_id)
 
-    console.log(transaction,' transactio en el find services ')
     return transaction;
   } catch (error) {
 
@@ -38,7 +36,7 @@ export const updateTransactionStatus = async (externalReference, status, payment
       throw new DataInvalid()
     }
     const transaction = await transactionsDao.updateTransaction(externalReference, status, payment_id);
-    console.log(transaction,' transactio en el find updateTransaction ')
+
     return transaction;
   } catch (error) {
 
@@ -53,7 +51,7 @@ export const updateTransactionStatusMercadoPago = async (externalReference, stat
     }
 
     const transaction = await transactionsDao.updateTransactionMercadoPago(externalReference, status, payment_id);
-    console.log(transaction,' transactio en el find updateTransactionMercadoPago ')
+ 
     return transaction;
   } catch (error) {
 

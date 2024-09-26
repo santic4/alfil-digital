@@ -13,6 +13,18 @@ class ProductRepository{
         }
     }
 
+    async postProduct(userId, newData){
+        try {
+            const newProduct = await productDao.postProduct(userId, newData)
+
+            return newProduct
+        } catch (error) {
+            console.error(error.message)
+            throw new DataInvalid()
+        }
+    }
+
+
     async getAllProductsAdmin(){
         try {
             const productAdmin = await productDao.getAllProductsAdmin();
@@ -40,21 +52,11 @@ class ProductRepository{
         }
     };
 
-    async postProduct(userId, newData){
-        try {
-            const newProduct = await productDao.postProduct(userId, newData)
 
-          
-            return newProduct
-        } catch (error) {
-            console.error(error.message)
-            throw new DataInvalid()
-        }
-    }
-
-    async updateProduct(pid, newData, user){
+    async updateProduct(pid, newData){
         try {
-            const updProduct = await productDao.updateProduct(pid, newData, user)
+   
+            const updProduct = await productDao.updateProduct(pid, newData)
 
             return updProduct
         } catch (error) {
