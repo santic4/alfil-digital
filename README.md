@@ -12,10 +12,15 @@
 
 ## Tecnologías Utilizadas
 
-- **Frontend:** React.js, HTML, CSS, JavaScript
+- **Frontend:** React.js, HTML, CSS, JavaScript y frameworks
 - **Backend:** Node.js, Express.js
-- **Base de Datos:** MongoDB (o la tecnología que estés utilizando)
-- **Despliegue en la Nube:** (Especifica la plataforma, como AWS, Heroku, etc.)
+- **Base de Datos:** MongoDB 
+- **Despliegue en la Nube:** 
+  - Hostinger
+  - Cloud Server de DonWeb
+- **Otras Herramientas:**
+  - PM2 (gestor de procesos para Node.js)
+  - Nginx (servidor web y proxy inverso)
 
 ## Instalación
 
@@ -23,4 +28,4 @@ Para ejecutar el proyecto localmente, sigue estos pasos:
 
 1. **Clonar el repositorio:**
    ```bash
-   git clone https://github.com/tu-usuario/alfil-digital.git
+   git clone https://github.com/santic4/alfil-digital.git
