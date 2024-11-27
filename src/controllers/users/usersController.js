@@ -1,4 +1,6 @@
+import { usersManager } from "../../models/index.js";
 import { usersServices } from "../../services/users/usersServices.js";
+import { hashear } from "../../utils/cryptografia.js";
 
 export const getCurrentUser = async (req, res, next) => {
   try {

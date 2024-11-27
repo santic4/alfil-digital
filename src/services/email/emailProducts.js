@@ -75,7 +75,7 @@ class CartServicesMP {
                             font-size: 1.7vh;
                             line-height: 1.5;
                             margin: 0;
-                        ">Podés descargar tus archivos desde los siguientes enlaces</p>
+                        ">Podés acceder a tus archivos desde los siguientes enlaces</p>
                     </div>
                     
                     <!-- Lista de enlaces de descarga -->
@@ -96,13 +96,13 @@ class CartServicesMP {
                                         display: inline-block;
                                         transition: background-color 0.3s ease;
                                     ">
-                                        Ir a descargar archivo ${e.name}
+                                        ${e.name}
                                     </a>
                                 </li>`).join('')}
                         </ul>
                     </div>
                             
-                    <!-- Agradecimiento -->
+            
                     <div style="margin-top: 30px;">
                         <p style="
                             font-size: 1.7vh;

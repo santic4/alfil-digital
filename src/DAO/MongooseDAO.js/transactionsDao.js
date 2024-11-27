@@ -1,5 +1,7 @@
 import TransactionDTO from "../../dto/transactionDTO.js";
 import Transaction from "../../models/mongoose/transactionSchema.js";
+import moment from 'moment-timezone';
+import { logger } from "../../utils/logger.js";
 
 class TransactionsDao {
     
@@ -22,28 +24,31 @@ class TransactionsDao {
     }
 
     async postTransaction(emailSend, externalReference, payment_id, carrito, total, clientData){
-        try{
-        const existingTransaction = await Transaction.findOne({ externalReference });
-            
-  
-        if (!existingTransaction) {
-          const transaction = new Transaction({
-            emailSend: emailSend,
-            externalReference,
-            payment_id,
-            carrito,
-            total,
-            clientData
-          });
-          await transaction.save();
-   
-        } else {
-          console.log('Transacción ya existe');
-        }
-        }catch(error){
-          throw new Error(`Error al crear una transacción: ${error.message}`);
-        }
-    }
+      try{
+      const existingTransaction = await Transaction.findOne({ externalReference });
+
+      if (!existingTransaction) {
+        const formattedDate = moment.tz('America/Argentina/Buenos_Aires').format('DD/MM/YYYY - HH:mm');
+
+        const transaction = new Transaction({
+          emailSend: emailSend,
+          externalReference,
+          payment_id,
+          carrito,
+          total,
+          clientData,
+          createdAt: formattedDate
+        });
+        await transaction.save();
+ 
+      } else {
+        console.log('Transacción ya existe');
+      }
+      }catch(error){
+        throw new Error(`Error al crear una transacción: ${error.message}`);
+      }
+  }
+
 
     async updateTransaction(externalReference, status, payment_id){
         try{

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset      xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
+            http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
+  <!-- Página principal -->
+  <url>
+    <loc>https://alfildigital.com.ar/</loc>
+    <lastmod>2024-10-25</lastmod>
+    <priority>1.0</priority>
+  </url>
+
+  <!-- Secciones de la tienda -->
+  <url>
+    <loc>https://alfildigital.com.ar/productos</loc>
+    <lastmod>2024-10-25</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://alfildigital.com.ar/cart</loc>
+    <lastmod>2024-10-25</lastmod>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://alfildigital.com.ar/checkout</loc>
+    <lastmod>2024-10-25</lastmod>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- Páginas de usuario y administrativas -->
+  <url>
+    <loc>https://alfildigital.com.ar/login</loc>
+    <lastmod>2024-10-25</lastmod>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://alfildigital.com.ar/admin</loc>
+    <lastmod>2024-10-25</lastmod>
+    <priority>0.4</priority>
+  </url>
+
+  <!-- Páginas de soporte e información -->
+  <url>
+    <loc>https://alfildigital.com.ar/faqs</loc>
+    <lastmod>2024-10-25</lastmod>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://alfildigital.com.ar/cancel-payment</loc>
+    <lastmod>2024-10-25</lastmod>
+    <priority>0.3</priority>
+  </url>
+</urlset>

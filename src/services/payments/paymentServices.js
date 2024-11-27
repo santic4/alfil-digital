@@ -75,8 +75,8 @@ class PaymentsServicesMP{
 
             const allFileadj = items.flatMap(item => 
                 item.productID.fileadj.map(file => ({
-                    url: file.url, // URL del archivo
-                    name: file.name // Nombre asociado al archivo
+                    url: file.url, 
+                    name: file.name 
                 }))
             );
    

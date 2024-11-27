@@ -14,8 +14,8 @@ const schemaProduct = new Schema ({
     images: { type: [String], default: [] },
     fileadj: [
         {
-          url: { type: String, required: true }, // URL del archivo
-          name: { type: String, required: true } // Nombre asociado al archivo
+          url: { type: String, required: true }, 
+          name: { type: String, required: true } 
         }
       ],
     position: { type: Number, default: null },

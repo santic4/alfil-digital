@@ -19,7 +19,8 @@ const transactionSchema = new Schema({
       Telefono: { type: String },
       DNI: { type: String },
     },
-    completed: { type: Boolean, default: false }
+    completed: { type: Boolean, default: false },
+    createdAt: { type: String }
   });
 
 const Transaction = model('Transaction', transactionSchema);

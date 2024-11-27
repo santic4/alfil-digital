@@ -17,8 +17,6 @@ class UsersServices {
     async findUserByUsername(username, password){
         try {
       
-          console.log(username,'username')
-          console.log(password,'password')
             const user = await usersRepository.findUserByUsername({username})
          
             if (!user) { throw new AuthenticationError() }
@@ -57,7 +55,7 @@ class UsersServices {
       const resetToken = jwt.sign({ email }, JWT_PRIVATE_KEY, { expiresIn: '1h' });
 
       user.resetPasswordToken = resetToken;
-      user.resetPasswordExpires = Date.now() + 3600000; // 1 hora en milisegundos
+      user.resetPasswordExpires = Date.now() + 3600000;
 
       await user.save();
 
@@ -75,9 +73,6 @@ class UsersServices {
             return { error: 'Token no válido o expirado' };
           }
 
-          console.log('NEW PASS', newPassword)
-          console.log(user,'useR PASSSSSSS')
-      
           // Verificar que la nueva contraseña no sea igual a la anterior
           const isSamePassword = await hasheadasSonIguales({
             recibida: newPassword,
@@ -170,6 +165,7 @@ class UsersServices {
 
       return users;
     }
+    
 }
 
 export const usersServices = new UsersServices()
