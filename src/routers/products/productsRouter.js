@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { deleteProduct, getAllProducts, getAllProductsAdmin, getCategory, getFilteredProducts, getProductId, postProduct, updateProduct } from '../../controllers/products/productsController.js';
+import { deleteProduct, getAllProducts, getAllProductsAdmin, getCategory, getFilteredProducts, getProductId, modifyPricesAll, modifyPricesByCategory, postProduct, updateProduct } from '../../controllers/products/productsController.js';
 import { passportAuth } from '../../middlewares/passport.js';
 import { adminsOnly } from '../../middlewares/authorizationUserAdmin.js';
 import { upload } from '../../middlewares/multer.js';
@@ -96,7 +96,23 @@ productsRouter.put('/:pid',
 
 // DEL /products/:pid
 productsRouter.delete('/:pid', 
-    passportAuth,
-    adminsOnly,
-    deleteProduct
+  passportAuth,
+  adminsOnly,
+  deleteProduct
 )
+
+// Endpoint para modificar precios de todos los productos
+productsRouter.post('/modify-all',
+  passportAuth,
+  adminsOnly,
+  modifyPricesAll
+);
+
+// Endpoint para modificar precios por categoría
+productsRouter.post('/modify-by-category', 
+  passportAuth,
+  adminsOnly,
+  modifyPricesByCategory
+);
+
+

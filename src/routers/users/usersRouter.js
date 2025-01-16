@@ -1,7 +1,7 @@
 import { Router } from 'express'
 
 //controllers
-import { getCurrentUser, postUser } from '../../controllers/users/usersController.js'
+import { getCurrentUser } from '../../controllers/users/usersController.js'
 
 // passport
 import { passportAuth } from '../../middlewares/passport.js'

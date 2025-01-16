@@ -9,6 +9,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import { bucket } from "../../config/firebase-config.js";
+import { Product } from "../../models/mongoose/productModel.js";
 
 // Definir __filename y __dirname
 const __filename = fileURLToPath(import.meta.url);
@@ -178,6 +179,37 @@ class ProductServices{
     
         return delProducto;
     }
+
+    async modifyPricesService (category, amount, isPercentage, priceType) {
+
+        const products = await Product.find({ category });
+    
+        if (!products.length) {
+            throw new Error('No products found in this category');
+        }
+    
+        const updatedProducts = [];
+    
+        for (let product of products) {
+            const updatedProduct = { ...product };
+    
+            if (priceType === 'priceARS' || priceType === 'both') {
+                updatedProduct.priceARS = isPercentage 
+                    ? updatedProduct.priceARS * (1 + amount / 100)
+                    : updatedProduct.priceARS + amount;
+            }
+    
+            if (priceType === 'priceUSD' || priceType === 'both') {
+                updatedProduct.priceUSD = isPercentage 
+                    ? updatedProduct.priceUSD * (1 + amount / 100)
+                    : updatedProduct.priceUSD + amount;
+            }
+    
+            updatedProducts.push(await updatedProduct.save());
+        }
+    
+        return updatedProducts;
+    };
 }
 
 export const productServices = new ProductServices()

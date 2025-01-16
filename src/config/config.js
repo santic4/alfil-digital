@@ -13,6 +13,7 @@ export const NODE_ENV = process.env.NODE_ENV
 
 // DB
 export const MONGODB = process.env.MONGODB
+export const MONGODBTEST = process.env.MONGODBTEST 
 
 // SECRETS WORDS
 export const COOKIE_SECRET = process.env.COOKIE_SECRET

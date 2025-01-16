@@ -214,3 +214,74 @@ export const deleteProduct = async (req, res, next) => {
       next(err)
   }
 }
+
+export const modifyPricesAll = async (req, res, next) => {
+
+  const { amount, isPercentage, priceType } = req.body;
+
+  try {
+      const products = await Product.find();
+
+      const updatedProducts = products.map(product => {
+          let newPriceARS = product.priceARS;
+          let newPriceUSD = product.priceUSD;
+
+          if (priceType === 'priceARS' || priceType === 'both') {
+              newPriceARS = isPercentage ? newPriceARS * (1 + amount / 100) : newPriceARS + amount;
+          }
+
+          if (priceType === 'priceUSD' || priceType === 'both') {
+              newPriceUSD = isPercentage ? newPriceUSD * (1 + amount / 100) : newPriceUSD + amount;
+          }
+
+          return { ...product._doc, priceARS: newPriceARS, priceUSD: newPriceUSD };
+      });
+
+      // Update all products
+      await Product.bulkWrite(updatedProducts.map(product => ({
+          updateOne: {
+              filter: { _id: product._id },
+              update: { priceARS: product.priceARS, priceUSD: product.priceUSD },
+          },
+      })));
+
+      res.json(updatedProducts);
+  } catch (error) {
+    next()
+  }
+};
+
+export const modifyPricesByCategory = async (req, res) => {
+  const { category, amount, isPercentage, priceType } = req.body;
+  try {
+      const products = await Product.find({ category });
+
+      const updatedProducts = products.map(product => {
+          let newPriceARS = product.priceARS;
+          let newPriceUSD = product.priceUSD;
+
+          if (priceType === 'priceARS' || priceType === 'both') {
+              newPriceARS = isPercentage ? newPriceARS * (1 + amount / 100) : newPriceARS + amount;
+          }
+
+          if (priceType === 'priceUSD' || priceType === 'both') {
+              newPriceUSD = isPercentage ? newPriceUSD * (1 + amount / 100) : newPriceUSD + amount;
+          }
+
+          return { ...product._doc, priceARS: newPriceARS, priceUSD: newPriceUSD };
+      });
+
+      // Update the products in the specified category
+      await Product.bulkWrite(updatedProducts.map(product => ({
+          updateOne: {
+              filter: { _id: product._id },
+              update: { priceARS: product.priceARS, priceUSD: product.priceUSD },
+          },
+      })));
+
+      res.json(updatedProducts);
+  } catch (error) {
+      res.status(500).json({ message: 'Error updating prices' });
+  }
+};
+
