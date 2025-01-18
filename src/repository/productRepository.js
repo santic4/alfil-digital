@@ -74,6 +74,7 @@ class ProductRepository{
             throw new Error('Producto no encontrado')
         }
     }
+
 }
 
 export const productRepository = new ProductRepository()

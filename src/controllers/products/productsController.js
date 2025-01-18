@@ -251,9 +251,10 @@ export const modifyPricesAll = async (req, res, next) => {
   }
 };
 
-export const modifyPricesByCategory = async (req, res) => {
+export const modifyPricesByCategory = async (req, res, next) => {
   const { category, amount, isPercentage, priceType } = req.body;
   try {
+
       const products = await Product.find({ category });
 
       const updatedProducts = products.map(product => {
@@ -271,7 +272,6 @@ export const modifyPricesByCategory = async (req, res) => {
           return { ...product._doc, priceARS: newPriceARS, priceUSD: newPriceUSD };
       });
 
-      // Update the products in the specified category
       await Product.bulkWrite(updatedProducts.map(product => ({
           updateOne: {
               filter: { _id: product._id },
@@ -281,7 +281,45 @@ export const modifyPricesByCategory = async (req, res) => {
 
       res.json(updatedProducts);
   } catch (error) {
-      res.status(500).json({ message: 'Error updating prices' });
+     next()
   }
 };
 
+export const selectedModifyProductsController = async (req, res, next) => {
+  const { productIds, amount, isPercentage, priceType } = req.body;
+
+  try {
+    const products = await Product.find({ _id: { $in: productIds } });
+
+
+    const updatedProducts = products.map((product) => {
+      let newPriceARS = product.priceARS;
+      let newPriceUSD = product.priceUSD;
+
+      if (priceType === 'priceARS' || priceType === 'both') {
+        newPriceARS = isPercentage ? newPriceARS * (1 + amount / 100) : newPriceARS + amount;
+      }
+
+      if (priceType === 'priceUSD' || priceType === 'both') {
+        newPriceUSD = isPercentage ? newPriceUSD * (1 + amount / 100) : newPriceUSD + amount;
+      }
+
+      return { ...product._doc, priceARS: newPriceARS, priceUSD: newPriceUSD };
+    });
+
+    await Product.bulkWrite(
+      updatedProducts.map((product) => ({
+        updateOne: {
+          filter: { _id: product._id },
+          update: { priceARS: product.priceARS, priceUSD: product.priceUSD },
+        },
+      }))
+    );
+
+    console.log(updatedProducts,'updated')
+
+    res.json(updatedProducts);
+  } catch (error) {
+    next(error);
+  }
+}

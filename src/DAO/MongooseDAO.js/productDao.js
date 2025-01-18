@@ -63,9 +63,8 @@ class ProductDao{
     async getAllProductsAdmin(){
 
         const productAdmin = await Product.find({}).lean();
-       
-        return productAdmin
 
+        return productAdmin
     }
 
     async getCategory(category){
