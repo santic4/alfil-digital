@@ -1,31 +1,30 @@
-# Alfil Digital
+# 🛒 Alfil Digital
 
-**Alfil Digital** es una plataforma de desarrollo web que ofrece soluciones digitales personalizadas para empresas y emprendedores. Con un enfoque en el diseño y la funcionalidad, nuestro objetivo es ayudar a nuestros clientes a alcanzar sus metas a través de un sitio web efectivo y atractivo.
+**Alfil Digital** es una tienda online desarrollada desde cero con una arquitectura full stack moderna. El proyecto incluye funcionalidades completas para un e-commerce, tanto del lado del cliente como del administrador, con foco en rendimiento, SEO y experiencia de usuario.
 
-## Características
+## 🚀 Características principales
 
-- **Desarrollo de E-commerce:** Creación de tiendas en línea personalizadas, optimizadas para la conversión.
-- **Landing Pages:** Diseño de páginas de aterrizaje efectivas para campañas de marketing.
-- **Aplicaciones Web:** Desarrollo de aplicaciones interactivas y funcionales para satisfacer las necesidades del negocio.
-- **Optimización SEO:** Estrategias para mejorar la visibilidad en los motores de búsqueda.
-- **Integración de APIs:** Comunicación fluida con servicios externos y plataformas.
+- 🧾 Catálogo de productos con filtros dinámicos
+- 📦 Vista detallada del producto
+- 🧠 Gestión inteligente de banners y promociones
+- 🔐 Panel de administrador completo (CRUD de productos, pedidos y banners)
+- 💳 Integración con pasarelas de pago
+- 📈 SEO optimizado (meta tags, structured data, URLs limpias)
+- 📊 Integración con Google Analytics
+- 🌎 Responsive y adaptado para móviles
+- 🧪 Testing básico de endpoints y validaciones
+- ☁️ Despliegue en servidores cloud
 
-## Tecnologías Utilizadas
+## 🛠️ Tecnologías utilizadas
 
-- **Frontend:** React.js, HTML, CSS, JavaScript y frameworks
+- **Frontend:** React.js, CSS Modules
 - **Backend:** Node.js, Express.js
-- **Base de Datos:** MongoDB 
-- **Despliegue en la Nube:** 
-  - Hostinger
-  - Cloud Server de DonWeb
-- **Otras Herramientas:**
-  - PM2 (gestor de procesos para Node.js)
-  - Nginx (servidor web y proxy inverso)
+- **Base de datos:** MongoDB (con Mongoose)
+- **SEO & Analytics:** Meta tags dinámicas, Google Analytics
+- **Otros:** API REST, Deploy con Render, testing con Jest/Supertest, diseño UI/UX
 
-## Instalación
+## 📦 Instalación y ejecución local
 
-Para ejecutar el proyecto localmente, sigue estos pasos:
-
-1. **Clonar el repositorio:**
+1. Cloná el repo:
    ```bash
-   git clone https://github.com/santic4/alfil-digital.git
+   git clone https://github.com/tuusuario/alfil-digital.git
