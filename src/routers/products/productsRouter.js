@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { deleteProduct, getAllProducts, getAllProductsAdmin, getCategory, getFilteredProducts, getProductId, modifyPricesAll, modifyPricesByCategory, postProduct, selectedModifyProductsController, updateProduct } from '../../controllers/products/productsController.js';
+import { deleteProduct, getAllProducts, getAllProductsAdmin, getCategory, getFilteredProducts, getProductId, modifyPricesAll, modifyPricesByCategory, postProduct, postProductTest, selectedModifyGroupDescription, selectedModifyProductsController, updateProduct } from '../../controllers/products/productsController.js';
 import { passportAuth } from '../../middlewares/passport.js';
 import { adminsOnly } from '../../middlewares/authorizationUserAdmin.js';
 import { upload } from '../../middlewares/multer.js';
@@ -115,9 +115,18 @@ productsRouter.post('/modify-by-category',
   modifyPricesByCategory
 );
 
+// MODIFICAR PRECIO EN GRUPO
 
 productsRouter.post('/modify-selected', 
   passportAuth,
   adminsOnly,
   selectedModifyProductsController
+);
+
+// MODIFICAR DESCRIPCION EN GRUPO
+
+productsRouter.post('/modify-group-description', 
+  passportAuth,
+  adminsOnly,
+  selectedModifyGroupDescription
 );

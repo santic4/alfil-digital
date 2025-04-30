@@ -1,4 +1,5 @@
 import { transactionsDao } from "../../DAO/MongooseDAO.js/transactionsDao.js";
+import { logger } from "../../utils/logger.js";
 import { findTransactionByPaymentId } from "../transactions/transactionServicesMP.js";
 import { emailService } from "./emailServices.js";
 
@@ -119,6 +120,7 @@ class CartServicesMP {
           await transactionsDao.updateTransactionByPaymentId(paymentID, { completed: true });
 
         } catch (error) {
+          logger.warn(error,'No se pudo enviar el mail.')
           throw new Error('No se pudo enviar el mail.')
         }
       }

@@ -8,6 +8,8 @@ export const createOrderMP = async (req, res) => {
     const { emailSend } = req.query;
 
     try {
+        logger.info('ENTRO AL createOrderMP');
+
         const externalReference = generateToken();
         const response = await paymentsServicesMP.createOrder(items, carrito, emailSend, externalReference, client, total);
 
@@ -21,6 +23,8 @@ export const createOrderMP = async (req, res) => {
 export const successOrder = async (req, res) => {
     try {
         const{ payment_id} = req.query;
+
+        logger.info('ENTRO AL successOrder');
 
         if (payment_id) {
             res.redirect(`https://alfildigital.com.ar?payment_id=${payment_id}`);
@@ -37,6 +41,7 @@ export const webHookMP = async (req, res) => {
     const payment = req.query;
 
     try {
+        logger.info('ENTRO AL WEBHOOK');
         await paymentsServicesMP.webHook(payment);
 
         res.status(200);
@@ -49,6 +54,8 @@ export const captureMP = async (req, res) => {
     const payment = req.query;
 
     try {
+
+        logger.info('ENTRO AL captureMP');
 
         const foundedTransaction = await findTransactionByPaymentId(payment)
 

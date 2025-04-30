@@ -3,7 +3,7 @@ import { Category } from '../../models/mongoose/categories.js';
 import { postCategory } from '../../controllers/products/productsController.js';
 import { adminsOnly } from '../../middlewares/authorizationUserAdmin.js';
 import { passportAuth } from '../../middlewares/passport.js';
-
+import { modifyGroupCategory } from '../../controllers/category/categoryController.js';
 
 export const categoryRouter = Router();
 
@@ -20,6 +20,13 @@ categoryRouter.post('/',
     passportAuth,
     adminsOnly,
     postCategory
+);
+
+// Modificar categoria en grupo
+categoryRouter.post('/modify-category-group', 
+    passportAuth,
+    adminsOnly,
+    modifyGroupCategory
 );
 
 categoryRouter.delete('/:cid', async (req, res) => {

@@ -178,6 +178,17 @@ class ProductServices{
         return delProducto;
     }
 
+    
+    async modifyGroupDescription(productIds, description) {
+        
+        if (!productIds || !description) {
+          throw new Error('Datos insuficientes')
+        }
+
+        const response = await productRepository.modifyGroupDescription(productIds, description)
+
+        return response;
+    }
 
 }
 

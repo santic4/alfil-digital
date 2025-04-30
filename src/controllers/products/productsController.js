@@ -1,3 +1,4 @@
+import { randomUUID } from "crypto";
 import { bucket } from "../../config/firebase-config.js";
 import { Category } from "../../models/mongoose/categories.js";
 import { Product } from "../../models/mongoose/productModel.js";
@@ -77,6 +78,37 @@ export const postProduct = async (req, res, next) => {
     newData.images = imageUrls;
 
     const newProduct = await productServices.postProduct(req.user, newData);
+
+    res.json(newProduct);
+  } catch (error) {
+
+    next(error);
+  }
+};
+
+export const postProductTest = async (req, res, next) => {
+  try {
+    const newData = req.body;
+
+    let inserted = false;
+    let newProduct;
+    while (!inserted) {
+        try {
+            newData._id = randomUUID(); 
+
+            newProduct = await Product.create(newData);
+
+            inserted = true; 
+        } catch (error) {
+            if (error.code === 11000) {
+                console.log('Se entro en error por duplicacion')
+            } else {
+                console.log('Se entro algun otro error que no es codigo duplicacion')
+                console.error(error)
+                throw new Error('error code')
+            }
+        }
+    }
 
     res.json(newProduct);
   } catch (error) {
@@ -316,10 +348,20 @@ export const selectedModifyProductsController = async (req, res, next) => {
       }))
     );
 
-    console.log(updatedProducts,'updated')
-
     res.json(updatedProducts);
   } catch (error) {
     next(error);
   }
+}
+
+export const selectedModifyGroupDescription = async (req, res, next) => {
+  const { productIds, description } = req.body;
+  try {
+
+      const updatedProducts = await productServices.modifyGroupDescription(productIds, description);
+
+      res.json(updatedProducts);
+    } catch (error) {
+      next(error)
+    }
 }

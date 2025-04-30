@@ -107,6 +107,8 @@ class PaymentsServicesMP{
                     }
                 });
 
+                console.log(payment,'payment en webhook sevices')
+
                 if (captureResult.status !== 'approved' ) {
                     throw new Error('Pago rechazado.')
                 }

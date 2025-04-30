@@ -75,6 +75,15 @@ class ProductRepository{
         }
     }
 
+    async modifyGroupDescription(productIds, description) {
+        try {
+            const updProduct = await productDao.modifyGroupDescription(productIds, description)
+
+            return updProduct
+        } catch (error) {
+            throw new Error('Producto no encontrado')
+        }
+    }
 }
 
 export const productRepository = new ProductRepository()

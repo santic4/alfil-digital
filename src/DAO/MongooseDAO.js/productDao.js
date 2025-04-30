@@ -98,6 +98,16 @@ class ProductDao{
 
         return delProduct
     }
+
+    async modifyGroupDescription(productIds, description){
+
+        const updatedProducts = await Product.updateMany(
+            { _id: { $in: productIds } },
+            { $set: { description } }
+          );
+
+        return updatedProducts
+    }
 }
 
 export const productDao = new ProductDao()
