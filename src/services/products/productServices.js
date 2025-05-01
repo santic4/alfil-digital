@@ -8,6 +8,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import { bucket } from "../../config/firebase-config.js";
+import { ProductDTO } from "../../dto/productDto.js";
 
 // Definir __filename y __dirname
 const __filename = fileURLToPath(import.meta.url);
@@ -189,6 +190,29 @@ class ProductServices{
 
         return response;
     }
+
+    async toggleFeaturedStatusService( idProduct ){
+
+        if (!idProduct) {
+            throw new Error('El id del producto no existe.');
+        }
+
+        const product = await productRepository.getProductId(idProduct);
+ 
+        const response = await productRepository.toggleFeaturedStatusRepository(product);
+
+        return response
+    }
+
+    async getFeaturedProductsService(){
+
+        const response = await productRepository.getFeaturedProductsRepository();
+
+        const productDTOs = response.map(product => new ProductDTO(product));
+
+        return productDTOs
+    }
+    
 
 }
 

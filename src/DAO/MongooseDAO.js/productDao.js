@@ -81,8 +81,6 @@ class ProductDao{
     
     }
 
-
-
     async updateProduct(pid, newData){
         const updProduct = await Product.findByIdAndUpdate(
             pid,
@@ -99,7 +97,7 @@ class ProductDao{
         return delProduct
     }
 
-    async modifyGroupDescription(productIds, description){
+    async modifyGroupDescription(product, description){
 
         const updatedProducts = await Product.updateMany(
             { _id: { $in: productIds } },
@@ -108,6 +106,25 @@ class ProductDao{
 
         return updatedProducts
     }
+
+    async toggleFeaturedStatusDAO( product ){
+
+        const response = await Product.findByIdAndUpdate(
+          { _id: product._id},
+          { $set: { featured: !product.featured } },
+          { new: true }
+        );
+
+        return response
+    }
+
+    async getFeaturedProductsDAO(){
+
+        const response = await Product.find({ featured: true });
+
+        return response
+    }
+    
 }
 
 export const productDao = new ProductDao()

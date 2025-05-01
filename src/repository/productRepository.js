@@ -84,6 +84,29 @@ class ProductRepository{
             throw new Error('Producto no encontrado')
         }
     }
+
+    async toggleFeaturedStatusRepository( product ) {
+        try {
+
+            const response = await productDao.toggleFeaturedStatusDAO(product);
+
+            return response
+        } catch (error) {
+            throw new Error('Producto no encontrado')
+        }
+    }
+
+    async getFeaturedProductsRepository() {
+        try {
+
+            const response = await productDao.getFeaturedProductsDAO();
+
+            return response
+        } catch (error) {
+            throw new Error('Producto no encontrado')
+        }
+    }
+    
 }
 
 export const productRepository = new ProductRepository()

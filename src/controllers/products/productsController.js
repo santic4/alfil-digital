@@ -365,3 +365,26 @@ export const selectedModifyGroupDescription = async (req, res, next) => {
       next(error)
     }
 }
+
+// FEATURED
+export const toggleFeaturedStatus = async (req, res, next) => {
+  const { idProduct } = req.body
+  try {
+ 
+    await productServices.toggleFeaturedStatusService(idProduct);
+
+    res.status(200).json({ message: 'Estado de featured actualizado correctamente.' });
+  } catch (error) {
+     next(error)
+  }
+}
+
+export const getFeaturedProducts = async (req, res, next) => {
+  try {
+    const featuredProducts = await productServices.getFeaturedProductsService();
+
+    res.json(featuredProducts);
+  } catch (error) {
+     next(error)
+  }
+}

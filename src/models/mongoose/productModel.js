@@ -20,6 +20,7 @@ const schemaProduct = new Schema ({
       ],
     position: { type: Number, default: null },
     owner: { type: String, ref: 'users' },
+    featured: { type: Boolean, default: false },
 }, {
     strict: 'throw',
     versionKey: false,

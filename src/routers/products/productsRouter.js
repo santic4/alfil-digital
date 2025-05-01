@@ -1,9 +1,8 @@
 import { Router } from 'express'
-import { deleteProduct, getAllProducts, getAllProductsAdmin, getCategory, getFilteredProducts, getProductId, modifyPricesAll, modifyPricesByCategory, postProduct, postProductTest, selectedModifyGroupDescription, selectedModifyProductsController, updateProduct } from '../../controllers/products/productsController.js';
+import { deleteProduct, getAllProducts, getAllProductsAdmin, getCategory, getFilteredProducts, getProductId, toggleFeaturedStatus, modifyPricesAll, modifyPricesByCategory, postProduct, postProductTest, selectedModifyGroupDescription, selectedModifyProductsController, updateProduct, getFeaturedProducts } from '../../controllers/products/productsController.js';
 import { passportAuth } from '../../middlewares/passport.js';
 import { adminsOnly } from '../../middlewares/authorizationUserAdmin.js';
 import { upload } from '../../middlewares/multer.js';
-import { FeaturedProducts } from '../../models/mongoose/featuredModel.js';
 
 export const productsRouter = Router()
 
@@ -27,47 +26,20 @@ productsRouter.get('/filter',
     getFilteredProducts
 )
 
+
+
 // ADMIN
 
-productsRouter.get('/featured-products', async (req, res) => {
-  try {
-    const products = await FeaturedProducts.find({});
-    res.json(products);
-  } catch (error) {
-    res.status(500).send(error);
-  }
-});
+productsRouter.get('/featured-products',
+  getFeaturedProducts
+);
 
-productsRouter.post('/featured-products', async (req, res) => {
-  try {
-    const body = req.body
-    
-    const schema = {
-      _id:body._id,
-      images: body.images,
-      title: body.title,
-      priceARS: body.priceARS,
-      priceUSD: body.priceUSD,
-      category: body.category
-    }
+productsRouter.put('/featured-products/toggle-status', 
+    passportAuth,
+    adminsOnly,
+    toggleFeaturedStatus
+);
 
-    const newProduct = await FeaturedProducts.create(schema);
-
-    await newProduct;
-    res.json(newProduct);
-  } catch (error) {
-    res.status(500).send(error);
-  }
-});
-
-productsRouter.delete('/featured-products/:id', async (req, res) => {
-  try {
-    await FeaturedProducts.findByIdAndDelete(req.params.id);
-    res.sendStatus(204);
-  } catch (error) {
-    res.status(500).send(error);
-  }
-});
 
 // GET /products/pid
 productsRouter.get('/:pid', 
